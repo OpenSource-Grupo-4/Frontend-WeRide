@@ -1,70 +1,13 @@
 <mat-drawer-container class="app-container" autosize>
   <!-- Sidebar -->
   <mat-drawer #drawer class="sidenav" mode="side" opened>
-    <div class="user-profile">
-      <img
-        src="/user-avatar.jpg"
-        alt="User Avatar"
-        class="user-avatar"
-      />
-      <h3 class="user-name">User</h3>
-    </div>
-
-    <nav class="sidebar-menu">
-      <a class="menu-item active" href="#">
-        <mat-icon>dashboard</mat-icon>
-        <span>Inicio</span>
-      </a>
-      <a class="menu-item" href="#">
-        <mat-icon>garage</mat-icon>
-        <span>Garaje</span>
-      </a>
-      <a class="menu-item" href="#">
-        <mat-icon>person</mat-icon>
-        <span>Tu</span>
-      </a>
-      <a class="menu-item" href="#">
-        <mat-icon>card_membership</mat-icon>
-        <span>Planes</span>
-      </a>
-      <a class="menu-item" href="#">
-        <mat-icon>luggage</mat-icon>
-        <span>Viaje</span>
-      </a>
-      <a class="menu-item" href="#">
-        <mat-icon>book_online</mat-icon>
-        <span>Reservas</span>
-      </a>
-    </nav>
+    <app-sidebar></app-sidebar>
   </mat-drawer>
 
   <!-- Main content -->
   <mat-drawer-content>
     <!-- Navbar -->
-    <mat-toolbar class="navbar">
-      <button mat-icon-button (click)="drawer.toggle()">
-        <mat-icon>menu</mat-icon>
-      </button>
-
-      <img
-        src="/WeRideLogo.png"
-        alt="WeRide Logo"
-        class="logo"
-      />
-
-      <span class="spacer"></span>
-
-      <button mat-icon-button>
-        <mat-icon>notifications</mat-icon>
-      </button>
-
-      <div class="user-nav">
-        <span class="user-name-nav">User</span>
-        <button mat-icon-button>
-          <mat-icon>account_circle</mat-icon>
-        </button>
-      </div>
-    </mat-toolbar>
+    <app-navbar (toggleSidebar)="drawer.toggle()"></app-navbar>
 
     <!-- Page content -->
     <div class="content">
