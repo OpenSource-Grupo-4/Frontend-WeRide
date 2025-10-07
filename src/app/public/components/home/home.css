@@ -1,20 +1,4 @@
-.app-container {
-  display: flex;
-  min-height: 100vh;
-  background-color: #f9fafb;
-}
-
-.main-content {
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  margin-left: 260px;
-  padding-top: 60px;
-}
-
 .home-page {
-  padding: 2rem;
   max-width: 1200px;
   margin: 0 auto;
   width: 100%;
@@ -135,10 +119,6 @@
 }
 
 @media (max-width: 768px) {
-  .main-content {
-    margin-left: 0;
-  }
-
   .action-buttons {
     flex-direction: column;
     align-items: center;

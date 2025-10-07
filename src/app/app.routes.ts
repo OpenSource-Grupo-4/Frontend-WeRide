@@ -14,7 +14,7 @@ export const routes: Routes = [
       },
       {
         path: 'home',
-        loadComponent: () => import('./public/components/home/home').then(m => m.HomeComponent)
+        loadComponent: () => import('./public/components/home/home').then(m => m.Home)
       },
       {
         path: 'vehicle-status',
