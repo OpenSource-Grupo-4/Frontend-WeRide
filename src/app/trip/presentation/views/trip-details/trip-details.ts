@@ -10,7 +10,6 @@ import {Router} from '@angular/router';
     MatCard,
     MatButton,
     CommonModule,
-    MatIconButton
   ],
   templateUrl: './trip-details.html',
   styleUrl: './trip-details.css'

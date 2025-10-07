@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { LayoutComponent } from './public/components/layout/layout';
 import { BOOKING_ROUTES } from './booking/presentation/views/booking.routes';
 import { TRIP_ROUTES } from './trip/presentation/views/trip.routes';
+import {PLAN_ROUTES} from './plans/presentation/views/plan.routes';
 
 export const routes: Routes = [
   {
@@ -26,12 +27,16 @@ export const routes: Routes = [
         loadComponent: () => import('./booking/presentation/views/schedule-unlock/schedule-unlock').then(m => m.ScheduleUnlockComponent)
       },
       {
+        path: 'trip',
+        children: TRIP_ROUTES
+      },
+      {
         path: 'booking',
         children: BOOKING_ROUTES
       },
       {
-        path: 'trip',
-        children: TRIP_ROUTES
+        path: 'plan',
+        children: PLAN_ROUTES
       }
     ]
   }
