@@ -1,0 +1,17 @@
+<mat-drawer-container class="app-container" autosize>
+  <!-- Sidebar -->
+  <mat-drawer #drawer class="sidenav" mode="side" opened>
+    <app-sidebar></app-sidebar>
+  </mat-drawer>
+
+  <!-- Main content -->
+  <mat-drawer-content>
+    <!-- Navbar -->
+    <app-navbar (toggleSidebar)="drawer.toggle()"></app-navbar>
+
+    <!-- Page content -->
+    <div class="content">
+      <h1>hello</h1>
+    </div>
+  </mat-drawer-content>
+</mat-drawer-container>
