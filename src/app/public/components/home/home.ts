@@ -1,24 +1,27 @@
 import { Component } from '@angular/core';
-import { MatSidenavModule } from '@angular/material/sidenav';
-import { MatToolbarModule } from '@angular/material/toolbar';
+import { RouterModule } from '@angular/router';
+import { SidebarComponent } from '../sidebar/sidebar';
+import { HeaderComponent } from '../header/header';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { Navbar } from '../navbar/navbar';
-import { Sidebar } from '../sidebar/sidebar';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-home',
   imports: [
-    MatSidenavModule,
-    MatToolbarModule,
+    CommonModule,
+    RouterModule,
+    SidebarComponent,
+    HeaderComponent,
     MatIconModule,
-    MatButtonModule,
-    Navbar,
-    Sidebar
+    MatButtonModule
   ],
   templateUrl: './home.html',
   styleUrl: './home.css'
 })
 export class Home {
-
+  toggleSidebar() {
+    // Sidebar toggle logic can be implemented here if needed
+    console.log('Sidebar toggle requested');
+  }
 }

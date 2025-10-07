@@ -1,36 +1,35 @@
-<div class="user-profile">
-  <img
-    src="/user-avatar.jpg"
-    alt="User Avatar"
-    class="user-avatar"
-  />
-  <h3 class="user-name">User</h3>
+<div class="sidebar">
+  <div class="profile-section">
+    <img src="/img/WeRideLogo.png" alt="Profile">
+    <h3>Judy Stevenson</h3>
+  </div>
+
+  <nav>
+    <ul>
+      <li routerLink="/home" routerLinkActive="active">
+        <mat-icon>dashboard</mat-icon>
+        <span>Inicio</span>
+      </li>
+      <li>
+        <mat-icon>garage</mat-icon>
+        <span>Garaje</span>
+      </li>
+      <li>
+        <mat-icon>person</mat-icon>
+        <span>Tu</span>
+      </li>
+      <li>
+        <mat-icon>card_membership</mat-icon>
+        <span>Planes</span>
+      </li>
+      <li>
+        <mat-icon>luggage</mat-icon>
+        <span>Viaje</span>
+      </li>
+      <li routerLink="/vehicle-status" routerLinkActive="active">
+        <mat-icon>book_online</mat-icon>
+        <span>Reservas</span>
+      </li>
+    </ul>
+  </nav>
 </div>
-
-<nav class="sidebar-menu">
-  <a class="menu-item active" href="#">
-    <mat-icon>dashboard</mat-icon>
-    <span>Inicio</span>
-  </a>
-  <a class="menu-item" href="#">
-    <mat-icon>garage</mat-icon>
-    <span>Garaje</span>
-  </a>
-  <a class="menu-item" href="#">
-    <mat-icon>person</mat-icon>
-    <span>Tu</span>
-  </a>
-  <a class="menu-item" href="#">
-    <mat-icon>card_membership</mat-icon>
-    <span>Planes</span>
-  </a>
-  <a class="menu-item" href="#">
-    <mat-icon>luggage</mat-icon>
-    <span>Viaje</span>
-  </a>
-  <a class="menu-item" href="#">
-    <mat-icon>book_online</mat-icon>
-    <span>Reservas</span>
-  </a>
-</nav>
-
