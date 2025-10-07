@@ -1,34 +1,36 @@
-<div class="sidebar">
-  <div class="profile-section">
-    <img src="/img/WeRideLogo.png" alt="Profile">
-    <h3>Judy Stevenson</h3>
+<div class="sidebar" [class.collapsed]="collapsed">
+  <div class="profile-section" *ngIf="!collapsed">
+    <button mat-icon-button>
+      <mat-icon>account_circle</mat-icon>
+    </button>
+    <h3>User</h3>
   </div>
 
   <nav>
     <ul>
       <li routerLink="/home" routerLinkActive="active">
         <mat-icon>dashboard</mat-icon>
-        <span>Inicio</span>
+        <span *ngIf="!collapsed">Inicio</span>
       </li>
       <li>
         <mat-icon>garage</mat-icon>
-        <span>Garaje</span>
+        <span *ngIf="!collapsed">Garaje</span>
       </li>
       <li>
         <mat-icon>person</mat-icon>
-        <span>Tu</span>
+        <span *ngIf="!collapsed">Tu</span>
       </li>
       <li>
         <mat-icon>card_membership</mat-icon>
-        <span>Planes</span>
+        <span *ngIf="!collapsed">Planes</span>
       </li>
       <li>
         <mat-icon>luggage</mat-icon>
-        <span>Viaje</span>
+        <span *ngIf="!collapsed">Viaje</span>
       </li>
-      <li routerLink="/vehicle-status" routerLinkActive="active">
+      <li routerLink="/booking" routerLinkActive="active">
         <mat-icon>book_online</mat-icon>
-        <span>Reservas</span>
+        <span *ngIf="!collapsed">Reservas</span>
       </li>
     </ul>
   </nav>
