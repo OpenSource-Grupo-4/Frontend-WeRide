@@ -1,14 +1,16 @@
 import { Component } from '@angular/core';
 import {MatCard} from '@angular/material/card';
-import {MatButton} from '@angular/material/button';
+import {MatButton, MatIconButton} from '@angular/material/button';
 import {CommonModule} from '@angular/common';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-trip-details',
   imports: [
     MatCard,
     MatButton,
-    CommonModule
+    CommonModule,
+    MatIconButton
   ],
   templateUrl: './trip-details.html',
   styleUrl: './trip-details.css'
@@ -20,14 +22,14 @@ export class TripDetails {
   extraTime = 'Aun no sobrepasas tu tiempo';
   rating = 0;
 
+  constructor(private router: Router) {}
+
   setRating(stars: number) {
     this.rating = stars;
   }
 
   goToHistory() {
-    /**
-     * TODO: Implementar la lógica de navegación a la pantalla de historial de viajes
-     */
+    this.router.navigate(['/trip/history']);
   }
 
   goToSettings() {

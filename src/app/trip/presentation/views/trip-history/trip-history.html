@@ -1,7 +1,9 @@
 <div class="trip-history-container">
   <div class="header">
-    <span class="back-arrow">&#8592;</span>
-    <h2>Historial de viajes:</h2>
+    <button mat-icon-button class="back-btn" (click)="goBack()" aria-label="Volver">
+      <span style="font-size: 24px;">←</span>
+    </button>
+    <h2>Historial de Viajes</h2>
   </div>
   <div *ngFor="let trip of trips" class="trip-card">
     <img [src]="trip.image" alt="Scooter" class="vehicle-img" />

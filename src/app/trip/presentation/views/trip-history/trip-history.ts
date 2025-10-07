@@ -1,4 +1,8 @@
 import { Component } from '@angular/core';
+import { CommonModule} from '@angular/common';
+import { MatIconModule } from '@angular/material/icon';
+import {MatIconButton} from '@angular/material/button';
+import {Router} from '@angular/router';
 
 interface Trip {
   route: string;
@@ -12,7 +16,8 @@ interface Trip {
 
 @Component({
   selector: 'app-trip-history',
-  imports: [],
+  standalone: true,
+  imports: [MatIconModule, MatIconButton, CommonModule],
   templateUrl: './trip-history.html',
   styleUrl: './trip-history.css'
 })
@@ -47,6 +52,7 @@ export class TripHistory {
       image: 'assets/scooter-green.png'
     }
   ];
+  constructor(private router: Router) {}
 
   printReceipt(trip: Trip) {
     alert('Imprimiendo recibo del viaje: ' + trip.id);
@@ -59,4 +65,9 @@ export class TripHistory {
   seeMore() {
     alert('Cargando más viajes...');
   }
+
+  goBack() {
+    this.router.navigate(['/trip']);
+  }
+
 }

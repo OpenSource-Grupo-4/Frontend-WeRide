@@ -17,5 +17,9 @@ export const TRIP_ROUTES: Routes = [
   {
     path: 'map',
     loadComponent: () => import('./trip-map/trip-map').then(m => m.TripMap)
+  },
+  {
+    path: 'history',
+    loadComponent: () => import('./trip-history/trip-history').then(m => m.TripHistory)
   }
 ];
