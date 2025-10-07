@@ -3,11 +3,19 @@ import { Routes } from '@angular/router';
 export const TRIP_ROUTES: Routes = [
   {
     path: '',
-    redirectTo: 'details',
+    redirectTo: '',
     pathMatch: 'full'
+  },
+  {
+    path: '',
+    loadComponent: () => import('./trip-layout/trip-layout').then(m => m.TripLayout)
   },
   {
     path: 'details',
     loadComponent: () => import('./trip-details/trip-details').then(m => m.TripDetails)
+  },
+  {
+    path: 'map',
+    loadComponent: () => import('./trip-map/trip-map').then(m => m.TripMap)
   }
 ];
