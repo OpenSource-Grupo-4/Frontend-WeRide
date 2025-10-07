@@ -1,0 +1,71 @@
+.trip-details-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 16px 16px 0 0;
+  padding: 32px 24px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  background: #fff;
+  min-height: 140px;
+}
+
+.trip-info {
+  flex: 1;
+  min-width: 220px;
+}
+
+.trip-info h3 {
+  margin-bottom: 8px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.trip-info p {
+  margin: 2px 0;
+  font-size: 15px;
+}
+
+.trip-info strong {
+  font-weight: 600;
+}
+
+.trip-rating {
+  flex: 1;
+  text-align: center;
+}
+
+.stars {
+  font-size: 28px;
+  margin-bottom: 8px;
+}
+
+.star {
+  cursor: pointer;
+  color: #444;
+  transition: color 0.2s;
+  margin: 0 2px;
+}
+
+.star.filled {
+  color: #222;
+}
+
+.rating-label {
+  font-weight: 500;
+  font-size: 16px;
+}
+
+.trip-actions {
+  flex: 1;
+  display: flex;
+  gap: 24px;
+  justify-content: flex-end;
+}
+
+.trip-actions button {
+  min-width: 180px;
+  font-weight: 600;
+  font-size: 16px;
+  border-radius: 12px !important;
+  height: 44px;
+}

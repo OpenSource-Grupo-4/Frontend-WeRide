@@ -1,0 +1,26 @@
+<mat-card class="trip-details-card">
+  <div class="trip-info">
+    <h3>Scooter Eléctrico</h3>
+    <p><strong>Ubicación:</strong> <span>{{ location }}</span></p>
+    <p><strong>Batería:</strong> <span>{{ battery }}%</span></p>
+    <p><strong>Tiempo restante:</strong> <span>{{ remainingTime }}</span></p>
+    <p><strong>Tiempo Extra:</strong> <span>{{ extraTime }}</span></p>
+  </div>
+  <div class="trip-rating">
+    <div class="stars">
+      <ng-container *ngFor="let star of [1,2,3,4,5]">
+        <span
+          class="star"
+          [class.filled]="star <= rating"
+          (click)="setRating(star)">
+          &#9733;
+        </span>
+      </ng-container>
+    </div>
+    <div class="rating-label">Déjanos tu puntuación</div>
+  </div>
+  <div class="trip-actions">
+    <button mat-stroked-button (click)="goToHistory()">Historial de viajes</button>
+    <button mat-stroked-button (click)="goToSettings()">Configuración</button>
+  </div>
+</mat-card>

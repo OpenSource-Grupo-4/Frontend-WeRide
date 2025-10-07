@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { LayoutComponent } from './public/components/layout/layout';
 import { BOOKING_ROUTES } from './booking/presentation/views/booking.routes';
+import { TRIP_ROUTES } from './trip/presentation/views/trip.routes';
 
 export const routes: Routes = [
   {
@@ -27,6 +28,10 @@ export const routes: Routes = [
       {
         path: 'booking',
         children: BOOKING_ROUTES
+      },
+      {
+        path: 'trip',
+        children: TRIP_ROUTES
       }
     ]
   }

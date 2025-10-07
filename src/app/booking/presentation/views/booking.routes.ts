@@ -22,5 +22,4 @@ export const BOOKING_ROUTES: Routes = [
     path: 'schedule-unlock',
     loadComponent: () => import('./schedule-unlock/schedule-unlock').then(m => m.ScheduleUnlockComponent)
   },
-  // You can add more routes here
 ];

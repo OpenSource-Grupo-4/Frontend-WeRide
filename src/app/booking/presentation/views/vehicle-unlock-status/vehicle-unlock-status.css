@@ -225,7 +225,6 @@
   color: #7c3aed;
 }
 
-/* Layout principal con sidebar y contenido */
 .main-layout {
   display: block;
   min-height: 100vh;
@@ -237,7 +236,6 @@
   padding: 2.5rem 6vw;
 }
 
-/* Elimino estilos del sidebar y perfil */
 .sidebar, .profile-section, .profile-img, .profile-name, .menu-icons, .menu-item {
   display: none !important;
 }
