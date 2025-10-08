@@ -1,1 +1,28 @@
-<p>garage-layout works!</p>
+<app-garage-filter (filterChange)="applyFilter($event)"></app-garage-filter>
+<div class="vehicle-grid">
+  @for (v of vehicles; track v.id) {
+    <app-vehicle-card [vehicle]="v"></app-vehicle-card>
+    <mat-card class="vehicle-card">
+      <img mat-card-image [src]="v.imageUrl" alt="{{ v.name }}">
+      <mat-card-content>
+        <h3>{{ v.name }}</h3>
+        <p>Brand: {{ v.brand }}</p>
+        <p>Rating: ⭐ {{ v.rating }}</p>
+
+        @if (v.available) {
+          <p>Disponible</p>
+        } @else {
+          <p>No disponible</p>
+        }
+      </mat-card-content>
+
+      <mat-card-actions>
+        <button mat-button color="warn" (click)="v.favorite = !v.favorite">
+          <mat-icon>{{ v.favorite ? 'favorite' : 'favorite_border' }}</mat-icon>
+          {{ v.favorite ? 'Unfavorite' : 'Favorite' }}
+        </button>
+        <button mat-button color="primary">Ver más de este producto</button>
+      </mat-card-actions>
+    </mat-card>
+  }
+</div>

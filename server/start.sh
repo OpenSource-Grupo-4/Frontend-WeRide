@@ -1,1 +1,3 @@
-npx json-server --watch server/db.json --routes server/routes.json
+#!/bin/bash
+npx json-server server/db.json --port 3000
+
