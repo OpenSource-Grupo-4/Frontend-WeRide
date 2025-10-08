@@ -1,4 +1,28 @@
-<div>
-  <p>map-placeholder</p>
-</div>
+<div class="container-map">
+  <mgl-map
+    [style]="'mapbox://styles/mapbox/streets-v12'"
+    [zoom]="[12]"
+    [center]="[-77.0935755943619, -12.076630586486122]"
+  >
+    @for (marker of markers; track $index) {
+      <mgl-marker
+        [lngLat]="[marker.lng, marker.lat]"
+      >
+        <img
+          src="https://cdn-icons-png.flaticon.com/512/684/684908.png"
+          class="google-marker"
+          alt="marker"
+        />
+      </mgl-marker>
+    }
 
+    @if (userLocation()) {
+      <mgl-marker
+        [lngLat]="userLocation()!"
+      >
+        <div class="user-marker"></div>
+      </mgl-marker>
+    }
+
+  </mgl-map>
+</div>
