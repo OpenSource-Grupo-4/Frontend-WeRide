@@ -1,0 +1,33 @@
+<mat-card class="vehicle-card">
+  <img mat-card-image
+       [ngSrc]="vehicle.imageUrl"
+       [alt]="vehicle.name"
+       width="400"
+       height="300"
+       priority>
+
+
+  <mat-card-content>
+    <h3>{{ vehicle.name }}</h3>
+    <p>Brand: {{ vehicle.brand }}</p>
+    <p>Rating: ⭐ {{ vehicle.rating }}</p>
+
+    @if (vehicle.available) {
+      <p class="available">Disponible</p>
+    } @else {
+      <p class="not-available">No disponible</p>
+    }
+  </mat-card-content>
+
+  <mat-card-actions>
+    <button mat-button color="warn" (click)="toggleFavorite()" [attr.aria-pressed]="isFavorite()">
+      <mat-icon>{{ isFavorite() ? 'favorite' : 'favorite_border' }}</mat-icon>
+      {{ isFavorite() ? 'Unfavorite' : 'Favorite' }}
+    </button>
+
+
+    <button mat-button color="primary">
+      Ver más de este producto
+    </button>
+  </mat-card-actions>
+</mat-card>

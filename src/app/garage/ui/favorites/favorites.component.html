@@ -1,0 +1,16 @@
+<div class="favorites">
+  <h2>Mis Favoritos</h2>
+
+  <div *ngIf="loading">Cargando...</div>
+
+  <div class="vehicle-grid" *ngIf="!loading && favorites.length > 0">
+    <app-vehicle-card
+      *ngFor="let vehicle of favorites"
+      [vehicle]="vehicle">
+    </app-vehicle-card>
+  </div>
+
+  <p *ngIf="!loading && favorites.length === 0">
+    No tienes vehículos favoritos aún.
+  </p>
+</div>

@@ -1,20 +1,13 @@
 import { Component } from '@angular/core';
-import { MatSidenavModule } from '@angular/material/sidenav';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-
+import { MatIconModule } from '@angular/material/icon';
+import{CommonModule} from '@angular/common';
+import {RouterModule} from '@angular/router';
 @Component({
   selector: 'app-home',
-  imports: [
-    MatSidenavModule,
-    MatToolbarModule,
-    MatIconModule,
-    MatButtonModule
-  ],
+  standalone: true,
+  imports: [ CommonModule, MatButtonModule, MatIconModule, RouterModule],
   templateUrl: './home.html',
-  styleUrl: './home.css'
+  styleUrls: ['./home.css']
 })
-export class Home {
-
-}
+export class Home {}
