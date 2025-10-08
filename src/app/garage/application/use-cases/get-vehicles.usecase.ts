@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Vehicle } from '../../domain/models/vehicle.model';
+import { Vehicle } from '../../domain/model/vehicle.model';
 import { VehicleRepository } from '../repositories/vehicle.repository';
 
 @Injectable({

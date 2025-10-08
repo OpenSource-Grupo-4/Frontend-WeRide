@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Vehicle } from '../../domain/models/vehicle.model';
-import { VehicleFilter } from '../../domain/models/vehicle-filter.model';
+import { Vehicle } from '../../domain/model/vehicle.model';
+import { VehicleFilter } from '../../domain/model/vehicle-filter.model';
 import { VehicleRepository } from '../repositories/vehicle.repository';
 
 @Injectable({

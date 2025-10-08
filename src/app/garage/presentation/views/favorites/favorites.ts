@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 
 @Component({
   selector: 'app-favorites',
@@ -6,6 +6,7 @@ import { Component } from '@angular/core';
   templateUrl: './favorites.html',
   styleUrl: './favorites.css'
 })
-export class Favorites {
+export class Favorites implements OnInit {
+  private getVehicle
 
 }

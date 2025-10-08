@@ -1,4 +1,4 @@
-import { Vehicle } from '../../domain/models/vehicle.model';
+import { Vehicle } from '../../domain/model/vehicle.model';
 import { VehicleRepository } from '../../application/repositories/vehicle.repository';
 import { Injectable } from '@angular/core';
 

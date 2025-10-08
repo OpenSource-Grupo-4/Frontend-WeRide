@@ -1,5 +1,5 @@
-import { Vehicle } from '../models/vehicle.model';
-import { VehicleFilter } from '../models/vehicle-filter.model';
+import { Vehicle } from '../../domain/model/vehicle.model';
+import { VehicleFilter } from '../../domain/model/vehicle-filter.model';
 
 export class VehicleFilterService {
   static apply(vehicles: Vehicle[], filter: VehicleFilter): Vehicle[] {

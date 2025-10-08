@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { GarageRoutingModule } from './garage-routing.module';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -18,7 +17,6 @@ import { GarageFilterComponent } from './ui/garage-filter/garage-filter.componen
   imports: [
     CommonModule,
     FormsModule,
-    GarageRoutingModule,
     GarageComponent,
     VehicleCardComponent,
     GarageFilterComponent,

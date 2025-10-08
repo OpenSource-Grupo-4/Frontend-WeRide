@@ -1,1 +1,40 @@
-<p>garage-filter works!</p>
+<div class="filters">
+  <mat-form-field appearance="outline">
+    <mat-label>Min Price</mat-label>
+    <input matInput type="number" [(ngModel)]="minPrice">
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Max Price</mat-label>
+    <input matInput type="number" [(ngModel)]="maxPrice">
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Available</mat-label>
+    <mat-select [(ngModel)]="available">
+      <mat-option [value]="true">Yes</mat-option>
+      <mat-option [value]="false">Not available</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Min Rating</mat-label>
+    <input matInput type="number" [(ngModel)]="minRating">
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Brand</mat-label>
+    <mat-select [(ngModel)]="brand">
+      <mat-option value="Honda">Honda</mat-option>
+      <mat-option value="Xiaomi">Xiaomi</mat-option>
+      <mat-option value="Trek">Trek</mat-option>
+      <mat-option value="CSC">CSC</mat-option>
+      <mat-option value="Ride1Up">Ride1Up</mat-option>
+      <mat-option value="Bird">Bird</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <button mat-raised-button color="primary" (click)="applyFilters()">
+    Apply Filters
+  </button>
+</div>
