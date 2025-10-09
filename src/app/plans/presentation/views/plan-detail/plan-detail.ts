@@ -1,15 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatCard, MatCardActions, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
-
-interface Plan {
-  benefits: string[];
-  price: string;
-  duration: string;
-  id: string;
-}
+import { Plan } from '../../../domain/model/plan.entity';
+import { PlanStore } from '../../../application/plan.store';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-plan-detail',
@@ -18,56 +14,30 @@ interface Plan {
   templateUrl: './plan-detail.html',
   styleUrl: './plan-detail.css'
 })
-export class PlanDetail {
-  plans: Plan[] = [
-    {
-      benefits: [
-        'Acceso a scooters estándar',
-        '10% de descuento en cada viaje',
-        'Soporte al cliente básico'
-      ],
-      price: '$3.99',
-      duration: 'Mensual',
-      id: 'basic-plan-001'
-    },
-    {
-      benefits: [
-        'Acceso a scooters premium',
-        '20% de descuento en cada viaje',
-        'Soporte al cliente prioritario',
-        'Viajes ilimitados los fines de semana'
-      ],
-      price: '$5.99',
-      duration: 'Mensual',
-      id: 'premium-plan-002'
-    },
-    {
-      benefits: [
-        'Acceso a toda la flota de scooters',
-        '30% de descuento en cada viaje',
-        'Soporte al cliente 24/7',
-        'Informes mensuales de uso',
-        'Viajes ilimitados todos los días'
-      ],
-      price: '$29.99',
-      duration: 'Mensual',
-      id: 'business-plan-003'
-    }
-  ];
+export class PlanDetail implements OnInit {
+  plan$: Observable<Plan | null>;
+  loading$: Observable<boolean>;
 
-  plan: Plan | undefined;
-
-  constructor(private route: ActivatedRoute) {
-    const planId = this.route.snapshot.paramMap.get('id');
-    this.plan = this.plans.find(p => p.id === planId);
+  constructor(
+    private route: ActivatedRoute,
+    private planStore: PlanStore
+  ) {
+    this.plan$ = this.planStore.selectedPlan$;
+    this.loading$ = this.planStore.loading$;
   }
 
-  planTitle(id: string): string {
-    switch (id) {
-      case 'basic-plan-001': return 'Plan Normal';
-      case 'premium-plan-002': return 'Plan Estudiantil';
-      case 'business-plan-003': return 'Plan Empresarial';
-      default: return 'Plan';
+  ngOnInit(): void {
+    const planId = this.route.snapshot.paramMap.get('id');
+    if (planId) {
+      this.planStore.loadPlanById(planId);
     }
+  }
+
+  getFormattedPrice(plan: Plan): string {
+    return `${plan.currency === 'USD' ? '$' : plan.currency}${plan.price.toFixed(2)}`;
+  }
+
+  getFormattedDuration(plan: Plan): string {
+    return plan.duration === 'monthly' ? 'Mensual' : plan.duration;
   }
 }

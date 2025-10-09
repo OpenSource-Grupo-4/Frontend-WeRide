@@ -1,4 +1,5 @@
 .plans-layout {
+  margin-left: 3rem;
   display: grid;
   grid-template-columns: 40% 1fr;
   gap: 3rem;
