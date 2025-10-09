@@ -1,29 +1,36 @@
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import { BookingResponse, BookingsListResponse } from './bookings-response';
 
-// Servicio simulado para consumir la API de reservas
+@Injectable({ providedIn: 'root' })
 export class BookingsApiEndpoint {
-  // Simulación de datos en memoria
-  private bookings: BookingResponse[] = [];
+  private baseUrl = 'http://localhost:3000/bookings';
+
+  constructor(private http: HttpClient) {}
 
   // Obtener todas las reservas
-  async getAll(): Promise<BookingsListResponse> {
-    return { bookings: this.bookings };
+  getAll(): Observable<BookingResponse[]> {
+    return this.http.get<BookingResponse[]>(this.baseUrl);
   }
 
   // Crear una nueva reserva
-  async create(booking: Omit<BookingResponse, 'id' | 'createdAt'>): Promise<BookingResponse> {
-    const newBooking: BookingResponse = {
-      ...booking,
-      id: Math.random().toString(36).substring(2),
-      createdAt: new Date().toISOString(),
-    };
-    this.bookings.push(newBooking);
-    return newBooking;
+  create(booking: Omit<BookingResponse, 'id'>): Observable<BookingResponse> {
+    return this.http.post<BookingResponse>(this.baseUrl, booking);
   }
 
   // Obtener una reserva por ID
-  async getById(id: string): Promise<BookingResponse | undefined> {
-    return this.bookings.find(b => b.id === id);
+  getById(id: string): Observable<BookingResponse> {
+    return this.http.get<BookingResponse>(`${this.baseUrl}/${id}`);
+  }
+
+  // Actualizar una reserva
+  update(id: string, booking: Partial<BookingResponse>): Observable<BookingResponse> {
+    return this.http.patch<BookingResponse>(`${this.baseUrl}/${id}`, booking);
+  }
+
+  // Eliminar una reserva
+  delete(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/${id}`);
   }
 }
-

@@ -6,22 +6,44 @@ export function toDomainNotification(response: NotificationResponse): Notificati
   return new Notification(
     response.id,
     response.userId,
-    response.type,
+    response.title,
     response.message,
-    new Date(response.sentAt),
-    response.status
+    response.type,
+    response.category,
+    response.priority,
+    new Date(response.createdAt),
+    response.readAt ? new Date(response.readAt) : null,
+    response.isRead,
+    response.actionRequired,
+    response.relatedEntityId,
+    response.relatedEntityType,
+    response.icon,
+    response.color,
+    response.expiresAt ? new Date(response.expiresAt) : undefined,
+    response.promoCode,
+    response.discount
   );
 }
 
 // Convierte Notification (dominio) a NotificationResponse (infraestructura)
-export function toInfraNotification(notification: Notification): NotificationResponse {
+export function toInfraNotification(notification: Notification): Omit<NotificationResponse, 'id'> {
   return {
-    id: notification.id,
     userId: notification.userId,
-    type: notification.type,
+    title: notification.title,
     message: notification.message,
-    sentAt: notification.sentAt.toISOString(),
-    status: notification.status
+    type: notification.type,
+    category: notification.category,
+    priority: notification.priority,
+    createdAt: notification.createdAt.toISOString(),
+    readAt: notification.readAt ? notification.readAt.toISOString() : null,
+    isRead: notification.isRead,
+    actionRequired: notification.actionRequired,
+    relatedEntityId: notification.relatedEntityId,
+    relatedEntityType: notification.relatedEntityType,
+    icon: notification.icon,
+    color: notification.color,
+    expiresAt: notification.expiresAt ? notification.expiresAt.toISOString() : undefined,
+    promoCode: notification.promoCode,
+    discount: notification.discount
   };
 }
-

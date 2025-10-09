@@ -1,8 +1,6 @@
-import { VehicleResponse } from './vehicle-response';
-// Asumo la entidad Vehicle en dominio:
 import { Vehicle } from '../domain/model/vehicle.entity';
+import { VehicleResponse } from './vehicle-response';
 
-// Convierte VehicleResponse (infraestructura) a Vehicle (dominio)
 export function toDomainVehicle(response: VehicleResponse): Vehicle {
   return new Vehicle(
     response.id,
@@ -10,21 +8,48 @@ export function toDomainVehicle(response: VehicleResponse): Vehicle {
     response.model,
     response.year,
     response.battery,
+    response.maxSpeed,
+    response.range,
+    response.weight,
+    response.color,
+    response.licensePlate,
     response.location,
-    response.status
+    response.status,
+    response.type,
+    response.companyId,
+    response.pricePerMinute,
+    response.image,
+    response.features,
+    response.maintenanceStatus,
+    new Date(response.lastMaintenance),
+    new Date(response.nextMaintenance),
+    response.totalKilometers,
+    response.rating
   );
 }
 
-// Convierte Vehicle (dominio) a VehicleResponse (infraestructura)
-export function toInfraVehicle(vehicle: Vehicle): VehicleResponse {
+export function toInfraVehicle(vehicle: Vehicle): Omit<VehicleResponse, 'id'> {
   return {
-    id: vehicle.id,
     brand: vehicle.brand,
     model: vehicle.model,
     year: vehicle.year,
     battery: vehicle.battery,
+    maxSpeed: vehicle.maxSpeed,
+    range: vehicle.range,
+    weight: vehicle.weight,
+    color: vehicle.color,
+    licensePlate: vehicle.licensePlate,
     location: vehicle.location,
-    status: vehicle.status
+    status: vehicle.status,
+    type: vehicle.type,
+    companyId: vehicle.companyId,
+    pricePerMinute: vehicle.pricePerMinute,
+    image: vehicle.image,
+    features: vehicle.features,
+    maintenanceStatus: vehicle.maintenanceStatus,
+    lastMaintenance: vehicle.lastMaintenance.toISOString(),
+    nextMaintenance: vehicle.nextMaintenance.toISOString(),
+    totalKilometers: vehicle.totalKilometers,
+    rating: vehicle.rating
   };
 }
-

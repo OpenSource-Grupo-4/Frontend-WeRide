@@ -2,14 +2,25 @@
 export interface NotificationResponse {
   id: string;
   userId: string;
-  type: 'sms' | 'email' | 'push';
+  title: string;
   message: string;
-  sentAt: string;
-  status: 'sent' | 'pending' | 'failed';
+  type: string;
+  category: string;
+  priority: string;
+  createdAt: string;
+  readAt: string | null;
+  isRead: boolean;
+  actionRequired: boolean;
+  relatedEntityId?: string;
+  relatedEntityType?: string;
+  icon: string;
+  color: string;
+  expiresAt?: string;
+  promoCode?: string;
+  discount?: number;
 }
 
 // Respuesta de la API para listado de notificaciones
 export interface NotificationsListResponse {
   notifications: NotificationResponse[];
 }
-

@@ -1,28 +1,49 @@
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import { NotificationResponse, NotificationsListResponse } from './notifications-response';
 
-// Servicio simulado para consumir la API de notificaciones
+@Injectable({ providedIn: 'root' })
 export class NotificationsApiEndpoint {
-  private notifications: NotificationResponse[] = [];
+  private baseUrl = 'http://localhost:3000/notifications';
+
+  constructor(private http: HttpClient) {}
 
   // Obtener todas las notificaciones
-  async getAll(): Promise<NotificationsListResponse> {
-    return { notifications: this.notifications };
+  getAll(): Observable<NotificationResponse[]> {
+    return this.http.get<NotificationResponse[]>(this.baseUrl);
+  }
+
+  // Obtener notificaciones por ID de usuario
+  getByUserId(userId: string): Observable<NotificationResponse[]> {
+    return this.http.get<NotificationResponse[]>(`${this.baseUrl}?userId=${userId}`);
   }
 
   // Crear una nueva notificación
-  async create(notification: Omit<NotificationResponse, 'id' | 'sentAt'>): Promise<NotificationResponse> {
-    const newNotification: NotificationResponse = {
-      ...notification,
-      id: Math.random().toString(36).substring(2),
-      sentAt: new Date().toISOString()
-    };
-    this.notifications.push(newNotification);
-    return newNotification;
+  create(notification: Omit<NotificationResponse, 'id'>): Observable<NotificationResponse> {
+    return this.http.post<NotificationResponse>(this.baseUrl, notification);
   }
 
   // Obtener una notificación por ID
-  async getById(id: string): Promise<NotificationResponse | undefined> {
-    return this.notifications.find(n => n.id === id);
+  getById(id: string): Observable<NotificationResponse> {
+    return this.http.get<NotificationResponse>(`${this.baseUrl}/${id}`);
+  }
+
+  // Actualizar una notificación
+  update(id: string, notification: Partial<NotificationResponse>): Observable<NotificationResponse> {
+    return this.http.patch<NotificationResponse>(`${this.baseUrl}/${id}`, notification);
+  }
+
+  // Eliminar una notificación
+  delete(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/${id}`);
+  }
+
+  // Marcar una notificación como leída
+  markAsRead(id: string): Observable<NotificationResponse> {
+    return this.http.patch<NotificationResponse>(`${this.baseUrl}/${id}`, {
+      isRead: true,
+      readAt: new Date().toISOString()
+    });
   }
 }
-

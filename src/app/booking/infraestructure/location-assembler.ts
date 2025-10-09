@@ -7,19 +7,33 @@ export function toDomainLocation(response: LocationResponse): Location {
     response.id,
     response.name,
     response.address,
-    { lat: response.latitude, lng: response.longitude }
+    response.coordinates,
+    response.type,
+    response.capacity,
+    response.availableSpots,
+    response.isActive,
+    response.operatingHours,
+    response.amenities,
+    response.district,
+    response.description,
+    response.image
   );
 }
 
 // Convierte Location (dominio) a LocationResponse (infraestructura)
-export function toInfraLocation(location: Location): LocationResponse {
+export function toInfraLocation(location: Location): Omit<LocationResponse, 'id'> {
   return {
-    id: location.id,
     name: location.name,
     address: location.address,
-    latitude: location.coordinates.lat,
-    longitude: location.coordinates.lng,
-    availableVehicles: 0 // Asignar si tienes la info
+    coordinates: location.coordinates,
+    type: location.type,
+    capacity: location.capacity,
+    availableSpots: location.availableSpots,
+    isActive: location.isActive,
+    operatingHours: location.operatingHours,
+    amenities: location.amenities,
+    district: location.district,
+    description: location.description,
+    image: location.image
   };
 }
-

@@ -1,27 +1,36 @@
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import { LocationResponse, LocationsListResponse } from './locations-response';
 
-// Servicio simulado para consumir la API de ubicaciones
+@Injectable({ providedIn: 'root' })
 export class LocationsApiEndpoint {
-  private locations: LocationResponse[] = [];
+  private baseUrl = 'http://localhost:3000/locations';
+
+  constructor(private http: HttpClient) {}
 
   // Obtener todas las ubicaciones
-  async getAll(): Promise<LocationsListResponse> {
-    return { locations: this.locations };
+  getAll(): Observable<LocationResponse[]> {
+    return this.http.get<LocationResponse[]>(this.baseUrl);
   }
 
   // Crear una nueva ubicación
-  async create(location: Omit<LocationResponse, 'id'>): Promise<LocationResponse> {
-    const newLocation: LocationResponse = {
-      ...location,
-      id: Math.random().toString(36).substring(2)
-    };
-    this.locations.push(newLocation);
-    return newLocation;
+  create(location: Omit<LocationResponse, 'id'>): Observable<LocationResponse> {
+    return this.http.post<LocationResponse>(this.baseUrl, location);
   }
 
   // Obtener una ubicación por ID
-  async getById(id: string): Promise<LocationResponse | undefined> {
-    return this.locations.find(l => l.id === id);
+  getById(id: string): Observable<LocationResponse> {
+    return this.http.get<LocationResponse>(`${this.baseUrl}/${id}`);
+  }
+
+  // Actualizar una ubicación
+  update(id: string, location: Partial<LocationResponse>): Observable<LocationResponse> {
+    return this.http.patch<LocationResponse>(`${this.baseUrl}/${id}`, location);
+  }
+
+  // Eliminar una ubicación
+  delete(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/${id}`);
   }
 }
-

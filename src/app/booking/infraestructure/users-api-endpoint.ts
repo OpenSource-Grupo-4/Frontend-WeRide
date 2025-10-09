@@ -1,27 +1,36 @@
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import { UserResponse, UsersListResponse } from './users-response';
 
-// Servicio simulado para consumir la API de usuarios
+@Injectable({ providedIn: 'root' })
 export class UsersApiEndpoint {
-  private users: UserResponse[] = [];
+  private baseUrl = 'http://localhost:3000/users';
+
+  constructor(private http: HttpClient) {}
 
   // Obtener todos los usuarios
-  async getAll(): Promise<UsersListResponse> {
-    return { users: this.users };
+  getAll(): Observable<UserResponse[]> {
+    return this.http.get<UserResponse[]>(this.baseUrl);
   }
 
   // Crear un nuevo usuario
-  async create(user: Omit<UserResponse, 'id'>): Promise<UserResponse> {
-    const newUser: UserResponse = {
-      ...user,
-      id: Math.random().toString(36).substring(2)
-    };
-    this.users.push(newUser);
-    return newUser;
+  create(user: Omit<UserResponse, 'id'>): Observable<UserResponse> {
+    return this.http.post<UserResponse>(this.baseUrl, user);
   }
 
   // Obtener un usuario por ID
-  async getById(id: string): Promise<UserResponse | undefined> {
-    return this.users.find(u => u.id === id);
+  getById(id: string): Observable<UserResponse> {
+    return this.http.get<UserResponse>(`${this.baseUrl}/${id}`);
+  }
+
+  // Actualizar un usuario
+  update(id: string, user: Partial<UserResponse>): Observable<UserResponse> {
+    return this.http.patch<UserResponse>(`${this.baseUrl}/${id}`, user);
+  }
+
+  // Eliminar un usuario
+  delete(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/${id}`);
   }
 }
-
