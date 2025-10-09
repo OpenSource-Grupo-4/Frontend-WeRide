@@ -1,0 +1,37 @@
+<div class="plans-layout">
+  <div class="plan-list-section">
+    <h2>Planes</h2>
+    <div *ngIf="loading$ | async" class="loading">Cargando planes...</div>
+    <button class="plan-card-btn" *ngFor="let plan of (plans$ | async)" (click)="selectPlan(plan)">
+      <span class="plan-title">{{ plan.name }}</span>
+      <mat-icon>chevron_right</mat-icon>
+    </button>
+  </div>
+
+  <div class="plan-detail-section" *ngIf="(selectedPlan$ | async) as selectedPlan">
+    <mat-card class="detail-card">
+      <mat-card-header>
+        <mat-card-title [style.color]="selectedPlan.color">{{ selectedPlan.name }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <p class="plan-description">{{ selectedPlan.description }}</p>
+        <div class="plan-info">
+          <p><strong>Duración:</strong> {{ getFormattedDuration(selectedPlan) }}</p>
+          <p><strong>Precio:</strong> {{ getFormattedPrice(selectedPlan) }}</p>
+          <p><strong>Precio por minuto:</strong> ${{ selectedPlan.pricePerMinute }}</p>
+          <p><strong>Descuento:</strong> {{ selectedPlan.discountPercentage }}%</p>
+          <p><strong>Minutos gratis al mes:</strong> {{ selectedPlan.freeMinutesPerMonth }}</p>
+        </div>
+        <div class="plan-benefits">
+          <h4>Beneficios:</h4>
+          <ul>
+            <li *ngFor="let benefit of selectedPlan.benefits">{{ benefit }}</li>
+          </ul>
+        </div>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-raised-button color="primary" class="pay-button">Pagar</button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div>

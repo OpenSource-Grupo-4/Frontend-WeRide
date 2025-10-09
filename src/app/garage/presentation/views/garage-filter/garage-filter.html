@@ -1,0 +1,59 @@
+<div class="filters-container">
+  <h3>Filtros</h3>
+  <div class="filters">
+    <mat-form-field appearance="outline">
+      <mat-label>Tipo de Vehículo</mat-label>
+      <mat-select [(ngModel)]="selectedType">
+        <mat-option value="">Todos</mat-option>
+        <mat-option value="electric_scooter">Scooter Eléctrico</mat-option>
+        <mat-option value="bike">Bicicleta</mat-option>
+        <mat-option value="electric_bike">Bicicleta Eléctrica</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Estado</mat-label>
+      <mat-select [(ngModel)]="selectedStatus">
+        <mat-option value="">Todos</mat-option>
+        <mat-option value="available">Disponible</mat-option>
+        <mat-option value="reserved">Reservado</mat-option>
+        <mat-option value="maintenance">En mantenimiento</mat-option>
+        <mat-option value="in_use">En uso</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Marca</mat-label>
+      <input matInput type="text" [(ngModel)]="brand" placeholder="Ej: Xiaomi">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Precio Min ($/min)</mat-label>
+      <input matInput type="number" [(ngModel)]="minPrice" min="0" step="0.1">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Precio Max ($/min)</mat-label>
+      <input matInput type="number" [(ngModel)]="maxPrice" min="0" step="0.1">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Rating Mínimo</mat-label>
+      <input matInput type="number" [(ngModel)]="minRating" min="0" max="5" step="0.1">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Batería Mínima (%)</mat-label>
+      <input matInput type="number" [(ngModel)]="minBattery" min="0" max="100">
+    </mat-form-field>
+
+    <div class="filter-actions">
+      <button mat-raised-button color="primary" (click)="applyFilters()">
+        Aplicar Filtros
+      </button>
+      <button mat-button (click)="resetFilters()">
+        Limpiar
+      </button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,33 @@
+<div class="favorites-container">
+  <h1>Mis Vehículos Favoritos</h1>
+
+  @if (isLoading) {
+    <div class="loading">
+      <p>Cargando favoritos...</p>
+    </div>
+  }
+
+  @if (error) {
+    <div class="error">
+      <p>{{ error }}</p>
+    </div>
+  }
+
+  @if (!isLoading && !error) {
+    <div class="vehicle-grid">
+      @for (vehicle of favoriteVehicles; track vehicle.id) {
+        <app-vehicle-card
+          [vehicle]="vehicle"
+          (toggleFavorite)="toggleFavorite($event)">
+        </app-vehicle-card>
+      }
+
+      @if (favoriteVehicles.length === 0) {
+        <div class="no-favorites">
+          <p>No tienes vehículos favoritos aún.</p>
+          <p>Explora el garaje y marca tus vehículos preferidos.</p>
+        </div>
+      }
+    </div>
+  }
+</div>

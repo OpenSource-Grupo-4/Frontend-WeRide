@@ -1,0 +1,45 @@
+<div class="verification-container">
+  <div class="card">
+    @if (authStore.error()) {
+      <div class="error-toast">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="12" r="10" fill="#F04349"/>
+          <path d="M15 9L9 15M9 9L15 15" stroke="white" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <div>
+          <div class="error-title">Ocurrio un Error</div>
+          <div class="error-message">{{ authStore.error() }}</div>
+        </div>
+      </div>
+    }
+
+    <button class="back-button" (click)="goBack()">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+        <path d="M19 12H5M5 12L12 19M5 12L12 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+
+    <h1 class="title">Introduce código de verificación</h1>
+    <p class="subtitle">Recibirás un código de verificación por WhatsApp</p>
+
+    <div class="code-inputs">
+      @for (digit of code(); track $index) {
+        <input
+          type="text"
+          maxlength="1"
+          [id]="'code-' + $index"
+          [(ngModel)]="code()[$index]"
+          (input)="onCodeInput($index, $event)"
+          (keydown)="onKeyDown($index, $event)"
+          class="code-input">
+      }
+    </div>
+
+    <div class="terms">
+      <p>Al continuar, aceptas la <a href="#" class="link">Política de privacidad</a> y los <a href="#" class="link">Términos de uso</a> de sesdven.</p>
+    </div>
+
+    <button class="btn-primary" (click)="continue()">Siguiente</button>
+  </div>
+</div>
+

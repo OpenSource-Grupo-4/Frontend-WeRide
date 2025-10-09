@@ -1,0 +1,68 @@
+<div class="email-login-container">
+  <div class="card">
+    @if (authStore.error()) {
+      <div class="error-toast">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="12" r="10" fill="#F04349"/>
+          <path d="M15 9L9 15M9 9L15 15" stroke="white" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <div>
+          <div class="error-title">Ocurrio un Error</div>
+          <div class="error-message">{{ authStore.error() }}</div>
+        </div>
+      </div>
+    }
+
+    <button class="back-button" (click)="goBack()">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+        <path d="M19 12H5M5 12L12 19M5 12L12 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+
+    <h1 class="title">Iniciar Sesión</h1>
+    <p class="subtitle">Ingresa con tu email corporativo</p>
+
+    <div class="form-group">
+      <label>Email</label>
+      <input
+        type="email"
+        [(ngModel)]="email"
+        placeholder="correo@empresa.com"
+        class="form-input">
+    </div>
+
+    <div class="form-group">
+      <label>Contraseña</label>
+      <div class="password-container">
+        <input
+          [type]="showPassword() ? 'text' : 'password'"
+          [(ngModel)]="password"
+          placeholder="••••••••"
+          class="form-input">
+        <button type="button" class="toggle-password" (click)="togglePassword()">
+          @if (showPassword()) {
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <path d="M3 3L21 21M10.584 10.587A2 2 0 0012 13.415M9.363 5.365A9.466 9.466 0 0112 5c4.97 0 9 3.582 10.5 8.5a11.43 11.43 0 01-2.676 3.677m-4.224 1.896C14.5 19.59 13.31 20 12 20c-4.97 0-9-3.582-10.5-8.5a11.426 11.426 0 013.677-4.677" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          } @else {
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
+            </svg>
+          }
+        </button>
+      </div>
+    </div>
+
+    <div class="forgot-password">
+      <a href="#" class="link">¿Olvidaste tu contraseña?</a>
+    </div>
+
+    <div class="terms">
+      <p>Al continuar, aceptas la <a href="#" class="link">Política de privacidad</a> y los <a href="#" class="link">Términos de uso</a> de WeRide.</p>
+    </div>
+
+    <button class="btn-primary" (click)="continue()">Iniciar Sesión</button>
+  </div>
+</div>
+

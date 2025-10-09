@@ -1,0 +1,29 @@
+<div class="plan-payment-container">
+  <h2>Confirmar Pago</h2>
+  <div *ngIf="loading$ | async" class="loading">Cargando...</div>
+  <div *ngIf="(plan$ | async) as plan" class="payment-content">
+    <div class="plan-summary">
+      <h3 [style.color]="plan.color">{{ plan.name }}</h3>
+      <p class="plan-description">{{ plan.description }}</p>
+      <div class="price-info">
+        <h4>Total a pagar:</h4>
+        <p class="price">{{ getFormattedPrice(plan) }}</p>
+        <p class="duration">Duración: {{ plan.durationDays }} días</p>
+      </div>
+      <div class="plan-benefits">
+        <h4>Beneficios incluidos:</h4>
+        <ul>
+          <li *ngFor="let benefit of plan.benefits">{{ benefit }}</li>
+        </ul>
+      </div>
+    </div>
+    <div class="payment-form">
+      <button class="confirm-button">Confirmar Pago</button>
+      <button class="cancel-button">Cancelar</button>
+    </div>
+  </div>
+  <div *ngIf="!(plan$ | async) && !(loading$ | async)">
+    <p>No se encontró el plan seleccionado.</p>
+  </div>
+</div>
+
