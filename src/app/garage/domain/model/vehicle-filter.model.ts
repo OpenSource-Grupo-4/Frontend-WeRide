@@ -1,8 +1,11 @@
 export interface VehicleFilter {
-  type?: string;
+  type?: 'electric_scooter' | 'bike' | 'electric_bike';
   minPrice?: number;
   maxPrice?: number;
   minRating?: number;
-  available?: boolean;
+  status?: 'available' | 'reserved' | 'maintenance' | 'in_use';
   brand?: string;
+  companyId?: string;
+  minBattery?: number;
+  color?: string;
 }

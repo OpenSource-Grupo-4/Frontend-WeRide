@@ -1,16 +1,33 @@
-<div class="favorites">
-  <h2>Mis Favoritos</h2>
+<div class="favorites-container">
+  <h1>Mis Vehículos Favoritos</h1>
 
-  <div *ngIf="loading">Cargando...</div>
+  @if (isLoading) {
+    <div class="loading">
+      <p>Cargando favoritos...</p>
+    </div>
+  }
 
-  <div class="vehicle-grid" *ngIf="!loading && favorites.length > 0">
-    <app-vehicle-card
-      *ngFor="let vehicle of favorites"
-      [vehicle]="vehicle">
-    </app-vehicle-card>
-  </div>
+  @if (error) {
+    <div class="error">
+      <p>{{ error }}</p>
+    </div>
+  }
 
-  <p *ngIf="!loading && favorites.length === 0">
-    No tienes vehículos favoritos aún.
-  </p>
+  @if (!isLoading && !error) {
+    <div class="vehicle-grid">
+      @for (vehicle of favoriteVehicles; track vehicle.id) {
+        <app-vehicle-card
+          [vehicle]="vehicle"
+          (toggleFavorite)="toggleFavorite($event)">
+        </app-vehicle-card>
+      }
+
+      @if (favoriteVehicles.length === 0) {
+        <div class="no-favorites">
+          <p>No tienes vehículos favoritos aún.</p>
+          <p>Explora el garaje y marca tus vehículos preferidos.</p>
+        </div>
+      }
+    </div>
+  }
 </div>

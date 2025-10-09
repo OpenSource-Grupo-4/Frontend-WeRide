@@ -2,7 +2,8 @@ import { Routes } from '@angular/router';
 import { LayoutComponent } from './public/components/layout/layout';
 import { BOOKING_ROUTES } from './booking/presentation/views/booking.routes';
 import { TRIP_ROUTES } from './trip/presentation/views/trip.routes';
-import {PLAN_ROUTES} from './plans/presentation/views/plan.routes';
+import { PLAN_ROUTES } from './plans/presentation/views/plan.routes';
+import { GARAGE_ROUTES } from './garage/garage.routes';
 
 export const routes: Routes = [
   {
@@ -37,6 +38,10 @@ export const routes: Routes = [
       {
         path: 'plan',
         children: PLAN_ROUTES
+      },
+      {
+        path: 'garage',
+        children: GARAGE_ROUTES
       }
     ]
   }
