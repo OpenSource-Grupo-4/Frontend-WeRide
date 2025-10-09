@@ -1,0 +1,140 @@
+.phone-login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: white;
+  padding: 2rem;
+}
+
+.card {
+  width: 100%;
+  max-width: 600px;
+  position: relative;
+}
+
+.back-button {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  color: #000000;
+  transition: color 0.3s ease;
+}
+
+.back-button:hover {
+  color: #7145D8;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #000000;
+  margin-bottom: 0.5rem;
+  margin-top: 3rem;
+}
+
+.subtitle {
+  font-size: 1rem;
+  color: #303746;
+  margin-bottom: 3rem;
+}
+
+.input-group {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.prefix {
+  flex: 0 0 120px;
+}
+
+.phone-input {
+  flex: 1;
+}
+
+label {
+  display: block;
+  font-size: 0.875rem;
+  color: #303746;
+  margin-bottom: 0.5rem;
+  background: #f5f5f5;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px 4px 0 0;
+}
+
+.input-prefix,
+.input-phone {
+  width: 100%;
+  padding: 1rem;
+  border: 2px solid #7145D8;
+  border-radius: 0 0 8px 8px;
+  font-size: 1rem;
+  color: #000000;
+  background: white;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+.input-prefix {
+  background: #f9f9f9;
+  cursor: not-allowed;
+}
+
+.input-phone:focus {
+  border-color: #5a36b3;
+}
+
+.terms {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.terms p {
+  font-size: 0.875rem;
+  color: #303746;
+  line-height: 1.5;
+}
+
+.link {
+  color: #7145D8;
+  text-decoration: none;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+.btn-primary {
+  width: 100%;
+  padding: 1rem;
+  background: #7145D8;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+  background: #5a36b3;
+  box-shadow: 0 4px 12px rgba(113, 69, 216, 0.3);
+}
+
+@media (max-width: 768px) {
+  .input-group {
+    flex-direction: column;
+  }
+
+  .prefix {
+    flex: 1;
+  }
+}
+
+

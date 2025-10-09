@@ -4,17 +4,22 @@ import { BOOKING_ROUTES } from './booking/presentation/views/booking.routes';
 import { TRIP_ROUTES } from './trip/presentation/views/trip.routes';
 import { PLAN_ROUTES } from './plans/presentation/views/plan.routes';
 import { GARAGE_ROUTES } from './garage/garage.routes';
+import { AUTH_ROUTES } from './auth/auth.routes';
 
 export const routes: Routes = [
   {
     path: '',
+    redirectTo: '/auth/login',
+    pathMatch: 'full'
+  },
+  {
+    path: 'auth',
+    children: AUTH_ROUTES
+  },
+  {
+    path: '',
     component: LayoutComponent,
     children: [
-      {
-        path: '',
-        redirectTo: 'home',
-        pathMatch: 'full'
-      },
       {
         path: 'home',
         loadComponent: () => import('./public/components/home/home').then(m => m.Home)
