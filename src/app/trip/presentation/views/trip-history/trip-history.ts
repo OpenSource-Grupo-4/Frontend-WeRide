@@ -1,10 +1,14 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule} from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import {MatIconButton} from '@angular/material/button';
 import {Router} from '@angular/router';
+import { forkJoin } from 'rxjs';
+import {TripStore} from '../../../application/trip.store';
+import {TripsApiEndpoint} from '../../../infrastructure/trips-api-endpoint';
+import {VehiclesApiEndpoint} from '../../../infrastructure/vehicles-api-endpoint';
 
-interface Trip {
+interface TripDisplay {
   route: string;
   date: string;
   vehicle: string;
@@ -22,43 +26,88 @@ interface Trip {
   styleUrl: './trip-history.css'
 })
 
-export class TripHistory {
-  trips: Trip[] = [
-    {
-      route: '1068 Av. la Molina - 221 Av. Paz Soldán',
-      date: '12 Sept, 10:35 AM',
-      vehicle: 'Scooter Eléctrico',
-      duration: '55 min',
-      distance: '27.4 km',
-      id: '935d73bd-1ab5-437e-a678-e03c92c94134',
-      image: 'assets/scooter-red.png'
-    },
-    {
-      route: '513 Av. Universitaria - 2810 Av. de la Marina',
-      date: '17 Sept, 15:10 PM',
-      vehicle: 'Scooter Eléctrico',
-      duration: '32 min',
-      distance: '16.8 km',
-      id: 'daab8f54-6cd1-4198-a5a9-4dd3b2a14287',
-      image: 'assets/scooter-blue.png'
-    },
-    {
-      route: '1489 Av. Los Quechuas - 2390 Av. Primavera',
-      date: '28 Sept, 06:40 AM',
-      vehicle: 'Scooter Eléctrico',
-      duration: '1h45min',
-      distance: '67.2 km',
-      id: 'ef9c803c-2aca-4de3-a27b-f74da6bae7d7',
-      image: 'assets/scooter-green.png'
-    }
-  ];
-  constructor(private router: Router) {}
+export class TripHistory implements OnInit {
+  private router = inject(Router);
+  private tripStore = inject(TripStore);
+  private tripsApi = inject(TripsApiEndpoint);
+  private vehiclesApi = inject(VehiclesApiEndpoint);
 
-  printReceipt(trip: Trip) {
+  trips: TripDisplay[] = [];
+
+  ngOnInit() {
+    this.loadTrips();
+  }
+
+  loadTrips() {
+    this.tripStore.setLoading(true);
+
+    this.tripsApi.getAll().subscribe({
+      next: (trips: any) => {
+        this.tripStore.setTrips(trips);
+
+        const vehicleRequests = trips.map((trip: any) => this.vehiclesApi.getById(trip.vehicleId));
+
+        forkJoin(vehicleRequests).subscribe({
+          next: (vehicles: any) => {
+            this.trips = trips.map((trip: any, index: any) => {
+              const vehicle = vehicles[index];
+              const startDate = new Date(trip.startDate);
+              const formattedDate = this.formatDate(startDate);
+
+              const hours = Math.floor(trip.duration / 60);
+              const minutes = trip.duration % 60;
+              const duration = hours > 0 ? `${hours}h${minutes}min` : `${minutes} min`;
+
+              return {
+                route: this.formatRoute(trip.route),
+                date: formattedDate,
+                vehicle: `${vehicle.brand} ${vehicle.model}`,
+                duration: duration,
+                distance: `${trip.distance} km`,
+                id: trip.id,
+                image: vehicle.image
+              };
+            });
+
+            this.tripStore.setLoading(false);
+          },
+          error: (error: any) => {
+            this.tripStore.setError(error.message);
+            this.tripStore.setLoading(false);
+          }
+        });
+      },
+      error: (error: any) => {
+        this.tripStore.setError(error.message);
+        this.tripStore.setLoading(false);
+      }
+    });
+  }
+
+  formatRoute(route: string): string {
+    const parts = route.split('→');
+    if (parts.length >= 2) {
+      return `${parts[0].trim()} - ${parts[parts.length - 1].trim()}`;
+    }
+    return route;
+  }
+
+  formatDate(date: Date): string {
+    const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sept', 'Oct', 'Nov', 'Dic'];
+    const day = date.getDate();
+    const month = months[date.getMonth()];
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    const period = date.getHours() >= 12 ? 'PM' : 'AM';
+
+    return `${day} ${month}, ${hours}:${minutes} ${period}`;
+  }
+
+  printReceipt(trip: TripDisplay) {
     alert('Imprimiendo recibo del viaje: ' + trip.id);
   }
 
-  viewDetails(trip: Trip) {
+  viewDetails(trip: TripDisplay) {
     alert('Mostrando detalles del viaje: ' + trip.id);
   }
 
@@ -69,5 +118,4 @@ export class TripHistory {
   goBack() {
     this.router.navigate(['/trip']);
   }
-
 }

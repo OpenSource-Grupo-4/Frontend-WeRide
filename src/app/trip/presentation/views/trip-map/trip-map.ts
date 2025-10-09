@@ -1,6 +1,7 @@
-import {Component, OnDestroy, OnInit, signal} from '@angular/core';
-import { Map } from 'mapbox-gl';
+import {Component, OnDestroy, OnInit, signal, inject} from '@angular/core';
 import { MapComponent, MarkerComponent} from 'ngx-mapbox-gl';
+import {LocationsApiEndpoint} from '../../../infrastructure/locations-api-endpoint';
+import {TripStore} from '../../../application/trip.store';
 
 @Component({
   selector: 'app-trip-map',
@@ -9,19 +10,35 @@ import { MapComponent, MarkerComponent} from 'ngx-mapbox-gl';
   styleUrl: './trip-map.css'
 })
 export class TripMap implements OnInit, OnDestroy {
+  private locationsApi = inject(LocationsApiEndpoint);
+  private tripStore = inject(TripStore);
+
   userLocation = signal<[number, number] | null>(null)
+  markers: Array<{lng: number, lat: number}> = [];
 
   private watchId?: number;
 
-  markers = [
-    {lng: -77.09451353035513, lat: -12.076631028447757},
-    {lng: -77.11978877469807, lat: -12.06576550096087},
-    {lng: -77.06801838656192, lat: -12.083350355463615},
-    {lng: -77.07102425059432, lat: -12.071962004217465},
-    {lng: -77.1073596422649, lat: -12.056230391783833}
-  ]
-
   ngOnInit(): void {
+    this.loadLocations();
+    this.startLocationTracking();
+  }
+
+  loadLocations() {
+    this.locationsApi.getAll().subscribe({
+      next: (locations: any) => {
+        this.tripStore.setLocations(locations);
+        this.markers = locations.map((loc: any) => ({
+          lng: loc.coordinates.lng,
+          lat: loc.coordinates.lat
+        }));
+      },
+      error: (error: any) => {
+        console.error('Error al cargar ubicaciones:', error);
+      }
+    });
+  }
+
+  startLocationTracking() {
     if('geolocation' in navigator){
       this.watchId = navigator.geolocation.watchPosition(
         (pos) => {
