@@ -1,3 +1,38 @@
-@import 'mapbox-gl/dist/mapbox-gl.css';
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+@import "mapbox-gl/dist/mapbox-gl.css";
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+.vehicle-details-dialog .mat-mdc-dialog-container {
+  padding: 0 !important;
+  border-radius: 16px !important;
+  overflow: hidden;
+}
+
+.vehicle-details-dialog .mat-mdc-dialog-surface {
+  border-radius: 16px !important;
+}
+
+.vehicle-details-dialog .mat-mdc-dialog-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.vehicle-details-dialog .mat-mdc-dialog-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.vehicle-details-dialog .mat-mdc-dialog-container::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.vehicle-details-dialog
+  .mat-mdc-dialog-container::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}

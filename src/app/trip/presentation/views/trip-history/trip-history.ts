@@ -4,9 +4,10 @@ import { MatIconModule } from '@angular/material/icon';
 import {MatIconButton} from '@angular/material/button';
 import {Router} from '@angular/router';
 import { forkJoin } from 'rxjs';
-import {TripStore} from '../../../application/trip.store';
-import {TripsApiEndpoint} from '../../../infrastructure/trips-api-endpoint';
-import {VehiclesApiEndpoint} from '../../../infrastructure/vehicles-api-endpoint';
+import { TripService } from '../../../../core/services/trip.service';
+import { VehicleService } from '../../../../core/services/vehicle.service';
+import { Trip } from '../../../domain/model/trip.entity';
+import { Vehicle } from '../../../domain/model/vehicle.entity';
 
 interface TripDisplay {
   route: string;
@@ -28,29 +29,32 @@ interface TripDisplay {
 
 export class TripHistory implements OnInit {
   private router = inject(Router);
-  private tripStore = inject(TripStore);
-  private tripsApi = inject(TripsApiEndpoint);
-  private vehiclesApi = inject(VehiclesApiEndpoint);
+  private tripService = inject(TripService);
+  private vehicleService = inject(VehicleService);
 
   trips: TripDisplay[] = [];
+  loading = false;
 
   ngOnInit() {
     this.loadTrips();
   }
 
   loadTrips() {
-    this.tripStore.setLoading(true);
+    this.loading = true;
 
-    this.tripsApi.getAll().subscribe({
-      next: (trips: any) => {
-        this.tripStore.setTrips(trips);
+    this.tripService.loadTrips().subscribe({
+      next: (trips: Trip[]) => {
+        if (!trips || trips.length === 0) {
+          this.trips = [];
+          this.loading = false;
+          return;
+        }
 
-        const vehicleRequests = trips.map((trip: any) => this.vehiclesApi.getById(trip.vehicleId));
-
-        forkJoin(vehicleRequests).subscribe({
-          next: (vehicles: any) => {
-            this.trips = trips.map((trip: any, index: any) => {
-              const vehicle = vehicles[index];
+        // Get vehicles for all trips
+        this.vehicleService.loadVehicles().subscribe({
+          next: (vehicles: Vehicle[]) => {
+            this.trips = trips.map((trip: Trip) => {
+              const vehicle = vehicles.find(v => v.id === trip.vehicleId);
               const startDate = new Date(trip.startDate);
               const formattedDate = this.formatDate(startDate);
 
@@ -61,25 +65,25 @@ export class TripHistory implements OnInit {
               return {
                 route: this.formatRoute(trip.route),
                 date: formattedDate,
-                vehicle: `${vehicle.brand} ${vehicle.model}`,
+                vehicle: vehicle ? `${vehicle.brand} ${vehicle.model}` : 'Vehículo no encontrado',
                 duration: duration,
                 distance: `${trip.distance} km`,
                 id: trip.id,
-                image: vehicle.image
+                image: vehicle?.image || 'assets/vehicles/default.jpg'
               };
             });
 
-            this.tripStore.setLoading(false);
+            this.loading = false;
           },
           error: (error: any) => {
-            this.tripStore.setError(error.message);
-            this.tripStore.setLoading(false);
+            console.error('Error loading vehicles:', error);
+            this.loading = false;
           }
         });
       },
       error: (error: any) => {
-        this.tripStore.setError(error.message);
-        this.tripStore.setLoading(false);
+        console.error('Error loading trips:', error);
+        this.loading = false;
       }
     });
   }

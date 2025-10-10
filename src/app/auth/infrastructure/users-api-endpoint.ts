@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { UserResponse } from './users-response';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UsersApiEndpoint {
-  private readonly baseUrl = 'http://localhost:3000/users';
+  private readonly baseUrl = `${environment.apiUrl}${environment.endpoints.users}`;
 
   constructor(private http: HttpClient) {}
 

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, firstValueFrom } from 'rxjs';
+import { environment } from '../../../../environments/environment';
 
 export interface VehicleApiResponse {
   id: string;
@@ -31,7 +32,7 @@ export interface VehicleApiResponse {
   providedIn: 'root'
 })
 export class VehicleApiService {
-  private apiUrl = 'http://localhost:3000/vehicles';
+  private apiUrl = `${environment.apiUrl}${environment.endpoints.vehicles}`;
 
   constructor(private http: HttpClient) {}
 

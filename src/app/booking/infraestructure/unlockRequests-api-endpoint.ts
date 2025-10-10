@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { UnlockRequestResponse, UnlockRequestsListResponse } from './unlockRequests-response';
+import { UnlockRequestResponse } from './unlockRequests-response';
+import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class UnlockRequestsApiEndpoint {
-  private baseUrl = 'http://localhost:3000/unlockRequests';
+  private baseUrl = `${environment.apiUrl}${environment.endpoints.unlockRequests}`;
 
   constructor(private http: HttpClient) {}
 

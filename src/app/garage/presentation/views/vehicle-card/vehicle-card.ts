@@ -30,9 +30,14 @@ import { Vehicle } from '../../../domain/model/vehicle.model';
 export class VehicleCard {
   @Input() vehicle!: Vehicle;
   @Output() toggleFavorite = new EventEmitter<string>();
+  @Output() viewDetails = new EventEmitter<Vehicle>();
 
   onToggleFavorite() {
     this.toggleFavorite.emit(this.vehicle.id);
+  }
+
+  onViewDetails() {
+    this.viewDetails.emit(this.vehicle);
   }
 
   getStatusLabel(): string {

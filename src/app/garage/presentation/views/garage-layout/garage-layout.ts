@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { MatDialog } from '@angular/material/dialog';
 import { GarageFilter } from '../garage-filter/garage-filter';
 import { VehicleCard } from '../vehicle-card/vehicle-card';
+import { VehicleDetailsModal } from '../vehicle-details-modal/vehicle-details-modal';
 import { MatButton } from '@angular/material/button';
 import { Vehicle } from '../../../domain/model/vehicle.model';
 import { VehicleFilter } from '../../../domain/model/vehicle-filter.model';
@@ -28,6 +30,7 @@ export class GarageLayout implements OnInit {
   error: string | null = null;
 
   constructor(
+    private dialog: MatDialog,
     private getVehiclesUseCase: GetVehiclesUseCase,
     private filterVehiclesUseCase: FilterVehiclesUseCase,
     private toggleFavoriteUseCase: ToggleFavoriteUseCase
@@ -66,5 +69,17 @@ export class GarageLayout implements OnInit {
   async toggleFavorite(vehicleId: string) {
     await this.toggleFavoriteUseCase.execute(vehicleId);
     await this.loadVehicles();
+  }
+
+  openVehicleDetails(vehicle: Vehicle) {
+    this.dialog.open(VehicleDetailsModal, {
+      data: vehicle,
+      width: '800px',
+      maxWidth: '95vw',
+      maxHeight: '90vh',
+      panelClass: 'vehicle-details-dialog',
+      autoFocus: false,
+      restoreFocus: false
+    });
   }
 }
