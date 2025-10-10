@@ -42,14 +42,20 @@ export class TripHistory implements OnInit {
     this.tripStore.setLoading(true);
 
     this.tripsApi.getAll().subscribe({
-      next: (trips: any) => {
+      next: (trips: any[]) => {
+        if (!trips || trips.length === 0) {
+          this.trips = [];
+          this.tripStore.setLoading(false);
+          return;
+        }
+
         this.tripStore.setTrips(trips);
 
         const vehicleRequests = trips.map((trip: any) => this.vehiclesApi.getById(trip.vehicleId));
 
         forkJoin(vehicleRequests).subscribe({
-          next: (vehicles: any) => {
-            this.trips = trips.map((trip: any, index: any) => {
+          next: (vehicles: any[]) => {
+            this.trips = trips.map((trip: any, index: number) => {
               const vehicle = vehicles[index];
               const startDate = new Date(trip.startDate);
               const formattedDate = this.formatDate(startDate);
@@ -72,13 +78,15 @@ export class TripHistory implements OnInit {
             this.tripStore.setLoading(false);
           },
           error: (error: any) => {
-            this.tripStore.setError(error.message);
+            console.error('Error loading vehicles:', error);
+            this.tripStore.setError('Error loading vehicle data');
             this.tripStore.setLoading(false);
           }
         });
       },
       error: (error: any) => {
-        this.tripStore.setError(error.message);
+        console.error('Error loading trips:', error);
+        this.tripStore.setError('Error loading trips');
         this.tripStore.setLoading(false);
       }
     });

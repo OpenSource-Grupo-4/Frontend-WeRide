@@ -5,12 +5,13 @@ import { map } from 'rxjs/operators';
 import { Plan } from '../domain/model/plan.entity';
 import { PlanResponse } from './plans-response';
 import { PlanAssembler } from './plan-assembler';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PlansApiEndpoint {
-  private baseUrl = 'http://localhost:3000/plans';
+  private baseUrl = `${environment.apiUrl}${environment.endpoints.plans}`;
 
   constructor(private http: HttpClient) {}
 

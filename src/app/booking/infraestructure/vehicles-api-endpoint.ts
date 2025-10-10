@@ -2,10 +2,11 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { VehicleResponse, VehiclesListResponse } from './vehicle-response';
+import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class VehiclesApiEndpoint {
-  private baseUrl = 'http://localhost:3000/vehicles';
+  private baseUrl = `${environment.apiUrl}${environment.endpoints.vehicles}`;
 
   constructor(private http: HttpClient) {}
 

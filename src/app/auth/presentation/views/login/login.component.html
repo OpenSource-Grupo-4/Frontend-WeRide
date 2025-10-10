@@ -3,8 +3,17 @@
     <h1 class="title">Iniciar Sesión</h1>
     <p class="subtitle">Entra y conduce tu salud</p>
 
-    <div class="buttons-container">
-      <button class="btn btn-google" (click)="loginWithGoogle()">
+    <div *ngIf="!dataLoaded" class="loading-indicator">
+      <div class="spinner"></div>
+      <p>{{ loadingMessage }}</p>
+    </div>
+
+    <div class="buttons-container" [class.disabled]="!dataLoaded">
+      <button
+        class="btn btn-google"
+        (click)="loginWithGoogle()"
+        [disabled]="!dataLoaded"
+      >
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
           <path
             d="M19.6 10.227c0-.709-.064-1.39-.182-2.045H10v3.868h5.382a4.6 4.6 0 01-1.996 3.018v2.51h3.232c1.891-1.742 2.982-4.305 2.982-7.35z"
@@ -26,15 +35,27 @@
         Continuar con Google
       </button>
 
-      <button class="btn btn-primary" (click)="navigateToPhoneLogin()">
+      <button
+        class="btn btn-primary"
+        (click)="navigateToPhoneLogin()"
+        [disabled]="!dataLoaded"
+      >
         Entrar con número de celular
       </button>
 
-      <button class="btn btn-text" (click)="navigateToEmailLogin()">
+      <button
+        class="btn btn-text"
+        (click)="navigateToEmailLogin()"
+        [disabled]="!dataLoaded"
+      >
         Entrar con mi email de empresa
       </button>
 
-      <button class="btn btn-guest" (click)="loginAsGuest()">
+      <button
+        class="btn btn-guest"
+        (click)="loginAsGuest()"
+        [disabled]="!dataLoaded"
+      >
         Continuar como invitado
       </button>
     </div>

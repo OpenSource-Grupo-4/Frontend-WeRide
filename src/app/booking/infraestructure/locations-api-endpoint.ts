@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { LocationResponse, LocationsListResponse } from './locations-response';
+import { LocationResponse } from './locations-response';
+import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class LocationsApiEndpoint {
-  private baseUrl = 'http://localhost:3000/locations';
+  private baseUrl = `${environment.apiUrl}${environment.endpoints.locations}`;
 
   constructor(private http: HttpClient) {}
 

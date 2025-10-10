@@ -1,7 +1,7 @@
 .login-container {
   display: flex;
   min-height: 100vh;
-  background: linear-gradient(135deg, #7145D8 0%, #5a36b3 100%);
+  background: linear-gradient(135deg, #7145d8 0%, #5a36b3 100%);
 }
 
 .login-card {
@@ -79,7 +79,7 @@
 }
 
 .btn-primary {
-  background: #7145D8;
+  background: #7145d8;
   color: white;
 }
 
@@ -95,11 +95,11 @@
 }
 
 .btn-text:hover {
-  color: #7145D8;
+  color: #7145d8;
 }
 
 .btn-guest {
-  background: #01E17B;
+  background: #01e17b;
   color: #000000;
   font-weight: 600;
 }
@@ -107,6 +107,38 @@
 .btn-guest:hover {
   background: #00c769;
   box-shadow: 0 4px 12px rgba(1, 225, 123, 0.3);
+}
+
+.loading-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 2rem 0;
+  gap: 1rem;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #7145d8;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.buttons-container.disabled {
+  opacity: 0.5;
+  pointer-events: none;
 }
 
 .terms {
@@ -122,7 +154,7 @@
 }
 
 .link {
-  color: #7145D8;
+  color: #7145d8;
   text-decoration: none;
 }
 
@@ -143,5 +175,3 @@
     max-width: 100%;
   }
 }
-
-
