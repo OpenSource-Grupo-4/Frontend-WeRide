@@ -1,0 +1,44 @@
+.travel-information-container {
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+    border-top: 1px solid gray;
+    border-bottom: none;
+    border-radius: 1.5rem;
+
+}
+
+.travel-information-contain {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+
+}
+
+.information-contain {
+    display: flex;
+    flex-direction: column;
+}
+.information-contain label{
+    font-weight: 550;
+}
+
+.button-contain {
+    margin: auto;
+    gap: 1rem;
+}
+
+.button-contain button {
+    width: 100%;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    margin-top: 0.5rem;
+}
+
+@media (min-width: 768px) {
+    .button-contain {
+        display: flex;
+    }
+}
+

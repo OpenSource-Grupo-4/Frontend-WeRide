@@ -1,0 +1,50 @@
+.container-home {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+    gap: 1rem;
+
+}
+
+.contain-mobility-component {
+  width: 100%;
+}
+
+.contain-map-component {
+  width: 100%;
+
+}
+
+.search-location {
+  width: 100%;
+  border: 2px solid black;
+  height: 2rem;
+  border-radius: 1rem;
+}
+
+.contain-input-search {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+}
+
+mat-form-field {
+  width: 100%;
+  max-width: 400px;
+}
+
+@media (min-width: 765px) {
+    .container-home {
+        flex-direction: row;
+    }
+    .contain-map-component {
+        width: 50%;
+    }
+    .contain-mobility-component {
+        width: 50%;
+    }
+
+    .search-location {
+        width: 50%;
+    }
+}
