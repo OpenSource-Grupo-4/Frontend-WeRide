@@ -3,11 +3,7 @@ import {MatCard} from '@angular/material/card';
 import {MatButton} from '@angular/material/button';
 import {CommonModule} from '@angular/common';
 import {Router} from '@angular/router';
-import { forkJoin } from 'rxjs';
-import {TripStore} from '../../../application/trip.store';
-import {TripsApiEndpoint} from '../../../infrastructure/trips-api-endpoint';
-import {VehiclesApiEndpoint} from '../../../infrastructure/vehicles-api-endpoint';
-import {LocationsApiEndpoint} from '../../../infrastructure/locations-api-endpoint';
+import { TripService, TripWithDetails } from '../../../../core/services/trip.service';
 
 @Component({
   selector: 'app-trip-details',
@@ -21,61 +17,51 @@ import {LocationsApiEndpoint} from '../../../infrastructure/locations-api-endpoi
 })
 export class TripDetails implements OnInit {
   private router = inject(Router);
-  private tripStore = inject(TripStore);
-  private tripsApi = inject(TripsApiEndpoint);
-  private vehiclesApi = inject(VehiclesApiEndpoint);
-  private locationsApi = inject(LocationsApiEndpoint);
+  private tripService = inject(TripService);
 
+  currentTrip: TripWithDetails | null = null;
   location = '';
   battery = 0;
   remainingTime = '';
   extraTime = '';
   rating = 0;
+  loading = false;
 
   ngOnInit() {
     this.loadCurrentTripData();
   }
 
   loadCurrentTripData() {
-    this.tripStore.setLoading(true);
+    this.loading = true;
 
-    this.tripsApi.getAll().subscribe({
-      next: (trips: any) => {
-        const currentTrip = trips.find((t: any) => t.status === 'completed') || trips[0];
-
-        if (currentTrip) {
-          this.tripStore.setCurrentTrip(currentTrip);
-
-          forkJoin({
-            vehicle: this.vehiclesApi.getById(currentTrip.vehicleId),
-            location: this.locationsApi.getById(currentTrip.endLocationId)
-          }).subscribe({
-            next: ({ vehicle, location }: any) => {
-              this.tripStore.setCurrentVehicle(vehicle);
-              this.tripStore.setCurrentLocation(location);
-
-              this.location = location.address;
-              this.battery = vehicle.battery;
-
-              const durationMinutes = Math.floor(currentTrip.duration);
-              const durationSeconds = Math.floor((currentTrip.duration % 1) * 60);
-              this.remainingTime = `${durationMinutes}:${durationSeconds.toString().padStart(2, '0')} min`;
-              this.extraTime = 'Aun no sobrepasas tu tiempo';
-
-              this.tripStore.setLoading(false);
-            },
-            error: (error: any) => {
-              this.tripStore.setError(error.message);
-              this.tripStore.setLoading(false);
-            }
-          });
+    this.tripService.loadLatestTrip().subscribe({
+      next: (tripWithDetails: TripWithDetails | null) => {
+        if (tripWithDetails) {
+          this.currentTrip = tripWithDetails;
+          this.updateDisplayData(tripWithDetails);
         }
+        this.loading = false;
       },
       error: (error: any) => {
-        this.tripStore.setError(error.message);
-        this.tripStore.setLoading(false);
+        console.error('Error loading trip data:', error);
+        this.loading = false;
       }
     });
+  }
+
+  private updateDisplayData(trip: TripWithDetails) {
+    if (trip.endLocation) {
+      this.location = trip.endLocation.address;
+    }
+
+    if (trip.vehicle) {
+      this.battery = trip.vehicle.battery;
+    }
+
+    const durationMinutes = Math.floor(trip.duration);
+    const durationSeconds = Math.floor((trip.duration % 1) * 60);
+    this.remainingTime = `${durationMinutes}:${durationSeconds.toString().padStart(2, '0')} min`;
+    this.extraTime = 'Aun no sobrepasas tu tiempo';
   }
 
   setRating(stars: number) {
@@ -87,6 +73,7 @@ export class TripDetails implements OnInit {
   }
 
   goToSettings() {
+    this.router.navigate(['/trip/settings']);
   }
 }
 
