@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
-  apiUrl: '/api',
+  apiUrl: 'https://db-weride-4.onrender.com',
   endpoints: {
     users: '/users',
     vehicles: '/vehicles',

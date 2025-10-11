@@ -9,7 +9,7 @@
     "test": "ng test",
     "server": "json-server server/db.json --port 3000",
     "dev": "concurrently \"npm run server\" \"npm start\"",
-    "serve:prod": "npm run build && node server/prod-server.js"
+    "serve:prod": "npm run build && npx ts-node --project server/tsconfig.json server/prod-server.ts"
   },
   "private": true,
   "dependencies": {
@@ -25,6 +25,7 @@
     "@angular/router": "20.3.3",
     "@ngrx/signals": "^20.0.1",
     "@ngx-translate/core": "^17.0.0",
+    "cors": "^2.8.5",
     "mapbox-gl": "^3.15.0",
     "ngx-mapbox-gl": "^13.0.0",
     "rxjs": "~7.8.0",
@@ -36,6 +37,7 @@
     "@angular/cli": "20.3.3",
     "@angular/compiler-cli": "20.3.3",
     "@types/compression": "^1.8.1",
+    "@types/cors": "^2.8.19",
     "@types/jasmine": "~5.1.0",
     "@types/json-server": "^0.14.8",
     "concurrently": "^8.2.2",
@@ -46,6 +48,7 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
+    "ts-node": "^10.9.2",
     "typescript": "~5.9.2"
   }
 }
