@@ -158,7 +158,9 @@ export interface Notification {
 
 @Injectable({ providedIn: 'root' })
 export class ApiService {
-  private readonly baseUrl = environment.apiUrl;
+  private readonly baseUrl = environment.production
+  ? environment.apiUrl
+  : '/api';
   private readonly endpoints = environment.endpoints;
 
   constructor(private http: HttpClient) {
