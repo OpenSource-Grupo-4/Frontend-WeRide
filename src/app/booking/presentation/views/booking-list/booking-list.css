@@ -172,3 +172,25 @@
   margin: 0 0 24px 0;
   font-size: 16px;
 }
+
+@media (max-width: 768px){
+  .bookings-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .header h1 {
+    margin-bottom: 16px;
+  }
+
+  .btn-primary {
+    width: 100%;
+    justify-content: center;
+  }
+
+}

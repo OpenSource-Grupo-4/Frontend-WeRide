@@ -82,9 +82,25 @@ nav ul li span {
   color: #111827;
 }
 
-@media (max-width: 1440px) {
+@media (min-width: 1000px) and (max-width: 1440px) {
   .sidebar {
     width: 220px;
     padding: 1.2rem 1.2rem 0 1.2rem;
   }
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    width: 100%;
+    transform: translateX(-5%);
+  }
+  nav {
+    padding: 0 0.5rem;
+  }
+
+  nav ul li span {
+    font-size: 17px;
+    font-weight: 550;
+  }
+
 }

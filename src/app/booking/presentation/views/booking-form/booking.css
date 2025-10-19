@@ -91,6 +91,8 @@
 }
 @media (max-width: 600px) {
   .booking-form-container {
-    padding: 16px 8px;
+    padding: 24px 16px;
+    margin: 16px;
   }
+
 }

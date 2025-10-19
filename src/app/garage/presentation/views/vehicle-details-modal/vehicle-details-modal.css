@@ -240,8 +240,14 @@
   }
 
   .modal-actions button {
-    width: 100%;
+    align-items: center;
+    width: 80%;
   }
+
+  .vehicle-details-modal::-webkit-scrollbar {
+    display: none !important;
+  }
+
 }
 
 .vehicle-details-modal::-webkit-scrollbar {

@@ -169,3 +169,26 @@
 .pay-button:hover {
   background-color: #5a37b0 !important;
 }
+
+@media (max-width: 768px) {
+  .plans-layout {
+    grid-template-columns: 1fr;
+    margin-left: 1rem;
+    padding: 1rem;
+  }
+
+  .plan-card-container {
+    margin-left: 0;
+    padding: 1rem;
+  }
+
+  .plan-card {
+    max-width: 100%;
+    flex: 1 1 100%;
+  }
+
+  .plan-detail-section {
+    position: static;
+    margin-top: 2rem;
+  }
+}

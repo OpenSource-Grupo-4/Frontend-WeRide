@@ -38,3 +38,10 @@ mgl-map {
     box-shadow: 0 0 0 0 rgba(0, 123, 255, 0);
   }
 }
+
+@media (max-width: 768px){
+  .container-map {
+    height: 30rem;
+    width: 100%;
+  }
+}
