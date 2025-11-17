@@ -14,7 +14,6 @@ export class UserService {
     return this.apiService.getUsers().pipe(
       tap(users => {
         this.usersSubject.next(users);
-        console.log('Usuarios cargados:', users.length);
       })
     );
   }

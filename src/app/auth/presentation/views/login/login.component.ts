@@ -22,18 +22,12 @@ export class LoginComponent implements OnInit {
   loadingMessage = 'Cargando datos de WeRide...';
 
   async ngOnInit(): Promise<void> {
-    console.log('LoginComponent iniciado - Cargando datos automaticamente...');
-    
     await this.dataInitService.initializeData();
 
     this.dataInitService.dataLoaded$.subscribe(loaded => {
       this.dataLoaded = loaded;
       if (loaded) {
-        this.loadingMessage = 'Datos cargados exitosamente';
-        console.log('Datos disponibles en el componente de login');
         this.showSampleData();
-      } else {
-        this.loadingMessage = 'Error cargando datos. Reintentando...';
       }
     });
   }
@@ -43,12 +37,7 @@ export class LoginComponent implements OnInit {
     const vehicles = this.dataInitService.getVehicles();
     const plans = this.dataInitService.getPlans();
 
-    console.log('Usuarios disponibles:', users.length);
-    console.log('Vehiculos disponibles:', vehicles.length);
-    console.log('Planes disponibles:', plans.length);
-
     const availableVehicles = vehicles.filter(v => v.status === 'available');
-    console.log('Vehiculos disponibles ahora:', availableVehicles.length);
   }
 
   navigateToPhoneLogin() {
@@ -60,7 +49,7 @@ export class LoginComponent implements OnInit {
   }
 
   loginWithGoogle() {
-    console.log('Login with Google');
+    //TODO : Implement Google login
   }
 
   loginAsGuest() {

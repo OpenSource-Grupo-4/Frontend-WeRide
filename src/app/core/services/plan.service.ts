@@ -14,7 +14,6 @@ export class PlanService {
     return this.apiService.getPlans().pipe(
       tap(plans => {
         this.plansSubject.next(plans);
-        console.log('Planes cargados:', plans.length);
       })
     );
   }

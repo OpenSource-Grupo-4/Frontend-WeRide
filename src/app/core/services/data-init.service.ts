@@ -21,8 +21,7 @@ export class DataInitService {
 
   async initializeData(): Promise<void> {
     try {
-      console.log('Cargando datos iniciales de WeRide API...');
-      
+
       const loadRequests = forkJoin({
         users: this.userService.loadUsers(),
         vehicles: this.vehicleService.loadVehicles(),
@@ -33,14 +32,6 @@ export class DataInitService {
 
       const results = await loadRequests.toPromise();
 
-      console.log('Datos cargados exitosamente:', {
-        users: results?.users?.length || 0,
-        vehicles: results?.vehicles?.length || 0,
-        plans: results?.plans?.length || 0,
-        locations: results?.locations?.length || 0,
-        companies: results?.companies?.length || 0
-      });
-
       this.dataLoadedSubject.next(true);
     } catch (error) {
       console.error('Error cargando datos iniciales:', error);
@@ -48,20 +39,20 @@ export class DataInitService {
     }
   }
 
-  getUsers() { 
-    return this.userService.getCachedUsers(); 
+  getUsers() {
+    return this.userService.getCachedUsers();
   }
 
-  getVehicles() { 
-    return this.vehicleService.getCachedVehicles(); 
+  getVehicles() {
+    return this.vehicleService.getCachedVehicles();
   }
 
-  getPlans() { 
-    return this.planService.getCachedPlans(); 
+  getPlans() {
+    return this.planService.getCachedPlans();
   }
 
-  getLocations() { 
-    return this.locationService.getCachedLocations(); 
+  getLocations() {
+    return this.locationService.getCachedLocations();
   }
 
   getAvailableVehicles() {

@@ -14,7 +14,6 @@ export class VehicleService {
     return this.apiService.getVehicles().pipe(
       tap(vehicles => {
         this.vehiclesSubject.next(vehicles);
-        console.log('Vehiculos cargados:', vehicles.length);
       })
     );
   }
@@ -22,7 +21,6 @@ export class VehicleService {
   loadAvailableVehicles(): Observable<Vehicle[]> {
     return this.apiService.getAvailableVehicles().pipe(
       tap(vehicles => {
-        console.log('Vehiculos disponibles cargados:', vehicles.length);
       })
     );
   }

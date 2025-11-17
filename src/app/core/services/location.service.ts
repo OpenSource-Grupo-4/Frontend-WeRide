@@ -14,7 +14,6 @@ export class LocationService {
     return this.apiService.getLocations().pipe(
       tap(locations => {
         this.locationsSubject.next(locations);
-        console.log('Ubicaciones cargadas:', locations.length);
       })
     );
   }
