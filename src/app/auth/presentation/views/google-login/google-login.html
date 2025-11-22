@@ -1,0 +1,33 @@
+<div class="google-login-container">
+  <div class="login-card">
+    <button class="back-button" (click)="goBack()">
+      <span>←</span>
+    </button>
+
+    <div class="header">
+      <img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_92x30dp.png" alt="Google" class="google-logo">
+      <h1>Elige una cuenta</h1>
+      <p class="subtitle">para continuar con WeRide</p>
+    </div>
+
+    <div class="accounts-list">
+      <div class="account-item" *ngFor="let account of mockGoogleAccounts" (click)="selectGoogleAccount(account)">
+        <div class="account-info">
+          <div class="account-name">{{ account.name }}</div>
+          <div class="account-email">{{ account.email }}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="add-account">
+      <button class="add-account-button" (click)="goBack()">
+        <span class="add-icon">+</span>
+        <span>Usar otra cuenta</span>
+      </button>
+    </div>
+
+    <div class="footer">
+      <p>Para continuar, Google compartirá tu nombre, dirección de correo electrónico, preferencia de idioma y foto de perfil con WeRide.</p>
+    </div>
+  </div>
+</div>
