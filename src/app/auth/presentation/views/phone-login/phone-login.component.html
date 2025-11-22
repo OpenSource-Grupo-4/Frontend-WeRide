@@ -31,5 +31,41 @@
 
     <button class="btn-primary" (click)="continue()">Siguiente</button>
   </div>
-</div>
 
+  <!-- Modal de Verificación -->
+  @if (showModal()) {
+    <div class="modal-overlay" (click)="closeModal()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <button class="modal-close" (click)="closeModal()">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+
+        <h2 class="modal-title">Código de Verificación</h2>
+        <p class="modal-subtitle">Hemos enviado un código de 6 dígitos al número {{prefix()}}{{phone()}}</p>
+
+        <div class="code-display">
+          <p>Código generado: <strong>{{verificationCode()}}</strong></p>
+        </div>
+
+        <div class="verification-input">
+          <label>Ingrese el código</label>
+          <input
+            type="text"
+            [(ngModel)]="enteredCode"
+            placeholder="000000"
+            maxlength="6"
+            class="input-code">
+        </div>
+
+        @if (errorMessage()) {
+          <div class="error-message">{{errorMessage()}}</div>
+        }
+
+        <button class="btn-verify" (click)="verifyCode()">Verificar</button>
+        <button class="btn-resend" (click)="resendCode()">Reenviar código</button>
+      </div>
+    </div>
+  }
+</div>
