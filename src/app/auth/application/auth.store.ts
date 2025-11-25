@@ -69,6 +69,34 @@ export const AuthStore = signalStore(
         )
       ),
 
+      loginWithGoogle: rxMethod<any>(
+        pipe(
+          tap(() => patchState(store, { isLoading: true, error: null })),
+          switchMap((googleAccount) =>
+            loginWithEmailUseCase.execute({
+              email: googleAccount.email,
+              password: '1234'
+            }).pipe(
+              tap((session) => {
+                patchState(store, {
+                  session,
+                  currentUser: session.user,
+                  isLoading: false,
+                  error: null
+                });
+              }),
+              catchError((error) => {
+                patchState(store, {
+                  isLoading: false,
+                  error: error.message || 'Error al iniciar sesión con Google'
+                });
+                return of(null);
+              })
+            )
+          )
+        )
+      ),
+
       loginWithPhone: rxMethod<PhoneCredentials>(
         pipe(
           tap(() => patchState(store, { isLoading: true, error: null })),

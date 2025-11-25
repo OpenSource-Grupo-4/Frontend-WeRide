@@ -1,0 +1,148 @@
+.google-login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: #f5f5f5;
+}
+
+.login-card {
+  background: white;
+  border-radius: 8px;
+  padding: 40px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  max-width: 450px;
+  width: 100%;
+  position: relative;
+}
+
+.back-button {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #5f6368;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.back-button:hover {
+  background: #f1f3f4;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.google-logo {
+  height: 24px;
+  margin-bottom: 16px;
+}
+
+h1 {
+  color: #202124;
+  font-size: 24px;
+  font-weight: 400;
+  margin: 0 0 8px 0;
+}
+
+.subtitle {
+  color: #5f6368;
+  font-size: 16px;
+  margin: 0;
+}
+
+.accounts-list {
+  margin: 24px 0;
+}
+
+.account-item {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  border: 1px solid #dadce0;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.account-item:hover {
+  background: #f8f9fa;
+  border-color: #d2d4d7;
+}
+
+.account-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 16px;
+}
+
+.account-info {
+  flex: 1;
+}
+
+.account-name {
+  color: #202124;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 2px;
+}
+
+.account-email {
+  color: #5f6368;
+  font-size: 14px;
+}
+
+.add-account {
+  margin: 24px 0;
+  padding-top: 16px;
+  border-top: 1px solid #dadce0;
+}
+
+.add-account-button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  background: white;
+  border: 1px solid #dadce0;
+  border-radius: 4px;
+  color: #3c4043;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.add-account-button:hover {
+  background: #f8f9fa;
+}
+
+.add-icon {
+  font-size: 20px;
+  margin-right: 8px;
+}
+
+.footer {
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid #dadce0;
+}
+
+.footer p {
+  color: #5f6368;
+  font-size: 12px;
+  line-height: 1.5;
+  margin: 0;
+}

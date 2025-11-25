@@ -49,7 +49,7 @@ export class LoginComponent implements OnInit {
   }
 
   loginWithGoogle() {
-    //TODO : Implement Google login
+    this.router.navigate(['/auth/google-login']);
   }
 
   loginAsGuest() {
