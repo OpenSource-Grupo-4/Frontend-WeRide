@@ -51,7 +51,6 @@ export class PlanPayment implements OnInit, OnDestroy {
     const planId = this.route.snapshot.paramMap.get('id');
 
     if (planId) {
-      // Cargar el plan por ID si no está disponible en el store
       this.store.loadPlanById(planId);
     }
 
@@ -63,6 +62,10 @@ export class PlanPayment implements OnInit, OnDestroy {
         this.calculatePrices();
       }
     });
+  }
+
+  goBack(): void {
+    this.router.navigate(['/plan']);
   }
 
   ngOnDestroy(): void {

@@ -1,3 +1,16 @@
+.back-button {
+  margin-left: 4.5rem;
+  padding: 0.6rem;
+  background: #7c3aed;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
 .payment-container {
   max-width: 500px;
   margin: 0 auto;
