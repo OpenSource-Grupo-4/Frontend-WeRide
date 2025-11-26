@@ -1,16 +1,16 @@
-import { Component, OnInit, OnDestroy, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { MatIconModule } from '@angular/material/icon';
-import { Plan } from '../../../domain/model/plan.entity';
-import { PlanStore } from '../../../application/plan.store';
-import { Observable, Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import {Component, inject, OnDestroy, OnInit} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {FormsModule} from '@angular/forms';
+import {ActivatedRoute, Router} from '@angular/router';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatInputModule} from '@angular/material/input';
+import {MatButtonModule} from '@angular/material/button';
+import {MatSlideToggleModule} from '@angular/material/slide-toggle';
+import {MatIconModule} from '@angular/material/icon';
+import {Plan} from '../../../domain/model/plan.entity';
+import {PlanStore} from '../../../application/plan.store';
+import {Observable, Subject} from 'rxjs';
+import {takeUntil} from 'rxjs/operators';
 
 @Component({
   selector: 'app-plan-payment',
@@ -99,6 +99,10 @@ export class PlanPayment implements OnInit, OnDestroy {
     this.expiryDate = value;
   }
 
+  verifyAddress(): void {
+    this.billingAddress = this.billingAddress.trim();
+  }
+
   isFormValid(): boolean {
     return !!(
       this.cardNumber.replace(/\s/g, '').length === 16 &&
@@ -124,7 +128,4 @@ export class PlanPayment implements OnInit, OnDestroy {
     }
   }
 
-  editAddress(): void {
-    console.log('Editar dirección');
-  }
 }
