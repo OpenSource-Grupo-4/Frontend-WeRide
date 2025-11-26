@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { BehaviorSubject, Observable, of } from 'rxjs';
+import { tap, catchError } from 'rxjs/operators';
 import { Plan } from '../domain/model/plan.entity';
 import { PlansApiEndpoint } from '../infrastructure/plans-api-endpoint';
 
@@ -25,6 +25,12 @@ export class PlanStore {
       tap(plans => {
         this.plansSubject.next(plans);
         this.loadingSubject.next(false);
+      }),
+      catchError(error => {
+        console.error('Error al cargar planes:', error);
+        this.loadingSubject.next(false);
+        this.plansSubject.next([]);
+        return of([]);
       })
     ).subscribe();
   }
@@ -35,6 +41,12 @@ export class PlanStore {
       tap(plan => {
         this.selectedPlanSubject.next(plan);
         this.loadingSubject.next(false);
+      }),
+      catchError(error => {
+        console.error('Error al cargar plan por ID:', error);
+        this.loadingSubject.next(false);
+        this.selectedPlanSubject.next(null);
+        return of(null);
       })
     ).subscribe();
   }

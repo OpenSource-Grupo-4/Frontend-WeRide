@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
-import {PlanList} from '../plan-list/plan-list';
+import { RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-plan-layout',
   imports: [
-    PlanList
+    RouterOutlet
   ],
   templateUrl: './plan-layout.html',
   styleUrl: './plan-layout.css'
