@@ -1,11 +1,15 @@
-import {environment} from '../../../environments/environment';
-import {HttpClient} from '@angular/common/http';
-import {Observable} from 'rxjs';
-import {User} from '../domain/model/user.entity';
-import {UserResponse} from './user-response';
-import {map} from 'rxjs/operators';
-import {UserAssembler} from './user-assembler';
+import { Injectable } from '@angular/core';
+import { environment } from '../../../environments/environment';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { User } from '../domain/model/user.entity';
+import { UserResponse } from './user-response';
+import { map } from 'rxjs/operators';
+import { UserAssembler } from './user-assembler';
 
+@Injectable({
+  providedIn: 'root'
+})
 export class UserApiEndpoint {
   private baseUrl = `${environment.apiUrl}${environment.endpoints.users}`;
 
