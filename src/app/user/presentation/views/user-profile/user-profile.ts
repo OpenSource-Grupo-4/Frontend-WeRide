@@ -25,15 +25,37 @@ export class UserProfile {
     { label: 'Personalizar tu perfil' }
   ];
 
+  get stats(): { label: string; value: string }[] {
+    if (!this.user?.statistics) {
+      return [
+        { label: 'Metros', value: '0' },
+        { label: 'Trayectos', value: '0' }
+      ];
+    }
+
+    const formatter = new Intl.NumberFormat('es-PE', { maximumFractionDigits: 0 });
+    const { totalDistance, totalTrips } = this.user.statistics;
+    return [
+      { label: 'Metros', value: formatter.format(totalDistance ?? 0) },
+      { label: 'Trayectos', value: formatter.format(totalTrips ?? 0) }
+    ];
+  }
+
+  get hasProfilePicture(): boolean {
+    return !!this.user?.profilePicture;
+  }
+
   getInitials(name?: string | null): string {
     if (!name) {
       return 'G';
     }
-    return name
-      .split(' ')
-      .filter(part => part)
-      .slice(0, 2)
-      .map(part => part[0]?.toUpperCase() ?? '')
-      .join('') || 'G';
+    return (
+      name
+        .split(' ')
+        .filter(part => part)
+        .slice(0, 2)
+        .map(part => part[0]?.toUpperCase() ?? '')
+        .join('') || 'G'
+    );
   }
 }
