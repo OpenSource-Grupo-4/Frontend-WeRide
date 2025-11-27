@@ -5,20 +5,15 @@ import { UserStore } from '../../../application/user.store';
 import { User } from '../../../domain/model/user.entity';
 
 @Component({
-  selector: 'app-user-section',
+  selector: 'app-user-stats',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './user-section.html',
-  styleUrl: './user-section.css'
+  templateUrl: './user-stats.html',
+  styleUrl: './user-stats.css'
 })
-export class UserSection implements OnInit {
+export class UserStats implements OnInit {
   private readonly userStore = inject(UserStore);
   user$: Observable<User | null> = this.userStore.getGuestUser$();
-
-  readonly quickActions = [
-    { label: 'Administrar tu cuenta' },
-    { label: 'Personalizar tu perfil' }
-  ];
 
   ngOnInit(): void {
     this.userStore.loadUsers();

@@ -1,75 +1,39 @@
 <ng-container *ngIf="user$ | async as user; else loadingState">
-  <section class="user-section">
-    <aside class="sidebar">
-      <div class="sidebar-top">
-        <button class="icon-button" type="button">
-          <span class="material-symbols-rounded">menu</span>
-        </button>
-        <div class="sidebar-profile">
-          <div class="avatar">{{ getInitials(user.name) }}</div>
-          <div>
-            <p class="name">{{ user.name }}</p>
-            <span class="role"
-              >{{ user.preferences.language | uppercase }} · Invitado</span
-            >
-          </div>
+  <div class="user-section">
+    <div class="user-card">
+      <div class="user-card-header">
+        <div class="avatar" [class.has-image]="!!user.profilePicture">
+          <img
+            *ngIf="user.profilePicture"
+            [src]="user.profilePicture"
+            [alt]="user.name || 'Avatar de usuario'"
+          />
+          <span *ngIf="!user.profilePicture">{{ getInitials(user.name) }}</span>
+        </div>
+        <div class="user-info">
+          <h3 class="user-name">{{ user.name }}</h3>
+          <span class="user-email">{{ user.email }}</span>
         </div>
       </div>
-      <nav class="sidebar-nav">
+
+      <div class="quick-actions">
         <button
           type="button"
-          *ngFor="let link of sidebarLinks"
-          [class.active]="link.label === 'Tu'"
+          class="action-item"
+          *ngFor="let action of quickActions"
         >
-          <div class="nav-left">
-            <span class="material-symbols-rounded">{{ link.icon }}</span>
-            <span>{{ link.label }}</span>
-          </div>
-          <span class="material-symbols-rounded chevron">chevron_right</span>
+          <span class="action-label">{{ action.label }}</span>
+          <span class="material-symbols-rounded">chevron_right</span>
         </button>
-      </nav>
-    </aside>
-
-    <div class="content">
-      <header class="content-header">
-        <div class="brand-mark">
-          <span class="material-symbols-rounded">electric_bike</span>
-        </div>
-        <div class="header-actions">
-          <button class="icon-button" type="button">
-            <span class="material-symbols-rounded">notifications</span>
-          </button>
-          <div class="chip">
-            <div class="chip-avatar">{{ getInitials(user.name) }}</div>
-            <div>
-              <p>{{ user.name }}</p>
-              <span>{{ user.email }}</span>
-            </div>
-            <span class="material-symbols-rounded">more_vert</span>
-          </div>
-        </div>
-      </header>
-
-      <div class="content-bar">
-        <div class="metric-card">
-          <p class="value">
-            {{ user.statistics.totalDistance | number: '1.0-0' }}
-          </p>
-          <span class="label">Metros</span>
-        </div>
-        <div class="metric-card">
-          <p class="value">{{ user.statistics.totalTrips }}</p>
-          <span class="label">Trayectos</span>
-        </div>
       </div>
-
-      <app-user-profile [user]="user"></app-user-profile>
     </div>
-  </section>
+  </div>
 </ng-container>
 
 <ng-template #loadingState>
-  <section class="user-section">
-    <p>Cargando perfil...</p>
-  </section>
+  <div class="user-section">
+    <div class="user-card">
+      <p>Cargando información del usuario...</p>
+    </div>
+  </div>
 </ng-template>
