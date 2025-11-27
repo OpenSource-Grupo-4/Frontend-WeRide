@@ -34,4 +34,9 @@ export class BookingsApiEndpoint {
   delete(id: string): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/${id}`);
   }
+
+  // Obtener reservas por userId
+  getByUserId(userId: string): Observable<BookingResponse[]> {
+    return this.http.get<BookingResponse[]>(`${this.baseUrl}?userId=${userId}`);
+  }
 }

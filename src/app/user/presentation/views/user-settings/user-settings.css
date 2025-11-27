@@ -35,6 +35,20 @@
   border-color: #6f4dff;
 }
 
+.us-card-item.active {
+  background: #f2f0ff;
+  border-color: #6f4dff;
+}
+
+.us-card-item.active .us-item {
+  color: #6f4dff;
+  font-weight: 600;
+}
+
+.us-card-item.active mat-icon:first-child {
+  color: #6f4dff;
+}
+
 .us-card-item mat-icon:first-child {
   color: #6f4dff;
   font-size: 24px;

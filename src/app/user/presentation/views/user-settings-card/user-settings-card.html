@@ -1,0 +1,99 @@
+<div class="settings-card">
+  <div class="card-header">
+    <h2>Ajustes</h2>
+    <button class="close-button" (click)="closeCard()" type="button" aria-label="Cerrar">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <div class="card-content">
+    <ng-container *ngIf="user$ | async as user">
+      <div class="settings-section">
+        <h3>Preferencias</h3>
+        
+        <div class="setting-item">
+          <div class="setting-info">
+            <mat-icon>language</mat-icon>
+            <div>
+              <span class="setting-label">Idioma</span>
+              <span class="setting-description">Selecciona tu idioma preferido</span>
+            </div>
+          </div>
+          <select class="setting-control" [(ngModel)]="preferences.language">
+            <option value="es">Español</option>
+            <option value="en">English</option>
+            <option value="pt">Português</option>
+          </select>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-info">
+            <mat-icon>notifications</mat-icon>
+            <div>
+              <span class="setting-label">Notificaciones</span>
+              <span class="setting-description">Recibe notificaciones sobre tus viajes</span>
+            </div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" [(ngModel)]="preferences.notifications">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-info">
+            <mat-icon>palette</mat-icon>
+            <div>
+              <span class="setting-label">Tema</span>
+              <span class="setting-description">Elige el tema de la aplicación</span>
+            </div>
+          </div>
+          <select class="setting-control" [(ngModel)]="preferences.theme">
+            <option value="light">Claro</option>
+            <option value="dark">Oscuro</option>
+            <option value="auto">Automático</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <h3>Cuenta</h3>
+        
+        <div class="setting-item">
+          <div class="setting-info">
+            <mat-icon>person</mat-icon>
+            <div>
+              <span class="setting-label">Información Personal</span>
+              <span class="setting-description">{{ user.name }} - {{ user.email }}</span>
+            </div>
+          </div>
+          <button class="setting-action" type="button">
+            <mat-icon>edit</mat-icon>
+            Editar
+          </button>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-info">
+            <mat-icon>delete</mat-icon>
+            <div>
+              <span class="setting-label">Eliminar Cuenta</span>
+              <span class="setting-description">Elimina permanentemente tu cuenta y todos tus datos</span>
+            </div>
+          </div>
+          <button class="setting-action danger" type="button">
+            <mat-icon>delete</mat-icon>
+            Eliminar
+          </button>
+        </div>
+      </div>
+
+      <div class="settings-actions">
+        <button class="save-button" (click)="savePreferences()" type="button">
+          Guardar Cambios
+        </button>
+      </div>
+    </ng-container>
+  </div>
+</div>
+

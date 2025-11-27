@@ -1,0 +1,74 @@
+<div class="help-card">
+  <div class="card-header">
+    <h2>Ayuda</h2>
+    <button class="close-button" (click)="closeCard()" type="button" aria-label="Cerrar">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <div class="card-content">
+    <div class="help-section">
+      <h3>Preguntas Frecuentes</h3>
+      <div class="faqs-list">
+        <div *ngFor="let faq of faqs" class="faq-item">
+          <div class="faq-question">
+            <mat-icon>help_outline</mat-icon>
+            <span>{{ faq.question }}</span>
+          </div>
+          <div class="faq-answer">
+            {{ faq.answer }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="help-section">
+      <h3>Contacto</h3>
+      <div class="contact-info">
+        <div class="contact-item">
+          <mat-icon>email</mat-icon>
+          <div>
+            <span class="contact-label">Email</span>
+            <span class="contact-value">{{ contactInfo.email }}</span>
+          </div>
+        </div>
+        <div class="contact-item">
+          <mat-icon>phone</mat-icon>
+          <div>
+            <span class="contact-label">Teléfono</span>
+            <span class="contact-value">{{ contactInfo.phone }}</span>
+          </div>
+        </div>
+        <div class="contact-item">
+          <mat-icon>schedule</mat-icon>
+          <div>
+            <span class="contact-label">Horario de Atención</span>
+            <span class="contact-value">{{ contactInfo.hours }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="help-section">
+      <h3>Recursos</h3>
+      <div class="resources-list">
+        <button class="resource-item" type="button">
+          <mat-icon>menu_book</mat-icon>
+          <span>Guía de Usuario</span>
+          <mat-icon>open_in_new</mat-icon>
+        </button>
+        <button class="resource-item" type="button">
+          <mat-icon>video_library</mat-icon>
+          <span>Tutoriales en Video</span>
+          <mat-icon>open_in_new</mat-icon>
+        </button>
+        <button class="resource-item" type="button">
+          <mat-icon>description</mat-icon>
+          <span>Términos y Condiciones</span>
+          <mat-icon>open_in_new</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+

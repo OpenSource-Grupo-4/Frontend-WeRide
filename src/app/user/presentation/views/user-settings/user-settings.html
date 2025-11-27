@@ -1,32 +1,13 @@
 <div class="user-settings">
   <div class="user-settings-card">
-    <button class="us-card-item" type="button">
-      <mat-icon>account_balance_wallet</mat-icon>
-      <span class="us-item">Cartera</span>
-      <mat-icon class="arrow-icon">keyboard_arrow_right</mat-icon>
-    </button>
-
-    <button class="us-card-item" type="button">
-      <mat-icon>history</mat-icon>
-      <span class="us-item">Historial</span>
-      <mat-icon class="arrow-icon">keyboard_arrow_right</mat-icon>
-    </button>
-
-    <button class="us-card-item" type="button">
-      <mat-icon>security</mat-icon>
-      <span class="us-item">Centro de seguridad</span>
-      <mat-icon class="arrow-icon">keyboard_arrow_right</mat-icon>
-    </button>
-
-    <button class="us-card-item" type="button">
-      <mat-icon>help</mat-icon>
-      <span class="us-item">Ayuda</span>
-      <mat-icon class="arrow-icon">keyboard_arrow_right</mat-icon>
-    </button>
-
-    <button class="us-card-item" type="button">
-      <mat-icon>settings</mat-icon>
-      <span class="us-item">Ajustes</span>
+    <button 
+      *ngFor="let setting of settings"
+      class="us-card-item" 
+      [class.active]="isActive(setting.key)"
+      type="button"
+      (click)="onSettingClick(setting.key)">
+      <mat-icon>{{ setting.icon }}</mat-icon>
+      <span class="us-item">{{ setting.label }}</span>
       <mat-icon class="arrow-icon">keyboard_arrow_right</mat-icon>
     </button>
   </div>

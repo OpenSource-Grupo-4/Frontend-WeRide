@@ -29,6 +29,11 @@
   width: 100%;
 }
 
+.section-content {
+  width: 100%;
+  position: relative;
+}
+
 @media (max-width: 1024px) {
   .content-section {
     grid-template-columns: 1fr;
