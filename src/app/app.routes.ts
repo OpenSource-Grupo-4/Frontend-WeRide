@@ -5,6 +5,7 @@ import { TRIP_ROUTES } from './trip/presentation/views/trip.routes';
 import { PLAN_ROUTES } from './plans/presentation/views/plan.routes';
 import { GARAGE_ROUTES } from './garage/garage.routes';
 import { AUTH_ROUTES } from './auth/auth.routes';
+import { USER_ROUTES } from './user/user.routes';
 
 export const routes: Routes = [
   {
@@ -47,6 +48,10 @@ export const routes: Routes = [
       {
         path: 'garage',
         children: GARAGE_ROUTES
+      },
+      {
+        path: 'user',
+        children: USER_ROUTES
       }
     ]
   }

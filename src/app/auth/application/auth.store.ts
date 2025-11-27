@@ -218,6 +218,14 @@ export const AuthStore = signalStore(
 
       setRegistrationStep: (step: 'phone' | 'verification' | 'details' | 'completed') => {
         patchState(store, { registrationStep: step });
+      },
+
+      setSession(session: any) {
+        patchState(store, { session, currentUser: session.user });
+
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('session', JSON.stringify(session));
+        }
       }
     };
   })

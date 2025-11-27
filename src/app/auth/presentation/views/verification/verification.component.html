@@ -23,17 +23,28 @@
     <p class="subtitle">Recibirás un código de verificación por WhatsApp</p>
 
     <div class="code-inputs">
-      @for (digit of code(); track $index) {
+      <input
+        type="text"
+        maxlength="1"
+        id="code-0"
+        [(ngModel)]="code()[0]"
+        (input)="onCodeInput(0, $event)"
+        (keydown)="onKeyDown(0, $event)"
+        (paste)="onPaste($event)"
+        class="code-input">
+
+      @for (digit of [code()[1], code()[2], code()[3]]; track $index) {
         <input
           type="text"
           maxlength="1"
-          [id]="'code-' + $index"
-          [(ngModel)]="code()[$index]"
-          (input)="onCodeInput($index, $event)"
-          (keydown)="onKeyDown($index, $event)"
+          [id]="'code-' + ($index + 1)"
+          [(ngModel)]="code()[$index + 1]"
+          (input)="onCodeInput($index + 1, $event)"
+          (keydown)="onKeyDown($index + 1, $event)"
           class="code-input">
       }
     </div>
+
 
     <div class="terms">
       <p>Al continuar, aceptas la <a href="#" class="link">Política de privacidad</a> y los <a href="#" class="link">Términos de uso</a> de sesdven.</p>

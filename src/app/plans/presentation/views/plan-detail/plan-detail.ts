@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import {Component, inject, OnInit} from '@angular/core';
+import {ActivatedRoute, Router} from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatCard, MatCardActions, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -15,6 +15,7 @@ import { Observable } from 'rxjs';
   styleUrl: './plan-detail.css'
 })
 export class PlanDetail implements OnInit {
+  private readonly router = inject(Router);
   plan$: Observable<Plan | null>;
   loading$: Observable<boolean>;
 
@@ -28,10 +29,32 @@ export class PlanDetail implements OnInit {
 
   ngOnInit(): void {
     const planId = this.route.snapshot.paramMap.get('id');
+    console.log('Plan ID desde ruta:', planId);
+
     if (planId) {
       this.planStore.loadPlanById(planId);
     }
   }
+
+  onPayment(plan: Plan | null): void {
+    if (!plan || !plan.id) {
+      console.error('No se puede navegar: plan o plan.id es null/undefined', plan);
+      return;
+    }
+
+    console.log('Navegando a payment con plan:', plan);
+    console.log('Plan ID:', plan.id);
+    console.log('Ruta completa:', ['/plan/payment', plan.id]);
+
+    try {
+      this.router.navigate(['/plan/payment', plan.id]).catch(error => {
+        console.error('Error al navegar a la página de pago:', error);
+      });
+    } catch (error) {
+      console.error('Error inesperado al intentar navegar:', error);
+    }
+  }
+
 
   getFormattedPrice(plan: Plan): string {
     return `${plan.currency === 'USD' ? '$' : plan.currency}${plan.price.toFixed(2)}`;

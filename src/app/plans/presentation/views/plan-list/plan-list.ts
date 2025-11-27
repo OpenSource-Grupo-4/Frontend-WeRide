@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule} from '@angular/common';
+import { Component, OnInit, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Router, RouterModule } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCard, MatCardHeader, MatCardTitle, MatCardContent, MatCardActions } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -10,34 +11,54 @@ import { Observable } from 'rxjs';
 @Component({
   selector: 'app-plan-list',
   standalone: true,
-  imports: [MatIconModule, CommonModule, MatCard, MatCardHeader, MatCardTitle, MatCardContent, MatCardActions, MatButtonModule],
+  imports: [
+    CommonModule,
+    RouterModule,
+    MatIconModule,
+    MatCard,
+    MatCardHeader,
+    MatCardTitle,
+    MatCardContent,
+    MatCardActions,
+    MatButtonModule
+  ],
   templateUrl: './plan-list.html',
   styleUrl: './plan-list.css'
 })
 export class PlanList implements OnInit {
-  plans$: Observable<Plan[]>;
-  selectedPlan$: Observable<Plan | null>;
-  loading$: Observable<boolean>;
+  private readonly store = inject(PlanStore);
+  private readonly router = inject(Router);
 
-  constructor(private planStore: PlanStore) {
-    this.plans$ = this.planStore.plans$;
-    this.selectedPlan$ = this.planStore.selectedPlan$;
-    this.loading$ = this.planStore.loading$;
-  }
+  plans$: Observable<Plan[]> = this.store.plans$;
+  selectedPlan$: Observable<Plan | null> = this.store.selectedPlan$;
+  loading$: Observable<boolean> = this.store.loading$;
 
   ngOnInit(): void {
-    this.planStore.loadPlans();
+    this.store.loadPlans();
   }
 
   selectPlan(plan: Plan): void {
-    this.planStore.selectPlan(plan);
-  }
-
-  getFormattedPrice(plan: Plan): string {
-    return `${plan.currency === 'USD' ? '$' : plan.currency}${plan.price.toFixed(2)}`;
+    this.store.selectPlan(plan);
   }
 
   getFormattedDuration(plan: Plan): string {
-    return plan.duration === 'monthly' ? 'Mensual' : plan.duration;
+    const durationMap: { [key: string]: string } = {
+      'monthly': 'Mensual',
+      'quarterly': 'Trimestral',
+      'annual': 'Anual'
+    };
+    return durationMap[plan.duration] || plan.duration;
+  }
+
+  getFormattedPrice(plan: Plan): string {
+    return `$${plan.price.toFixed(2)}`;
+  }
+
+  onPayment(plan: Plan): void {
+    if (!plan || !plan.id) {
+      console.error('No se puede navegar: plan o plan.id es null/undefined', plan);
+      return;
+    }
+    this.router.navigate(['/plan/payment', plan.id]);
   }
 }
