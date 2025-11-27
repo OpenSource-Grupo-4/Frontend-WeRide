@@ -3,11 +3,12 @@ import { Component, OnInit, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { UserStore } from '../../../application/user.store';
 import { User } from '../../../domain/model/user.entity';
+import { MatIcon } from "@angular/material/icon";
 
 @Component({
   selector: 'app-user-section',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, MatIcon],
   templateUrl: './user-section.html',
   styleUrl: './user-section.css'
 })

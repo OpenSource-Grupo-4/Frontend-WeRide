@@ -32,9 +32,7 @@
 }
 
 .us-card-item:hover {
-  border-color: #d4dcff;
-  box-shadow: 0 10px 25px rgba(111, 77, 255, 0.12);
-  transform: translateY(-2px);
+  border-color: #6f4dff;
 }
 
 .us-card-item mat-icon:first-child {

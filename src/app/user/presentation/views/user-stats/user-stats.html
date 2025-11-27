@@ -15,12 +15,23 @@
     </div>
     <div class="stats-container">
       <div class="stat-item">
+        <p class="stat-value">{{ user.statistics.totalTrips }}</p>
+        <span class="stat-label">Trayectos</span>
+      </div>
+
+      <div class="stat-item">
         <p class="stat-value">{{ user.statistics.totalDistance | number: '1.0-0' }}</p>
         <span class="stat-label">Metros</span>
       </div>
+
       <div class="stat-item">
-        <p class="stat-value">{{ user.statistics.totalTrips }}</p>
-        <span class="stat-label">Trayectos</span>
+        <p class="stat-value">{{ user.statistics.totalSpent | currency: '$' }}</p>
+        <span class="stat-label">Gasto total</span>
+      </div>
+
+      <div class="stat-item">
+        <p class="stat-value">{{ user.statistics.averageRating | number: '1.0-0' }}</p>
+        <span class="stat-label">Puntuación</span>
       </div>
     </div>
   </div>
