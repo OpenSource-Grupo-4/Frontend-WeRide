@@ -1,0 +1,275 @@
+{
+  "common": {
+    "close": "Cerrar",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "back": "Volver",
+    "next": "Siguiente",
+    "continue": "Continuar",
+    "retry": "Reintentar",
+    "loading": "Cargando...",
+    "error": "Error",
+    "success": "Éxito",
+    "confirm": "Confirmar",
+    "yes": "Sí",
+    "no": "No",
+    "search": "Buscar",
+    "filter": "Filtrar",
+    "viewDetails": "Ver Detalles",
+    "book": "Reservar",
+    "notAvailable": "No Disponible",
+    "and": "y"
+  },
+  "navigation": {
+    "home": "Inicio",
+    "garage": "Garaje",
+    "profile": "Perfil",
+    "plans": "Planes",
+    "trip": "Viaje",
+    "bookings": "Reservas",
+    "user": "User"
+  },
+  "auth": {
+    "login": {
+      "title": "Iniciar Sesión",
+      "subtitle": "Entra y conduce tu salud",
+      "continueWithGoogle": "Continuar con Google",
+      "loginWithPhone": "Entrar con número de celular",
+      "loginWithEmail": "Entrar con mi email de empresa",
+      "continueAsGuest": "Continuar como invitado",
+      "terms": "Al continuar, aceptas la",
+      "privacyPolicy": "Política de privacidad",
+      "termsOfUse": "Términos de uso",
+      "ofWeRide": "de WeRide",
+      "loadingMessage": "Cargando datos de WeRide..."
+    },
+    "phoneLogin": {
+      "title": "Introduce Número de Celular",
+      "subtitle": "En necesario que ingrese su numero de celular para continuar",
+      "prefix": "Prefijo",
+      "phone": "Celular",
+      "phonePlaceholder": "912345678",
+      "verificationCode": "Código de Verificación",
+      "codeSent": "Hemos enviado un código de 4 dígitos al número",
+      "copy": "Copiar",
+      "copied": "✓ Copiado"
+    },
+    "emailLogin": {
+      "title": "Iniciar Sesión",
+      "subtitle": "Ingresa con tu email corporativo",
+      "email": "Email",
+      "password": "Contraseña",
+      "forgotPassword": "¿Olvidaste tu contraseña?",
+      "rememberMe": "Recordarme",
+      "signIn": "Iniciar Sesión",
+      "errorTitle": "Ocurrio un Error"
+    },
+    "register": {
+      "title": "Introduce tus datos",
+      "subtitle": "Recibirás un código de verificación por WhatsApp",
+      "firstName": "Nombres",
+      "lastName": "Apellidos",
+      "name": "Nombre",
+      "email": "Email",
+      "phone": "Teléfono",
+      "password": "Contraseña",
+      "confirmPassword": "Confirmar Contraseña",
+      "createAccount": "Crear Cuenta",
+      "alreadyHaveAccount": "¿Ya tienes una cuenta?",
+      "login": "Iniciar Sesión",
+      "errorTitle": "Ocurrio un Error",
+      "successTitle": "Verificado Correctamente",
+      "successMessage": "Otp ingresado Correctamente"
+    },
+    "verification": {
+      "title": "Introduce código de verificación",
+      "subtitle": "Recibirás un código de verificación por WhatsApp",
+      "enterCode": "Ingresa el código de verificación",
+      "codeSentTo": "Código enviado a",
+      "resendCode": "Reenviar código",
+      "verify": "Verificar",
+      "errorTitle": "Ocurrio un Error"
+    }
+  },
+  "garage": {
+    "title": "Garaje de Vehículos",
+    "loading": "Cargando vehículos...",
+    "error": "Error al cargar los vehículos. Por favor, intente nuevamente.",
+    "filterError": "Error al aplicar filtros.",
+    "noResults": "No se encontraron vehículos con los filtros aplicados.",
+    "vehicle": {
+      "status": "Estado",
+      "price": "Precio",
+      "rating": "Rating",
+      "battery": "Batería",
+      "maxSpeed": "Velocidad Máx",
+      "range": "Alcance",
+      "reserve": "Reservar",
+      "viewDetails": "Ver Detalles",
+      "statuses": {
+        "available": "Disponible",
+        "reserved": "Reservado",
+        "maintenance": "En mantenimiento",
+        "in_use": "En uso"
+      },
+      "types": {
+        "electric_scooter": "Scooter Eléctrico",
+        "bike": "Bicicleta",
+        "electric_bike": "Bicicleta Eléctrica"
+      }
+    }
+  },
+  "user": {
+    "wallet": {
+      "title": "Cartera",
+      "totalSpent": "Total Gastado",
+      "recentPayments": "Últimos Pagos",
+      "noPayments": "No hay pagos registrados",
+      "paymentMethods": {
+        "credit_card": "Tarjeta de Crédito",
+        "digital_wallet": "Billetera Digital"
+      }
+    },
+    "settings": {
+      "title": "Ajustes",
+      "preferences": "Preferencias",
+      "account": "Cuenta",
+      "language": "Idioma",
+      "languageDescription": "Selecciona tu idioma preferido",
+      "languages": {
+        "es": "Español",
+        "en": "English",
+        "pt": "Português"
+      },
+      "notifications": "Notificaciones",
+      "notificationsDescription": "Recibe notificaciones sobre tus viajes",
+      "theme": "Tema",
+      "themeDescription": "Elige el tema de la aplicación",
+      "themes": {
+        "light": "Claro",
+        "dark": "Oscuro",
+        "auto": "Automático"
+      },
+      "personalInfo": "Información Personal",
+      "deleteAccount": "Eliminar Cuenta",
+      "deleteAccountDescription": "Elimina permanentemente tu cuenta y todos tus datos",
+      "saveChanges": "Guardar Cambios"
+    },
+    "help": {
+      "title": "Ayuda",
+      "faqs": "Preguntas Frecuentes",
+      "contact": "Contacto",
+      "contactEmail": "Email",
+      "contactPhone": "Teléfono",
+      "contactHours": "Horario de Atención",
+      "faq1": {
+        "question": "¿Cómo reservo un vehículo?",
+        "answer": "Puedes reservar un vehículo desde la sección de Garage. Selecciona el vehículo que deseas y haz clic en \"Reservar\"."
+      },
+      "faq2": {
+        "question": "¿Cómo cancelo una reserva?",
+        "answer": "Ve a la sección de Reservas, encuentra tu reserva activa y haz clic en \"Cancelar\"."
+      },
+      "faq3": {
+        "question": "¿Qué métodos de pago aceptan?",
+        "answer": "Aceptamos tarjetas de crédito y billeteras digitales. Puedes configurar tus métodos de pago en la sección de Cartera."
+      },
+      "faq4": {
+        "question": "¿Cómo contacto con soporte?",
+        "answer": "Puedes contactarnos a través del email de soporte o usando el chat en vivo disponible en la aplicación."
+      },
+      "hours": "Lunes a Viernes: 9:00 AM - 6:00 PM"
+    }
+  },
+  "booking": {
+    "title": "Reservar Vehículo",
+    "electricVehicle": "Vehículo de Micromovilidad Eléctrica",
+    "date": "Fecha",
+    "unlockTime": "Hora de Desbloqueo",
+    "duration": "Duración (minutos)",
+    "bookNow": "Reservar Ahora",
+    "saveDraft": "Guardar como Borrador",
+    "summary": {
+      "title": "Resumen de Reserva",
+      "vehicle": "Vehículo",
+      "type": "Tipo",
+      "batteryLevel": "Nivel de Batería",
+      "range": "Alcance",
+      "dateTime": "Fecha y hora",
+      "duration": "Duración",
+      "rate": "Tarifa",
+      "total": "Total",
+      "minutes": "minutos",
+      "notifications": {
+        "smsReminder": "Recordatorio SMS 30 min antes",
+        "emailConfirmation": "Confirmación por email",
+        "pushNotification": "Notificación push al desbloquear"
+      }
+    }
+  },
+  "trip": {
+    "title": "Viajes",
+    "activeTrip": "Viaje Activo",
+    "tripHistory": "Historial de Viajes",
+    "startTrip": "Iniciar Viaje",
+    "endTrip": "Finalizar Viaje",
+    "tripDetails": "Detalles del Viaje"
+  },
+  "plans": {
+    "title": "Planes",
+    "selectPlan": "Seleccionar Plan",
+    "monthly": "Mensual",
+    "annual": "Anual",
+    "perMonth": "por mes",
+    "perYear": "por año"
+  },
+  "home": {
+    "welcome": "Bienvenido a WeRide",
+    "subtitle": "Tu plataforma de micromovilidad eléctrica",
+    "features": {
+      "scooters": {
+        "title": "Scooters Eléctricos",
+        "description": "Alquila scooters eléctricos para viajes cortos por la ciudad"
+      },
+      "bikes": {
+        "title": "Bicicletas Eléctricas",
+        "description": "Bicicletas eléctricas para distancias más largas y ejercicio"
+      },
+      "schedule": {
+        "title": "Programar Desbloqueo",
+        "description": "Programa el desbloqueo de tu vehículo con anticipación"
+      },
+      "status": {
+        "title": "Estado de Desbloqueo",
+        "description": "Monitorea el estado de desbloqueo de tu vehículo en tiempo real"
+      }
+    },
+    "quickActions": "Acciones Rápidas",
+    "actions": {
+      "checkStatus": "Verificar Estado",
+      "schedule": "Programar Desbloqueo",
+      "viewBookings": "Ver Reservas"
+    }
+  },
+  "errors": {
+    "generic": "Ha ocurrido un error. Por favor, intente nuevamente.",
+    "network": "Error de conexión. Verifica tu conexión a internet.",
+    "notFound": "No se encontró el recurso solicitado.",
+    "unauthorized": "No tienes autorización para realizar esta acción.",
+    "serverError": "Error del servidor. Por favor, intente más tarde.",
+    "invalidCode": "Código incorrecto",
+    "loginError": "Error al iniciar sesión"
+  },
+  "validation": {
+    "required": "Este campo es obligatorio",
+    "email": "Ingresa un email válido",
+    "minLength": "Debe tener al menos {{min}} caracteres",
+    "maxLength": "No puede tener más de {{max}} caracteres",
+    "pattern": "El formato no es válido",
+    "min": "El valor mínimo es {{min}}",
+    "max": "El valor máximo es {{max}}"
+  }
+}
+

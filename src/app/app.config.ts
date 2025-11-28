@@ -3,8 +3,23 @@ import { provideRouter } from '@angular/router';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideHttpClient, withFetch } from '@angular/common/http';
 import { provideMapboxGL } from 'ngx-mapbox-gl';
+import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import { routes } from './app.routes';
 import { AUTH_PROVIDERS } from './auth/auth.providers';
+
+export class CustomTranslateLoader implements TranslateLoader {
+  constructor(private http: HttpClient, private prefix: string = './assets/i18n/', private suffix: string = '.json') {}
+
+  getTranslation(lang: string): Observable<any> {
+    return this.http.get(`${this.prefix}${lang}${this.suffix}`);
+  }
+}
+
+export function HttpLoaderFactory(http: HttpClient) {
+  return new CustomTranslateLoader(http);
+}
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -16,6 +31,14 @@ export const appConfig: ApplicationConfig = {
     provideMapboxGL({
       accessToken: 'pk.eyJ1IjoiamhpbXlwb29sIiwiYSI6ImNtZGY4cjVoMDBheHcyaXEzaDV5a2g4eGIifQ.QYmwDCEn26DEW-8RbIG2jg'
     }),
+    ...TranslateModule.forRoot({
+      defaultLanguage: 'es',
+      loader: {
+        provide: TranslateLoader,
+        useFactory: HttpLoaderFactory,
+        deps: [HttpClient]
+      }
+    }).providers!,
     ...AUTH_PROVIDERS
   ]
 };

@@ -1,17 +1,17 @@
 <div class="garage-container">
-  <h1>Garaje de Vehículos</h1>
+  <h1>{{ 'garage.title' | translate }}</h1>
 
   <app-garage-filter (filterChange)="applyFilter($event)"></app-garage-filter>
 
   @if (isLoading) {
   <div class="loading">
-    <p>Cargando vehículos...</p>
+    <p>{{ 'garage.loading' | translate }}</p>
   </div>
   } @if (error) {
   <div class="error">
     <p>{{ error }}</p>
     <button mat-button color="primary" (click)="loadVehicles()">
-      Reintentar
+      {{ 'common.retry' | translate }}
     </button>
   </div>
   } @if (!isLoading && !error) {
@@ -25,7 +25,7 @@
     </app-vehicle-card>
     } @if (filteredVehicles.length === 0) {
     <div class="no-results">
-      <p>No se encontraron vehículos con los filtros aplicados.</p>
+      <p>{{ 'garage.noResults' | translate }}</p>
     </div>
     }
   </div>

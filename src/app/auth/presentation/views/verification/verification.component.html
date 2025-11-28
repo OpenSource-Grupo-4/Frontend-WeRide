@@ -7,7 +7,7 @@
           <path d="M15 9L9 15M9 9L15 15" stroke="white" stroke-width="2" stroke-linecap="round"/>
         </svg>
         <div>
-          <div class="error-title">Ocurrio un Error</div>
+          <div class="error-title">{{ 'auth.verification.errorTitle' | translate }}</div>
           <div class="error-message">{{ authStore.error() }}</div>
         </div>
       </div>
@@ -19,8 +19,8 @@
       </svg>
     </button>
 
-    <h1 class="title">Introduce código de verificación</h1>
-    <p class="subtitle">Recibirás un código de verificación por WhatsApp</p>
+    <h1 class="title">{{ 'auth.verification.title' | translate }}</h1>
+    <p class="subtitle">{{ 'auth.verification.subtitle' | translate }}</p>
 
     <div class="code-inputs">
       <input

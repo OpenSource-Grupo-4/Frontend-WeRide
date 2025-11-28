@@ -1,14 +1,14 @@
 <div class="help-card">
   <div class="card-header">
-    <h2>Ayuda</h2>
-    <button class="close-button" (click)="closeCard()" type="button" aria-label="Cerrar">
+    <h2>{{ 'user.help.title' | translate }}</h2>
+    <button class="close-button" (click)="closeCard()" type="button" [attr.aria-label]="'common.close' | translate">
       <mat-icon>close</mat-icon>
     </button>
   </div>
 
   <div class="card-content">
     <div class="help-section">
-      <h3>Preguntas Frecuentes</h3>
+      <h3>{{ 'user.help.faqs' | translate }}</h3>
       <div class="faqs-list">
         <div *ngFor="let faq of faqs" class="faq-item">
           <div class="faq-question">
@@ -23,26 +23,26 @@
     </div>
 
     <div class="help-section">
-      <h3>Contacto</h3>
+      <h3>{{ 'user.help.contact' | translate }}</h3>
       <div class="contact-info">
         <div class="contact-item">
           <mat-icon>email</mat-icon>
           <div>
-            <span class="contact-label">Email</span>
+            <span class="contact-label">{{ 'user.help.contactEmail' | translate }}</span>
             <span class="contact-value">{{ contactInfo.email }}</span>
           </div>
         </div>
         <div class="contact-item">
           <mat-icon>phone</mat-icon>
           <div>
-            <span class="contact-label">Teléfono</span>
+            <span class="contact-label">{{ 'user.help.contactPhone' | translate }}</span>
             <span class="contact-value">{{ contactInfo.phone }}</span>
           </div>
         </div>
         <div class="contact-item">
           <mat-icon>schedule</mat-icon>
           <div>
-            <span class="contact-label">Horario de Atención</span>
+            <span class="contact-label">{{ 'user.help.contactHours' | translate }}</span>
             <span class="contact-value">{{ contactInfo.hours }}</span>
           </div>
         </div>

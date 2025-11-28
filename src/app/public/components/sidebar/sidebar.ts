@@ -3,10 +3,11 @@ import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterModule } from '@angular/router';
 import { MatIconButton } from '@angular/material/button';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-sidebar',
-  imports: [CommonModule, MatIconModule, RouterModule, MatIconButton],
+  imports: [CommonModule, MatIconModule, RouterModule, MatIconButton, TranslateModule],
   templateUrl: './sidebar.html',
   styleUrl: './sidebar.css'
 })

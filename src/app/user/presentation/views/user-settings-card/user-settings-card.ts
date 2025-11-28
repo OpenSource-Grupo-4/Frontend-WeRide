@@ -3,13 +3,14 @@ import { Component, OnInit, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { MatIcon } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
 import { UserStore } from '../../../application/user.store';
 import { UserSettingsStateService } from '../../../application/user-settings-state.service';
 
 @Component({
   selector: 'app-user-settings-card',
   standalone: true,
-  imports: [CommonModule, MatIcon, FormsModule],
+  imports: [CommonModule, MatIcon, FormsModule, TranslateModule],
   templateUrl: './user-settings-card.html',
   styleUrl: './user-settings-card.css'
 })

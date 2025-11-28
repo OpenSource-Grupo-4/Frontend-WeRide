@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { GarageFilter } from '../garage-filter/garage-filter';
 import { VehicleCard } from '../vehicle-card/vehicle-card';
 import { VehicleDetailsModal } from '../vehicle-details-modal/vehicle-details-modal';
@@ -16,6 +17,7 @@ import { ToggleFavoriteUseCase } from '../../../application/use-cases/toggle-fav
   standalone: true,
   imports: [
     CommonModule,
+    TranslateModule,
     GarageFilter,
     VehicleCard,
     MatButton,
@@ -33,7 +35,8 @@ export class GarageLayout implements OnInit {
     private dialog: MatDialog,
     private getVehiclesUseCase: GetVehiclesUseCase,
     private filterVehiclesUseCase: FilterVehiclesUseCase,
-    private toggleFavoriteUseCase: ToggleFavoriteUseCase
+    private toggleFavoriteUseCase: ToggleFavoriteUseCase,
+    private translate: TranslateService
   ) {}
 
   async ngOnInit() {
@@ -47,7 +50,7 @@ export class GarageLayout implements OnInit {
       this.vehicles = await this.getVehiclesUseCase.execute();
       this.filteredVehicles = this.vehicles;
     } catch (error) {
-      this.error = 'Error al cargar los vehículos. Por favor, intente nuevamente.';
+      this.error = this.translate.instant('garage.error');
       console.error('Error loading vehicles:', error);
     } finally {
       this.isLoading = false;
@@ -59,7 +62,7 @@ export class GarageLayout implements OnInit {
     try {
       this.filteredVehicles = await this.filterVehiclesUseCase.execute(filter);
     } catch (error) {
-      this.error = 'Error al aplicar filtros.';
+      this.error = this.translate.instant('garage.filterError');
       console.error('Error applying filters:', error);
     } finally {
       this.isLoading = false;

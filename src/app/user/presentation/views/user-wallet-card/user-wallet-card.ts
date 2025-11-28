@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { MatIcon } from '@angular/material/icon';
+import { TranslateModule } from '@ngx-translate/core';
 import { UserStore } from '../../../application/user.store';
 import { UserPaymentsService } from '../../../infrastructure/user-payments.service';
 import { Payment } from '../../../infrastructure/payments-api-endpoint';
@@ -10,7 +11,7 @@ import { UserSettingsStateService } from '../../../application/user-settings-sta
 @Component({
   selector: 'app-user-wallet-card',
   standalone: true,
-  imports: [CommonModule, MatIcon],
+  imports: [CommonModule, MatIcon, TranslateModule],
   templateUrl: './user-wallet-card.html',
   styleUrl: './user-wallet-card.css'
 })

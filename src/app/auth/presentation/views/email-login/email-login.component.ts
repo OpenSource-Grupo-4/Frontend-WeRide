@@ -2,13 +2,14 @@ import { Component, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
 import { AuthStore } from '../../../application/auth.store';
 import { AuthCredentials } from '../../../domain/model/auth-credentials.entity';
 
 @Component({
   selector: 'app-email-login',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, TranslateModule],
   templateUrl: './email-login.component.html',
   styleUrl: './email-login.component.css'
 })

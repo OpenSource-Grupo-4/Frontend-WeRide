@@ -7,7 +7,7 @@
           <path d="M15 9L9 15M9 9L15 15" stroke="white" stroke-width="2" stroke-linecap="round"/>
         </svg>
         <div>
-          <div class="error-title">Ocurrio un Error</div>
+          <div class="error-title">{{ 'auth.register.errorTitle' | translate }}</div>
           <div class="error-message">{{ authStore.error() }}</div>
         </div>
       </div>
@@ -20,8 +20,8 @@
           <path d="M8 12L11 15L16 9" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
         <div>
-          <div class="success-title">Verificado Correctamente</div>
-          <div class="success-message">Otp ingresado Correctamente</div>
+          <div class="success-title">{{ 'auth.register.successTitle' | translate }}</div>
+          <div class="success-message">{{ 'auth.register.successMessage' | translate }}</div>
         </div>
       </div>
     }
@@ -32,32 +32,32 @@
       </svg>
     </button>
 
-    <h1 class="title">Introduce tus datos</h1>
-    <p class="subtitle">Recibirás un código de verificación por WhatsApp</p>
+    <h1 class="title">{{ 'auth.register.title' | translate }}</h1>
+    <p class="subtitle">{{ 'auth.register.subtitle' | translate }}</p>
 
     <div class="form-group">
-      <label>Nombres</label>
+      <label>{{ 'auth.register.firstName' | translate }}</label>
       <input
         type="text"
         [(ngModel)]="firstName"
-        placeholder="Nombres"
+        [placeholder]="'auth.register.firstName' | translate"
         class="form-input">
     </div>
 
     <div class="form-group">
-      <label>Apellidos</label>
+      <label>{{ 'auth.register.lastName' | translate }}</label>
       <input
         type="text"
         [(ngModel)]="lastName"
-        placeholder="Apellidos"
+        [placeholder]="'auth.register.lastName' | translate"
         class="form-input">
     </div>
 
     <div class="terms">
-      <p>Al continuar, aceptas la <a href="#" class="link">Política de privacidad</a> y los <a href="#" class="link">Términos de uso</a> de WeRide.</p>
+      <p>{{ 'auth.login.terms' | translate }} <a href="#" class="link">{{ 'auth.login.privacyPolicy' | translate }}</a> {{ 'common.and' | translate }} <a href="#" class="link">{{ 'auth.login.termsOfUse' | translate }}</a> {{ 'auth.login.ofWeRide' | translate }}</p>
     </div>
 
-    <button class="btn-primary" (click)="continue()">Siguiente</button>
+    <button class="btn-primary" (click)="continue()">{{ 'common.next' | translate }}</button>
   </div>
 </div>
 

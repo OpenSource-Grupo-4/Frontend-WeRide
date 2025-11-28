@@ -1,5 +1,6 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MatCard, MatCardActions, MatCardContent, MatCardImage, MatCardHeader, MatCardTitle, MatCardSubtitle } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton, MatIconButton } from '@angular/material/button';
@@ -11,6 +12,7 @@ import { Vehicle } from '../../../domain/model/vehicle.model';
   standalone: true,
   imports: [
     CommonModule,
+    TranslateModule,
     MatCard,
     MatCardContent,
     MatCardActions,
@@ -31,6 +33,7 @@ export class VehicleCard {
   @Input() vehicle!: Vehicle;
   @Output() toggleFavorite = new EventEmitter<string>();
   @Output() viewDetails = new EventEmitter<Vehicle>();
+  private translate = inject(TranslateService);
 
   onToggleFavorite() {
     this.toggleFavorite.emit(this.vehicle.id);
@@ -41,22 +44,11 @@ export class VehicleCard {
   }
 
   getStatusLabel(): string {
-    const statusMap: Record<string, string> = {
-      'available': 'Disponible',
-      'reserved': 'Reservado',
-      'maintenance': 'En mantenimiento',
-      'in_use': 'En uso'
-    };
-    return statusMap[this.vehicle.status] || this.vehicle.status;
+    return this.translate.instant(`garage.vehicle.statuses.${this.vehicle.status}`) || this.vehicle.status;
   }
 
   getTypeLabel(): string {
-    const typeMap: Record<string, string> = {
-      'electric_scooter': 'Scooter Eléctrico',
-      'bike': 'Bicicleta',
-      'electric_bike': 'Bicicleta Eléctrica'
-    };
-    return typeMap[this.vehicle.type] || this.vehicle.type;
+    return this.translate.instant(`garage.vehicle.types.${this.vehicle.type}`) || this.vehicle.type;
   }
 
   getStatusClass(): string {

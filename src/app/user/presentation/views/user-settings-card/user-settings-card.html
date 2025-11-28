@@ -1,7 +1,7 @@
 <div class="settings-card">
   <div class="card-header">
-    <h2>Ajustes</h2>
-    <button class="close-button" (click)="closeCard()" type="button" aria-label="Cerrar">
+    <h2>{{ 'user.settings.title' | translate }}</h2>
+    <button class="close-button" (click)="closeCard()" type="button" [attr.aria-label]="'common.close' | translate">
       <mat-icon>close</mat-icon>
     </button>
   </div>
@@ -9,20 +9,20 @@
   <div class="card-content">
     <ng-container *ngIf="user$ | async as user">
       <div class="settings-section">
-        <h3>Preferencias</h3>
+        <h3>{{ 'user.settings.preferences' | translate }}</h3>
         
         <div class="setting-item">
           <div class="setting-info">
             <mat-icon>language</mat-icon>
             <div>
-              <span class="setting-label">Idioma</span>
-              <span class="setting-description">Selecciona tu idioma preferido</span>
+              <span class="setting-label">{{ 'user.settings.language' | translate }}</span>
+              <span class="setting-description">{{ 'user.settings.languageDescription' | translate }}</span>
             </div>
           </div>
           <select class="setting-control" [(ngModel)]="preferences.language">
-            <option value="es">Español</option>
-            <option value="en">English</option>
-            <option value="pt">Português</option>
+            <option value="es">{{ 'user.settings.languages.es' | translate }}</option>
+            <option value="en">{{ 'user.settings.languages.en' | translate }}</option>
+            <option value="pt">{{ 'user.settings.languages.pt' | translate }}</option>
           </select>
         </div>
 
@@ -30,8 +30,8 @@
           <div class="setting-info">
             <mat-icon>notifications</mat-icon>
             <div>
-              <span class="setting-label">Notificaciones</span>
-              <span class="setting-description">Recibe notificaciones sobre tus viajes</span>
+              <span class="setting-label">{{ 'user.settings.notifications' | translate }}</span>
+              <span class="setting-description">{{ 'user.settings.notificationsDescription' | translate }}</span>
             </div>
           </div>
           <label class="toggle-switch">
@@ -44,32 +44,32 @@
           <div class="setting-info">
             <mat-icon>palette</mat-icon>
             <div>
-              <span class="setting-label">Tema</span>
-              <span class="setting-description">Elige el tema de la aplicación</span>
+              <span class="setting-label">{{ 'user.settings.theme' | translate }}</span>
+              <span class="setting-description">{{ 'user.settings.themeDescription' | translate }}</span>
             </div>
           </div>
           <select class="setting-control" [(ngModel)]="preferences.theme">
-            <option value="light">Claro</option>
-            <option value="dark">Oscuro</option>
-            <option value="auto">Automático</option>
+            <option value="light">{{ 'user.settings.themes.light' | translate }}</option>
+            <option value="dark">{{ 'user.settings.themes.dark' | translate }}</option>
+            <option value="auto">{{ 'user.settings.themes.auto' | translate }}</option>
           </select>
         </div>
       </div>
 
       <div class="settings-section">
-        <h3>Cuenta</h3>
+        <h3>{{ 'user.settings.account' | translate }}</h3>
         
         <div class="setting-item">
           <div class="setting-info">
             <mat-icon>person</mat-icon>
             <div>
-              <span class="setting-label">Información Personal</span>
+              <span class="setting-label">{{ 'user.settings.personalInfo' | translate }}</span>
               <span class="setting-description">{{ user.name }} - {{ user.email }}</span>
             </div>
           </div>
           <button class="setting-action" type="button">
             <mat-icon>edit</mat-icon>
-            Editar
+            {{ 'common.edit' | translate }}
           </button>
         </div>
 
@@ -77,20 +77,20 @@
           <div class="setting-info">
             <mat-icon>delete</mat-icon>
             <div>
-              <span class="setting-label">Eliminar Cuenta</span>
-              <span class="setting-description">Elimina permanentemente tu cuenta y todos tus datos</span>
+              <span class="setting-label">{{ 'user.settings.deleteAccount' | translate }}</span>
+              <span class="setting-description">{{ 'user.settings.deleteAccountDescription' | translate }}</span>
             </div>
           </div>
           <button class="setting-action danger" type="button">
             <mat-icon>delete</mat-icon>
-            Eliminar
+            {{ 'common.delete' | translate }}
           </button>
         </div>
       </div>
 
       <div class="settings-actions">
         <button class="save-button" (click)="savePreferences()" type="button">
-          Guardar Cambios
+          {{ 'user.settings.saveChanges' | translate }}
         </button>
       </div>
     </ng-container>

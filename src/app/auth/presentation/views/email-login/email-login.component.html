@@ -7,7 +7,7 @@
           <path d="M15 9L9 15M9 9L15 15" stroke="white" stroke-width="2" stroke-linecap="round"/>
         </svg>
         <div>
-          <div class="error-title">Ocurrio un Error</div>
+          <div class="error-title">{{ 'auth.emailLogin.errorTitle' | translate }}</div>
           <div class="error-message">{{ authStore.error() }}</div>
         </div>
       </div>
@@ -19,11 +19,11 @@
       </svg>
     </button>
 
-    <h1 class="title">Iniciar Sesión</h1>
-    <p class="subtitle">Ingresa con tu email corporativo</p>
+    <h1 class="title">{{ 'auth.emailLogin.title' | translate }}</h1>
+    <p class="subtitle">{{ 'auth.emailLogin.subtitle' | translate }}</p>
 
     <div class="form-group">
-      <label>Email</label>
+      <label>{{ 'auth.emailLogin.email' | translate }}</label>
       <input
         type="email"
         [(ngModel)]="email"
@@ -32,7 +32,7 @@
     </div>
 
     <div class="form-group">
-      <label>Contraseña</label>
+      <label>{{ 'auth.emailLogin.password' | translate }}</label>
       <div class="password-container">
         <input
           [type]="showPassword() ? 'text' : 'password'"
@@ -55,14 +55,14 @@
     </div>
 
     <div class="forgot-password">
-      <a href="#" class="link">¿Olvidaste tu contraseña?</a>
+      <a href="#" class="link">{{ 'auth.emailLogin.forgotPassword' | translate }}</a>
     </div>
 
     <div class="terms">
-      <p>Al continuar, aceptas la <a href="#" class="link">Política de privacidad</a> y los <a href="#" class="link">Términos de uso</a> de WeRide.</p>
+      <p>{{ 'auth.login.terms' | translate }} <a href="#" class="link">{{ 'auth.login.privacyPolicy' | translate }}</a> {{ 'common.and' | translate }} <a href="#" class="link">{{ 'auth.login.termsOfUse' | translate }}</a> {{ 'auth.login.ofWeRide' | translate }}</p>
     </div>
 
-    <button class="btn-primary" (click)="continue()">Iniciar Sesión</button>
+    <button class="btn-primary" (click)="continue()">{{ 'auth.emailLogin.signIn' | translate }}</button>
   </div>
 </div>
 
