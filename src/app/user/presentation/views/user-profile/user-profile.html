@@ -6,15 +6,15 @@
           <img
             *ngIf="hasProfilePicture"
             [src]="currentUser.profilePicture"
-            alt="{{ currentUser.name || 'Avatar de usuario' }}"
-            title="{{ currentUser.name || 'Avatar de usuario' }}"
+            [alt]="currentUser.name || ('user.profile.avatarAlt' | translate)"
+            [title]="currentUser.name || ('user.profile.avatarAlt' | translate)"
           />
           <span *ngIf="!hasProfilePicture"
             >{{ getInitials(currentUser.name) }}</span
           >
         </div>
         <div class="header-info">
-          <p class="label">Usuario</p>
+          <p class="label">{{ 'user.profile.user' | translate }}</p>
           <h2>{{ currentUser.name }}</h2>
         </div>
       </div>
@@ -26,14 +26,14 @@
         </div>
       </div>
 
-      <button class="icon-button" type="button" aria-label="Configurar perfil">
+      <button class="icon-button" type="button" [attr.aria-label]="'user.profile.configureProfile' | translate">
         <span class="material-symbols-rounded">settings</span>
       </button>
     </div>
 
     <div class="profile-content">
       <div class="options-column">
-        <div class="column-title">Menú rápido</div>
+        <div class="column-title">{{ 'user.profile.quickMenu' | translate }}</div>
         <div class="options-list">
           <button
             class="menu-item"
@@ -56,8 +56,8 @@
               <img
                 *ngIf="hasProfilePicture"
                 [src]="currentUser.profilePicture"
-                alt="{{ currentUser.name || 'Avatar de usuario' }}"
-                title="{{ currentUser.name || 'Avatar de usuario' }}"
+                [alt]="currentUser.name || ('user.profile.avatarAlt' | translate)"
+                [title]="currentUser.name || ('user.profile.avatarAlt' | translate)"
               />
               <span *ngIf="!hasProfilePicture"
                 >{{ getInitials(currentUser.name) }}</span
@@ -83,6 +83,6 @@
 
 <ng-template #emptyProfile>
   <section class="profile-shell">
-    <p>No se encontró información del perfil.</p>
+    <p>{{ 'user.profile.noProfileInfo' | translate }}</p>
   </section>
 </ng-template>

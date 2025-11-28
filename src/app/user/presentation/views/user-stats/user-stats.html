@@ -16,22 +16,22 @@
     <div class="stats-container">
       <div class="stat-item">
         <p class="stat-value">{{ user.statistics.totalTrips }}</p>
-        <span class="stat-label">Trayectos</span>
+        <span class="stat-label">{{ 'user.stats.trips' | translate }}</span>
       </div>
 
       <div class="stat-item">
         <p class="stat-value">{{ user.statistics.totalDistance | number: '1.0-0' }}</p>
-        <span class="stat-label">Metros</span>
+        <span class="stat-label">{{ 'user.stats.meters' | translate }}</span>
       </div>
 
       <div class="stat-item">
         <p class="stat-value">{{ user.statistics.totalSpent | currency: '$' }}</p>
-        <span class="stat-label">Gasto total</span>
+        <span class="stat-label">{{ 'user.stats.totalSpent' | translate }}</span>
       </div>
 
       <div class="stat-item">
         <p class="stat-value">{{ user.statistics.averageRating | number: '1.0-0' }}</p>
-        <span class="stat-label">Puntuación</span>
+        <span class="stat-label">{{ 'user.stats.rating' | translate }}</span>
       </div>
     </div>
   </div>

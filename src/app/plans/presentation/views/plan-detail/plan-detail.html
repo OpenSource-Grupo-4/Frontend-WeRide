@@ -21,10 +21,10 @@
             </p>
             <p><strong>{{ 'plans.discount' | translate }}:</strong> {{ plan.discountPercentage }}%</p>
             <p>
-              <strong>Viajes máximos por día:</strong> {{ plan.maxTripsPerDay }}
+              <strong>{{ 'plans.maxTripsPerDay' | translate }}:</strong> {{ plan.maxTripsPerDay }}
             </p>
             <p>
-              <strong>Minutos máximos por viaje:</strong> {{
+              <strong>{{ 'plans.maxMinutesPerTrip' | translate }}:</strong> {{
               plan.maxMinutesPerTrip }}
             </p>
             <p>
@@ -49,7 +49,7 @@
 
     <ng-template #notFoundTemplate>
       <div>
-        <p>Plan no encontrado.</p>
+        <p>{{ 'plans.notFound' | translate }}</p>
       </div>
     </ng-template>
   </ng-template>

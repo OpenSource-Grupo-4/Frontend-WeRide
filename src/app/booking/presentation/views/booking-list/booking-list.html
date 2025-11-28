@@ -1,9 +1,9 @@
 <div class="booking-container">
   <div class="header">
-    <h1>My Bookings</h1>
+    <h1>{{ 'booking.myBookings' | translate }}</h1>
     <button class="btn-primary" routerLink="/booking/form">
       <mat-icon>add</mat-icon>
-      New Booking
+      {{ 'booking.newBooking' | translate }}
     </button>
   </div>
 
@@ -28,27 +28,27 @@
         </div>
         <div class="detail">
           <mat-icon>access_time</mat-icon>
-          <span>{{ booking.duration || 'N/A' }} minutos</span>
+          <span>{{ booking.duration || ('booking.notAvailable' | translate) }} {{ 'booking.minutes' | translate }}</span>
         </div>
         <div class="detail">
           <mat-icon>attach_money</mat-icon>
-          <span>${{ booking.finalCost ? booking.finalCost.toFixed(2) : 'N/A' }}</span>
+          <span>${{ booking.finalCost ? booking.finalCost.toFixed(2) : ('booking.notAvailable' | translate) }}</span>
         </div>
       </div>
       <div class="booking-actions">
-        <button class="btn-secondary" (click)="editBooking(booking.id)">Edit</button>
-        <button class="btn-danger" (click)="cancelBooking(booking.id)" [disabled]="booking.status !== 'pending'">Cancel</button>
+        <button class="btn-secondary" (click)="editBooking(booking.id)">{{ 'booking.edit' | translate }}</button>
+        <button class="btn-danger" (click)="cancelBooking(booking.id)" [disabled]="booking.status !== 'pending'">{{ 'booking.cancel' | translate }}</button>
       </div>
     </div>
   </div>
 
   <div class="empty-state" *ngIf="!isLoading && bookings.length === 0">
     <mat-icon>book_online</mat-icon>
-    <h2>No bookings yet</h2>
-    <p>Create your first booking to start using WeRide</p>
+    <h2>{{ 'booking.noBookings' | translate }}</h2>
+    <p>{{ 'booking.createFirstBooking' | translate }}</p>
     <button class="btn-primary" routerLink="/booking/form">
       <mat-icon>add</mat-icon>
-      Create Booking
+      {{ 'booking.createBooking' | translate }}
     </button>
   </div>
 </div>

@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
+import { TranslateModule } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { MatIcon } from '@angular/material/icon';
 import { UserStore } from '../../../application/user.store';
@@ -8,7 +9,7 @@ import { UserSettingsStateService } from '../../../application/user-settings-sta
 @Component({
   selector: 'app-user-security-card',
   standalone: true,
-  imports: [CommonModule, MatIcon],
+  imports: [CommonModule, MatIcon, TranslateModule],
   templateUrl: './user-security-card.html',
   styleUrl: './user-security-card.css'
 })

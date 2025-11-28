@@ -2,7 +2,7 @@
   <mat-card class="trip-details-card">
     <div class="card-content" *ngIf="!loading">
       <div class="trip-info">
-        <h3>Scooter Eléctrico</h3>
+        <h3>{{ 'trip.electricScooter' | translate }}</h3>
         <p><strong>{{ 'trip.location' | translate }}:</strong> {{ location || ('common.loading' | translate) }}</p>
         <p><strong>{{ 'garage.vehicle.battery' | translate }}:</strong> {{ battery }}%</p>
         <p>
@@ -24,19 +24,19 @@
               </span>
             </ng-container>
           </div>
-          <span class="rating-label">Déjanos tu puntuación</span>
+          <span class="rating-label">{{ 'trip.leaveRating' | translate }}</span>
         </div>
 
         <div class="trip-actions">
           <button mat-stroked-button class="action-btn" (click)="goToHistory()">
-            Historial de viajes
+            {{ 'trip.tripHistory' | translate }}
           </button>
           <button
             mat-stroked-button
             class="action-btn"
             (click)="goToSettings()"
           >
-            Configuración
+            {{ 'trip.settings' | translate }}
           </button>
         </div>
       </div>
