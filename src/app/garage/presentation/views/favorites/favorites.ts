@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {CommonModule} from '@angular/common';
+import {TranslateModule} from '@ngx-translate/core';
 import {VehicleCard} from '../vehicle-card/vehicle-card';
 import {Vehicle} from '../../../domain/model/vehicle.model';
 import {GetVehiclesUseCase} from '../../../application/use-cases/get-vehicles.usecase';
@@ -9,7 +10,7 @@ import {ToggleFavoriteUseCase} from '../../../application/use-cases/toggle-favor
 @Component({
   selector: 'app-favorites',
   standalone: true,
-  imports: [CommonModule, VehicleCard],
+  imports: [CommonModule, VehicleCard, TranslateModule],
   templateUrl: './favorites.html',
   styleUrl: './favorites.css'
 })

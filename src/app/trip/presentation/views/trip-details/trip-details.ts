@@ -3,6 +3,7 @@ import {MatCard} from '@angular/material/card';
 import {MatButton} from '@angular/material/button';
 import {CommonModule} from '@angular/common';
 import {Router} from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 import { TripService, TripWithDetails } from '../../../../core/services/trip.service';
 
 @Component({
@@ -11,6 +12,7 @@ import { TripService, TripWithDetails } from '../../../../core/services/trip.ser
     MatCard,
     MatButton,
     CommonModule,
+    TranslateModule,
   ],
   templateUrl: './trip-details.html',
   styleUrl: './trip-details.css'

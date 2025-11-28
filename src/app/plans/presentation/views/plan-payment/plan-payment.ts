@@ -7,6 +7,7 @@ import {MatInputModule} from '@angular/material/input';
 import {MatButtonModule} from '@angular/material/button';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import {MatIconModule} from '@angular/material/icon';
+import {TranslateModule} from '@ngx-translate/core';
 import {Plan} from '../../../domain/model/plan.entity';
 import {PlanStore} from '../../../application/plan.store';
 import {Observable, Subject} from 'rxjs';
@@ -22,7 +23,8 @@ import {takeUntil} from 'rxjs/operators';
     MatInputModule,
     MatButtonModule,
     MatSlideToggleModule,
-    MatIconModule
+    MatIconModule,
+    TranslateModule
   ],
   templateUrl: './plan-payment.html',
   styleUrl: './plan-payment.css'

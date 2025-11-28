@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { TranslateModule } from '@ngx-translate/core';
 
 interface Vehicle {
   id: string;
@@ -18,7 +19,7 @@ interface Vehicle {
 
 @Component({
   selector: 'app-schedule-unlock',
-  imports: [CommonModule, FormsModule, MatIconModule, MatButtonModule],
+  imports: [CommonModule, FormsModule, MatIconModule, MatButtonModule, TranslateModule],
   templateUrl: './schedule-unlock.html',
   styleUrl: './schedule-unlock.css'
 })

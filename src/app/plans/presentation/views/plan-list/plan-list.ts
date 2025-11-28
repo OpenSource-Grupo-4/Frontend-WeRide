@@ -4,6 +4,7 @@ import { Router, RouterModule } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCard, MatCardHeader, MatCardTitle, MatCardContent, MatCardActions } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Plan } from '../../../domain/model/plan.entity';
 import { PlanStore } from '../../../application/plan.store';
 import { Observable } from 'rxjs';
@@ -20,7 +21,8 @@ import { Observable } from 'rxjs';
     MatCardTitle,
     MatCardContent,
     MatCardActions,
-    MatButtonModule
+    MatButtonModule,
+    TranslateModule
   ],
   templateUrl: './plan-list.html',
   styleUrl: './plan-list.css'
@@ -28,6 +30,7 @@ import { Observable } from 'rxjs';
 export class PlanList implements OnInit {
   private readonly store = inject(PlanStore);
   private readonly router = inject(Router);
+  private readonly translate = inject(TranslateService);
 
   plans$: Observable<Plan[]> = this.store.plans$;
   selectedPlan$: Observable<Plan | null> = this.store.selectedPlan$;
@@ -42,12 +45,8 @@ export class PlanList implements OnInit {
   }
 
   getFormattedDuration(plan: Plan): string {
-    const durationMap: { [key: string]: string } = {
-      'monthly': 'Mensual',
-      'quarterly': 'Trimestral',
-      'annual': 'Anual'
-    };
-    return durationMap[plan.duration] || plan.duration;
+    const durationKey = `plans.${plan.duration}`;
+    return this.translate.instant(durationKey) || plan.duration;
   }
 
   getFormattedPrice(plan: Plan): string {

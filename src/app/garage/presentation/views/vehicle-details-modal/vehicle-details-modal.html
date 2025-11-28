@@ -10,7 +10,7 @@
     <div class="vehicle-image-section">
       <img
         [src]="vehicle.image"
-        [alt]="'Imagen del vehículo ' + vehicle.brand + ' ' + vehicle.model"
+        [alt]="('garage.details.vehicleImageAlt' | translate) + ' ' + vehicle.brand + ' ' + vehicle.model"
         [title]="vehicle.brand + ' ' + vehicle.model"
         class="vehicle-image"
       />
@@ -23,37 +23,37 @@
 
     <div class="vehicle-info-grid">
       <div class="info-section">
-        <h3>Información Básica</h3>
+        <h3>{{ 'garage.details.basicInfo' | translate }}</h3>
         <div class="info-row">
-          <span class="label">Marca:</span>
+          <span class="label">{{ 'garage.details.brand' | translate }}:</span>
           <span class="value">{{ vehicle.brand }}</span>
         </div>
         <div class="info-row">
-          <span class="label">Modelo:</span>
+          <span class="label">{{ 'garage.details.model' | translate }}:</span>
           <span class="value">{{ vehicle.model }}</span>
         </div>
         <div class="info-row">
-          <span class="label">Año:</span>
+          <span class="label">{{ 'garage.details.year' | translate }}:</span>
           <span class="value">{{ vehicle.year }}</span>
         </div>
         <div class="info-row">
-          <span class="label">Color:</span>
+          <span class="label">{{ 'garage.details.color' | translate }}:</span>
           <span class="value">{{ vehicle.color }}</span>
         </div>
         <div class="info-row">
-          <span class="label">Placa:</span>
+          <span class="label">{{ 'garage.details.licensePlate' | translate }}:</span>
           <span class="value">{{ vehicle.licensePlate }}</span>
         </div>
         <div class="info-row">
-          <span class="label">Tipo:</span>
+          <span class="label">{{ 'garage.details.type' | translate }}:</span>
           <span class="value">{{ vehicle.type }}</span>
         </div>
       </div>
 
       <div class="info-section">
-        <h3>Rendimiento</h3>
+        <h3>{{ 'garage.details.performance' | translate }}</h3>
         <div class="info-row">
-          <span class="label">Batería:</span>
+          <span class="label">{{ 'garage.vehicle.battery' | translate }}:</span>
           <span
             class="value battery-value"
             [style.color]="getBatteryColor(vehicle.battery)"
@@ -62,19 +62,19 @@
           </span>
         </div>
         <div class="info-row">
-          <span class="label">Velocidad Máx:</span>
+          <span class="label">{{ 'garage.details.maxSpeed' | translate }}:</span>
           <span class="value">{{ vehicle.maxSpeed }} km/h</span>
         </div>
         <div class="info-row">
-          <span class="label">Alcance:</span>
+          <span class="label">{{ 'garage.vehicle.range' | translate }}:</span>
           <span class="value">{{ vehicle.range }} km</span>
         </div>
         <div class="info-row">
-          <span class="label">Peso:</span>
+          <span class="label">{{ 'garage.details.weight' | translate }}:</span>
           <span class="value">{{ vehicle.weight }} kg</span>
         </div>
         <div class="info-row">
-          <span class="label">Kilómetros Totales:</span>
+          <span class="label">{{ 'garage.details.totalKilometers' | translate }}:</span>
           <span class="value"
             >{{ vehicle.totalKilometers | number:'1.1-1' }} km</span
           >
@@ -82,15 +82,15 @@
       </div>
 
       <div class="info-section">
-        <h3>Precio y Valoración</h3>
+        <h3>{{ 'garage.priceAndRating' | translate }}</h3>
         <div class="info-row">
-          <span class="label">Precio por Minuto:</span>
+          <span class="label">{{ 'garage.pricePerMinute' | translate }}:</span>
           <span class="value price-value"
             >${{ vehicle.pricePerMinute }}/min</span
           >
         </div>
         <div class="info-row">
-          <span class="label">Valoración:</span>
+          <span class="label">{{ 'garage.details.rating' | translate }}:</span>
           <span class="value rating-value">
             <mat-icon class="star-icon">star</mat-icon>
             {{ vehicle.rating }}
@@ -99,9 +99,9 @@
       </div>
 
       <div class="info-section">
-        <h3>Mantenimiento</h3>
+        <h3>{{ 'garage.details.maintenance' | translate }}</h3>
         <div class="info-row">
-          <span class="label">Estado:</span>
+          <span class="label">{{ 'garage.details.maintenanceStatus' | translate }}:</span>
           <span
             class="value maintenance-status"
             [style.color]="getMaintenanceStatusColor(vehicle.maintenanceStatus)"
@@ -110,18 +110,18 @@
           </span>
         </div>
         <div class="info-row">
-          <span class="label">Último Mantenimiento:</span>
+          <span class="label">{{ 'garage.details.lastMaintenance' | translate }}:</span>
           <span class="value">{{ formatDate(vehicle.lastMaintenance) }}</span>
         </div>
         <div class="info-row">
-          <span class="label">Próximo Mantenimiento:</span>
+          <span class="label">{{ 'garage.details.nextMaintenance' | translate }}:</span>
           <span class="value">{{ formatDate(vehicle.nextMaintenance) }}</span>
         </div>
       </div>
     </div>
 
     <div class="features-section">
-      <h3>Características</h3>
+      <h3>{{ 'garage.details.features' | translate }}</h3>
       <div class="features-grid">
         <mat-chip-set>
           <mat-chip
@@ -150,10 +150,10 @@
   </div>
 
   <div mat-dialog-actions class="modal-actions">
-    <button mat-button (click)="onClose()" class="cancel-button">Cerrar</button>
+    <button mat-button (click)="onClose()" class="cancel-button">{{ 'common.close' | translate }}</button>
     <button mat-raised-button color="primary" class="reserve-button">
       <mat-icon>bookmark</mat-icon>
-      Reservar Vehículo
+      {{ 'garage.details.reserveVehicle' | translate }}
     </button>
   </div>
 </div>

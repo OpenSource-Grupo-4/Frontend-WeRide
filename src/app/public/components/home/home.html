@@ -1,49 +1,49 @@
 <div class="home-page">
   <div class="welcome-section">
-    <h1>Welcome to WeRide</h1>
-    <p>Your electric micromobility platform</p>
+    <h1>{{ 'home.welcome' | translate }}</h1>
+    <p>{{ 'home.subtitle' | translate }}</p>
   </div>
 
   <div class="features-grid">
     <div class="feature-card">
       <mat-icon>electric_scooter</mat-icon>
-      <h3>Electric Scooters</h3>
-      <p>Rent electric scooters for short trips around the city</p>
+      <h3>{{ 'home.features.scooters.title' | translate }}</h3>
+      <p>{{ 'home.features.scooters.description' | translate }}</p>
     </div>
 
     <div class="feature-card">
       <mat-icon>pedal_bike</mat-icon>
-      <h3>E-Bikes</h3>
-      <p>Electric bikes for longer distances and exercise</p>
+      <h3>{{ 'home.features.bikes.title' | translate }}</h3>
+      <p>{{ 'home.features.bikes.description' | translate }}</p>
     </div>
 
     <div class="feature-card">
       <mat-icon>schedule</mat-icon>
-      <h3>Schedule Unlock</h3>
-      <p>Schedule your vehicle unlock in advance</p>
+      <h3>{{ 'home.features.schedule.title' | translate }}</h3>
+      <p>{{ 'home.features.schedule.description' | translate }}</p>
     </div>
 
     <div class="feature-card">
       <mat-icon>lock_open</mat-icon>
-      <h3>Unlock Status</h3>
-      <p>Monitor your vehicle's unlock status in real-time</p>
+      <h3>{{ 'home.features.status.title' | translate }}</h3>
+      <p>{{ 'home.features.status.description' | translate }}</p>
     </div>
   </div>
 
   <div class="quick-actions">
-    <h2>Quick Actions</h2>
+    <h2>{{ 'home.quickActions' | translate }}</h2>
     <div class="action-buttons">
       <button class="btn-primary" routerLink="/vehicle-status">
         <mat-icon>lock_open</mat-icon>
-        Check Unlock Status
+        {{ 'home.actions.checkStatus' | translate }}
       </button>
       <button class="btn-secondary" routerLink="/schedule-unlock">
         <mat-icon>schedule</mat-icon>
-        Schedule Unlock
+        {{ 'home.actions.schedule' | translate }}
       </button>
       <button class="btn-tertiary" routerLink="/booking">
         <mat-icon>book_online</mat-icon>
-        View Bookings
+        {{ 'home.actions.viewBookings' | translate }}
       </button>
     </div>
   </div>

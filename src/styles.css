@@ -36,3 +36,25 @@ body {
   .mat-mdc-dialog-container::-webkit-scrollbar-thumb:hover {
   background: #a8a8a8;
 }
+
+.confirm-booking-dialog .mat-mdc-dialog-container,
+.active-booking-dialog .mat-mdc-dialog-container,
+.booking-ending-dialog .mat-mdc-dialog-container,
+.qr-scanner-dialog .mat-mdc-dialog-container,
+.manual-unlock-dialog .mat-mdc-dialog-container,
+.report-problem-dialog .mat-mdc-dialog-container,
+.rate-trip-dialog .mat-mdc-dialog-container {
+  padding: 0 !important;
+  border-radius: 16px !important;
+  overflow: hidden;
+}
+
+.confirm-booking-dialog .mat-mdc-dialog-surface,
+.active-booking-dialog .mat-mdc-dialog-surface,
+.booking-ending-dialog .mat-mdc-dialog-surface,
+.qr-scanner-dialog .mat-mdc-dialog-surface,
+.manual-unlock-dialog .mat-mdc-dialog-surface,
+.report-problem-dialog .mat-mdc-dialog-surface,
+.rate-trip-dialog .mat-mdc-dialog-surface {
+  border-radius: 16px !important;
+}

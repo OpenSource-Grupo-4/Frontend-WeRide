@@ -18,37 +18,37 @@
   <mat-card-content>
     <div class="vehicle-info">
       <div class="info-row">
-        <span class="label">Estado:</span>
+        <span class="label">{{ 'garage.vehicle.status' | translate }}:</span>
         <span class="value" [ngClass]="getStatusClass()"
           >{{ getStatusLabel() }}</span
         >
       </div>
 
       <div class="info-row">
-        <span class="label">Precio:</span>
+        <span class="label">{{ 'garage.vehicle.price' | translate }}:</span>
         <span class="value">${{ vehicle.pricePerMinute }}/min</span>
       </div>
 
       <div class="info-row">
-        <span class="label">Rating:</span>
+        <span class="label">{{ 'garage.vehicle.rating' | translate }}:</span>
         <span class="value">⭐ {{ vehicle.rating }}</span>
       </div>
 
       @if (vehicle.battery > 0) {
       <div class="info-row">
-        <span class="label">Batería:</span>
+        <span class="label">{{ 'garage.vehicle.battery' | translate }}:</span>
         <span class="value">{{ vehicle.battery }}%</span>
       </div>
       }
 
       <div class="info-row">
-        <span class="label">Velocidad Máx:</span>
+        <span class="label">{{ 'garage.vehicle.maxSpeed' | translate }}:</span>
         <span class="value">{{ vehicle.maxSpeed }} km/h</span>
       </div>
 
       @if (vehicle.range > 0) {
       <div class="info-row">
-        <span class="label">Alcance:</span>
+        <span class="label">{{ 'garage.vehicle.range' | translate }}:</span>
         <span class="value">{{ vehicle.range }} km</span>
       </div>
       }
@@ -69,8 +69,8 @@
       color="primary"
       [disabled]="vehicle.status !== 'available'"
     >
-      @if (vehicle.status === 'available') { Reservar } @else { No Disponible }
+      @if (vehicle.status === 'available') { {{ 'garage.vehicle.reserve' | translate }} } @else { {{ 'common.notAvailable' | translate }} }
     </button>
-    <button mat-button (click)="onViewDetails()">Ver Detalles</button>
+    <button mat-button (click)="onViewDetails()">{{ 'garage.vehicle.viewDetails' | translate }}</button>
   </mat-card-actions>
 </mat-card>

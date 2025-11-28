@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { RouterModule } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 import { BookingsApiEndpoint } from '../../../infraestructure/bookings-api-endpoint';
 import { VehiclesApiEndpoint } from '../../../infraestructure/vehicles-api-endpoint';
 import { LocationsApiEndpoint } from '../../../infraestructure/locations-api-endpoint';
@@ -21,7 +22,7 @@ interface BookingView {
 
 @Component({
   selector: 'app-booking-list',
-  imports: [CommonModule, MatIconModule, MatButtonModule, RouterModule],
+  imports: [CommonModule, MatIconModule, MatButtonModule, RouterModule, TranslateModule],
   templateUrl: './booking-list.html',
   styleUrl: './booking-list.css'
 })

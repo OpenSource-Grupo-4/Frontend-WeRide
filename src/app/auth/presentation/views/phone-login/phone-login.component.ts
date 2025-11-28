@@ -2,13 +2,14 @@ import { Component, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
 import { AuthStore } from '../../../application/auth.store';
 import { VerificationComponent } from '../verification/verification.component';
 
 @Component({
   selector: 'app-phone-login',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, TranslateModule],
   templateUrl: './phone-login.component.html',
   styleUrl: './phone-login.component.css'
 })

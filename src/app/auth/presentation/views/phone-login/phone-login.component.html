@@ -6,20 +6,20 @@
       </svg>
     </button>
 
-    <h1 class="title">Introduce Número de Celular</h1>
-    <p class="subtitle">En necesario que ingrese su numero de celular para continuar</p>
+    <h1 class="title">{{ 'auth.phoneLogin.title' | translate }}</h1>
+    <p class="subtitle">{{ 'auth.phoneLogin.subtitle' | translate }}</p>
 
     <div class="input-group">
       <div class="prefix">
-        <label>Prefijo</label>
+        <label>{{ 'auth.phoneLogin.prefix' | translate }}</label>
         <input type="text" [(ngModel)]="prefix" readonly class="input-prefix">
       </div>
       <div class="phone-input">
-        <label>Celular</label>
+        <label>{{ 'auth.phoneLogin.phone' | translate }}</label>
         <input
           type="tel"
           [(ngModel)]="phone"
-          placeholder="912345678"
+          [placeholder]="'auth.phoneLogin.phonePlaceholder' | translate"
           maxlength="9"
           class="input-phone"
         />
@@ -27,10 +27,10 @@
     </div>
 
     <div class="terms">
-      <p>Al continuar, aceptas la <a href="#" class="link">Política de privacidad</a> y los <a href="#" class="link">Términos de uso</a> de WeRide.</p>
+      <p>{{ 'auth.login.terms' | translate }} <a href="#" class="link">{{ 'auth.login.privacyPolicy' | translate }}</a> {{ 'common.and' | translate }} <a href="#" class="link">{{ 'auth.login.termsOfUse' | translate }}</a> {{ 'auth.login.ofWeRide' | translate }}</p>
     </div>
 
-    <button class="btn-primary" (click)="continue()">Siguiente</button>
+    <button class="btn-primary" (click)="continue()">{{ 'common.next' | translate }}</button>
   </div>
 
   @if (showModal()) {
@@ -38,18 +38,18 @@
       <div class="modal-content">
         <button class="close-btn" (click)="closeModal()">×</button>
 
-        <h2>Código de Verificación</h2>
-        <p>Hemos enviado un código de 4 dígitos al número {{ prefix() }}{{ phone() }}</p>
+        <h2>{{ 'auth.phoneLogin.verificationCode' | translate }}</h2>
+        <p>{{ 'auth.phoneLogin.codeSent' | translate }} {{ prefix() }}{{ phone() }}</p>
 
         <div class="code-display">
           <span class="code">{{ verificationCode() }}</span>
           <button class="copy-btn" (click)="copyCode()">
-            {{ copySuccess() ? '✓ Copiado' : 'Copiar' }}
+            {{ copySuccess() ? ('auth.phoneLogin.copied' | translate) : ('auth.phoneLogin.copy' | translate) }}
           </button>
         </div>
 
         <button class="continue-btn" (click)="proceedToVerification()">
-          Continuar
+          {{ 'common.continue' | translate }}
         </button>
       </div>
     </div>

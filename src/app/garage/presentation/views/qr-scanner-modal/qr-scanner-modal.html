@@ -1,0 +1,25 @@
+<div class="qr-scanner-modal">
+  <div class="modal-header">
+    <h2 mat-dialog-title>
+      <mat-icon class="title-icon">qr_code_scanner</mat-icon>
+      {{ 'garage.qrScanner.title' | translate }}
+    </h2>
+    <button mat-icon-button (click)="onClose()" class="close-button">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <div mat-dialog-content class="modal-content">
+    <div class="qr-placeholder">
+      <mat-icon class="qr-icon">qr_code</mat-icon>
+      <p class="placeholder-text">{{ 'garage.qrScanner.scanHere' | translate }}</p>
+    </div>
+  </div>
+
+  <div mat-dialog-actions class="modal-actions">
+    <button mat-raised-button (click)="onOK()" class="ok-button">
+      {{ 'garage.qrScanner.ok' | translate }}
+    </button>
+  </div>
+</div>
+

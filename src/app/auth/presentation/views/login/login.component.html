@@ -1,7 +1,7 @@
 <div class="login-container">
   <div class="login-card">
-    <h1 class="title">Iniciar Sesión</h1>
-    <p class="subtitle">Entra y conduce tu salud</p>
+    <h1 class="title">{{ 'auth.login.title' | translate }}</h1>
+    <p class="subtitle">{{ 'auth.login.subtitle' | translate }}</p>
 
     <div *ngIf="!dataLoaded" class="loading-indicator">
       <div class="spinner"></div>
@@ -32,7 +32,7 @@
             fill="#EA4335"
           />
         </svg>
-        Continuar con Google
+        {{ 'auth.login.continueWithGoogle' | translate }}
       </button>
 
       <button
@@ -40,7 +40,7 @@
         (click)="navigateToPhoneLogin()"
         [disabled]="!dataLoaded"
       >
-        Entrar con número de celular
+        {{ 'auth.login.loginWithPhone' | translate }}
       </button>
 
       <button
@@ -48,7 +48,7 @@
         (click)="navigateToEmailLogin()"
         [disabled]="!dataLoaded"
       >
-        Entrar con mi email de empresa
+        {{ 'auth.login.loginWithEmail' | translate }}
       </button>
 
       <button
@@ -56,20 +56,20 @@
         (click)="loginAsGuest()"
         [disabled]="!dataLoaded"
       >
-        Continuar como invitado
+        {{ 'auth.login.continueAsGuest' | translate }}
       </button>
     </div>
 
     <div class="terms">
       <p>
-        Al continuar, aceptas la
-        <a href="#" class="link">Política de privacidad</a> y los
-        <a href="#" class="link">Términos de uso</a> de WeRide.
+        {{ 'auth.login.terms' | translate }}
+        <a href="#" class="link">{{ 'auth.login.privacyPolicy' | translate }}</a> {{ 'common.and' | translate }}
+        <a href="#" class="link">{{ 'auth.login.termsOfUse' | translate }}</a> {{ 'auth.login.ofWeRide' | translate }}
       </p>
     </div>
   </div>
 
   <div class="illustration">
-    <img src="assets/auth/weride-loginscreen.png" alt="Ilustración WeRide" />
+    <img src="assets/auth/weride-loginscreen.png" [alt]="'auth.login.title' | translate" />
   </div>
 </div>

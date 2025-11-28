@@ -1,7 +1,7 @@
 <div class="plans-layout">
   <div class="plan-list-section">
-    <h2>Planes</h2>
-    <div *ngIf="loading$ | async" class="loading">Cargando planes...</div>
+    <h2>{{ 'plans.title' | translate }}</h2>
+    <div *ngIf="loading$ | async" class="loading">{{ 'plans.loading' | translate }}</div>
     <button
       class="plan-card-btn"
       *ngFor="let plan of (plans$ | async)"
@@ -26,23 +26,23 @@
         <p class="plan-description">{{ selectedPlan.description }}</p>
         <div class="plan-info">
           <p>
-            <strong>Duración:</strong> {{ getFormattedDuration(selectedPlan) }}
+            <strong>{{ 'plans.duration' | translate }}:</strong> {{ getFormattedDuration(selectedPlan) }}
           </p>
-          <p><strong>Precio:</strong> {{ getFormattedPrice(selectedPlan) }}</p>
+          <p><strong>{{ 'plans.price' | translate }}:</strong> {{ getFormattedPrice(selectedPlan) }}</p>
           <p>
-            <strong>Precio por minuto:</strong> ${{ selectedPlan.pricePerMinute
+            <strong>{{ 'plans.pricePerMinute' | translate }}:</strong> ${{ selectedPlan.pricePerMinute
             }}
           </p>
           <p>
-            <strong>Descuento:</strong> {{ selectedPlan.discountPercentage }}%
+            <strong>{{ 'plans.discount' | translate }}:</strong> {{ selectedPlan.discountPercentage }}%
           </p>
           <p>
-            <strong>Minutos gratis al mes:</strong> {{
+            <strong>{{ 'plans.freeMinutesPerMonth' | translate }}:</strong> {{
             selectedPlan.freeMinutesPerMonth }}
           </p>
         </div>
         <div class="plan-benefits">
-          <h4>Beneficios:</h4>
+          <h4>{{ 'plans.benefits' | translate }}:</h4>
           <ul>
             <li *ngFor="let benefit of selectedPlan.benefits">{{ benefit }}</li>
           </ul>
@@ -55,7 +55,7 @@
           class="pay-button"
           (click)="onPayment(selectedPlan)"
         >
-          Pagar
+          {{ 'plans.pay' | translate }}
         </button>
       </mat-card-actions>
     </mat-card>

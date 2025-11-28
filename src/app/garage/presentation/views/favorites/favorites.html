@@ -1,9 +1,9 @@
 <div class="favorites-container">
-  <h1>Mis Vehículos Favoritos</h1>
+  <h1>{{ 'garage.favorites.title' | translate }}</h1>
 
   @if (isLoading) {
     <div class="loading">
-      <p>Cargando favoritos...</p>
+      <p>{{ 'garage.loadingFavorites' | translate }}</p>
     </div>
   }
 
@@ -24,8 +24,8 @@
 
       @if (favoriteVehicles.length === 0) {
         <div class="no-favorites">
-          <p>No tienes vehículos favoritos aún.</p>
-          <p>Explora el garaje y marca tus vehículos preferidos.</p>
+          <p>{{ 'garage.favorites.noFavorites' | translate }}</p>
+          <p>{{ 'garage.favorites.explore' | translate }}</p>
         </div>
       }
     </div>

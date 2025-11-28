@@ -2,13 +2,14 @@ import { Component, inject, signal, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
 import { AuthStore } from '../../../application/auth.store';
 import { RegistrationData } from '../../../domain/model/registration-data.entity';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, TranslateModule],
   templateUrl: './register.component.html',
   styleUrl: './register.component.css'
 })
