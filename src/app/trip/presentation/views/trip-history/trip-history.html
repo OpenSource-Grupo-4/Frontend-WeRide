@@ -11,7 +11,7 @@
       <h3>Viaje ({{ trip.route }})</h3>
       <p>Fecha y hora: {{ trip.date }}</p>
       <p>Vehículo: {{ trip.vehicle }}</p>
-      <p>Duración del viaje: {{ trip.duration }}</p>
+      <p>{{ 'trip.tripDuration' | translate }}: {{ trip.duration }}</p>
       <p>Distancia recorrida: {{ trip.distance }}</p>
       <p>Id del Viaje: {{ trip.id }}</p>
     </div>

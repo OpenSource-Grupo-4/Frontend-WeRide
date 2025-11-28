@@ -99,6 +99,11 @@
     "error": "Error loading vehicles. Please try again.",
     "filterError": "Error applying filters.",
     "noResults": "No vehicles found with the applied filters.",
+    "priceAndRating": "Price and Rating",
+    "pricePerMinute": "Price per Minute",
+    "minPrice": "Min Price ($/min)",
+    "maxPrice": "Max Price ($/min)",
+    "loadingFavorites": "Loading favorites...",
     "vehicle": {
       "status": "Status",
       "price": "Price",
@@ -122,6 +127,8 @@
     }
   },
   "user": {
+    "loadingStats": "Loading stats...",
+    "loadingUserInfo": "Loading user information...",
     "wallet": {
       "title": "Wallet",
       "totalSpent": "Total Spent",
@@ -191,6 +198,13 @@
     "duration": "Duration (minutes)",
     "bookNow": "Book Now",
     "saveDraft": "Save as Draft",
+    "scheduleUnlock": "Schedule Unlock",
+    "selectDate": "Select Date",
+    "durationHours": "Duration (hours)",
+    "hour": "hour",
+    "hours": "hours",
+    "scheduleUnlockButton": "Schedule Unlock",
+    "loadingBookings": "Loading bookings...",
     "summary": {
       "title": "Booking Summary",
       "vehicle": "Vehicle",
@@ -215,7 +229,12 @@
     "tripHistory": "Trip History",
     "startTrip": "Start Trip",
     "endTrip": "End Trip",
-    "tripDetails": "Trip Details"
+    "tripDetails": "Trip Details",
+    "tripDuration": "Trip Duration",
+    "location": "Location",
+    "remainingTime": "Remaining Time",
+    "extraTime": "Extra Time",
+    "loadingTrip": "Loading trip data..."
   },
   "plans": {
     "title": "Plans",
@@ -223,7 +242,16 @@
     "monthly": "Monthly",
     "annual": "Annual",
     "perMonth": "per month",
-    "perYear": "per year"
+    "perYear": "per year",
+    "loading": "Loading plans...",
+    "loadingPlan": "Loading plan...",
+    "duration": "Duration",
+    "price": "Price",
+    "pricePerMinute": "Price per minute",
+    "discount": "Discount",
+    "freeMinutesPerMonth": "Free minutes per month",
+    "benefits": "Benefits",
+    "pay": "Pay"
   },
   "home": {
     "welcome": "Welcome to WeRide",

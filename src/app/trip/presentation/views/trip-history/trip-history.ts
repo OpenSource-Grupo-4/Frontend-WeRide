@@ -3,6 +3,7 @@ import { CommonModule} from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import {MatIconButton} from '@angular/material/button';
 import {Router} from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 import { forkJoin } from 'rxjs';
 import { TripService } from '../../../../core/services/trip.service';
 import { VehicleService } from '../../../../core/services/vehicle.service';
@@ -22,7 +23,7 @@ interface TripDisplay {
 @Component({
   selector: 'app-trip-history',
   standalone: true,
-  imports: [MatIconModule, MatIconButton, CommonModule],
+  imports: [MatIconModule, MatIconButton, CommonModule, TranslateModule],
   templateUrl: './trip-history.html',
   styleUrl: './trip-history.css'
 })

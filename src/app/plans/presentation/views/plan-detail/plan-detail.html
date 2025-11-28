@@ -1,6 +1,6 @@
 <div class="plan-detail-container">
   <ng-container *ngIf="loading$ | async; else contentTemplate">
-    <div class="loading">Cargando plan...</div>
+    <div class="loading">{{ 'plans.loadingPlan' | translate }}</div>
   </ng-container>
 
   <ng-template #contentTemplate>
@@ -14,12 +14,12 @@
         <mat-card-content>
           <p class="plan-description">{{ plan.description }}</p>
           <div class="plan-info">
-            <p><strong>Duración:</strong> {{ getFormattedDuration(plan) }}</p>
-            <p><strong>Precio:</strong> {{ getFormattedPrice(plan) }}</p>
+            <p><strong>{{ 'plans.duration' | translate }}:</strong> {{ getFormattedDuration(plan) }}</p>
+            <p><strong>{{ 'plans.price' | translate }}:</strong> {{ getFormattedPrice(plan) }}</p>
             <p>
-              <strong>Precio por minuto:</strong> ${{ plan.pricePerMinute }}
+              <strong>{{ 'plans.pricePerMinute' | translate }}:</strong> ${{ plan.pricePerMinute }}
             </p>
-            <p><strong>Descuento:</strong> {{ plan.discountPercentage }}%</p>
+            <p><strong>{{ 'plans.discount' | translate }}:</strong> {{ plan.discountPercentage }}%</p>
             <p>
               <strong>Viajes máximos por día:</strong> {{ plan.maxTripsPerDay }}
             </p>
@@ -28,12 +28,12 @@
               plan.maxMinutesPerTrip }}
             </p>
             <p>
-              <strong>Minutos gratis al mes:</strong> {{
+              <strong>{{ 'plans.freeMinutesPerMonth' | translate }}:</strong> {{
               plan.freeMinutesPerMonth }}
             </p>
           </div>
           <div class="plan-benefits">
-            <h4>Beneficios:</h4>
+            <h4>{{ 'plans.benefits' | translate }}:</h4>
             <ul>
               <li *ngFor="let benefit of plan.benefits">{{ benefit }}</li>
             </ul>
@@ -41,7 +41,7 @@
         </mat-card-content>
         <mat-card-actions>
           <button mat-raised-button color="primary" (click)="onPayment(plan)">
-            Pagar
+            {{ 'plans.pay' | translate }}
           </button>
         </mat-card-actions>
       </mat-card>

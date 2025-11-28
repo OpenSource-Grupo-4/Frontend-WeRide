@@ -18,12 +18,9 @@ export class App implements OnInit {
     const browserLang = navigator.language.split('-')[0];
     const lang = ['en', 'es'].includes(browserLang) ? browserLang : defaultLang;
     
-    // Set default language first
     this.translate.setDefaultLang(defaultLang);
     
-    // Then use the detected language
     this.translate.use(lang).subscribe(() => {
-      // Language loaded successfully
     });
   }
 }

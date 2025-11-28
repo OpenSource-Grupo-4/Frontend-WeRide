@@ -24,7 +24,6 @@ export class LoginComponent implements OnInit {
   loadingMessage = '';
 
   async ngOnInit(): Promise<void> {
-    // Use get() instead of instant() to avoid issues if translations aren't loaded yet
     this.translate.get('auth.login.loadingMessage').subscribe(msg => {
       this.loadingMessage = msg;
     });

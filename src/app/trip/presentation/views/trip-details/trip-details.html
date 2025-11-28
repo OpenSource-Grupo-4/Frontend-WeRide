@@ -3,12 +3,12 @@
     <div class="card-content" *ngIf="!loading">
       <div class="trip-info">
         <h3>Scooter Eléctrico</h3>
-        <p><strong>Ubicación:</strong> {{ location || 'Cargando...' }}</p>
-        <p><strong>Batería:</strong> {{ battery }}%</p>
+        <p><strong>{{ 'trip.location' | translate }}:</strong> {{ location || ('common.loading' | translate) }}</p>
+        <p><strong>{{ 'garage.vehicle.battery' | translate }}:</strong> {{ battery }}%</p>
         <p>
-          <strong>Tiempo restante:</strong> {{ remainingTime || 'Cargando...' }}
+          <strong>{{ 'trip.remainingTime' | translate }}:</strong> {{ remainingTime || ('common.loading' | translate) }}
         </p>
-        <p><strong>Tiempo Extra:</strong> {{ extraTime || 'Cargando...' }}</p>
+        <p><strong>{{ 'trip.extraTime' | translate }}:</strong> {{ extraTime || ('common.loading' | translate) }}</p>
       </div>
 
       <div class="trip-footer">
@@ -43,7 +43,7 @@
     </div>
 
     <div class="loading-content" *ngIf="loading">
-      <p>Cargando datos del viaje...</p>
+      <p>{{ 'trip.loadingTrip' | translate }}</p>
     </div>
   </mat-card>
 </div>

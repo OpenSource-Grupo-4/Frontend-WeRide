@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
+import { TranslateModule } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { UserStore } from '../../../application/user.store';
 import { User } from '../../../domain/model/user.entity';
@@ -7,7 +8,7 @@ import { User } from '../../../domain/model/user.entity';
 @Component({
   selector: 'app-user-stats',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, TranslateModule],
   templateUrl: './user-stats.html',
   styleUrl: './user-stats.css'
 })

@@ -21,7 +21,7 @@ export class LanguageSwitcher implements OnInit {
   constructor(private translate: TranslateService) {}
 
   ngOnInit() {
-    this.currentLang = this.translate.currentLang || this.translate.defaultLang || 'es';
+    this.currentLang = this.translate.currentLang || 'es';
     this.translate.onLangChange.subscribe(event => {
       this.currentLang = event.lang;
     });

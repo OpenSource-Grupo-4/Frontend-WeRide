@@ -8,7 +8,7 @@
   </div>
 
   <div *ngIf="isLoading" class="loading-state">
-    <p>Cargando reservas...</p>
+    <p>{{ 'booking.loadingBookings' | translate }}</p>
   </div>
 
   <div class="bookings-grid" *ngIf="!isLoading">

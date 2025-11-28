@@ -4,6 +4,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
 import { CommonModule } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
 import { Vehicle } from '../../../domain/model/vehicle.model';
 
 @Component({
@@ -14,7 +15,8 @@ import { Vehicle } from '../../../domain/model/vehicle.model';
     MatDialogModule,
     MatButtonModule,
     MatIconModule,
-    MatChipsModule
+    MatChipsModule,
+    TranslateModule
   ],
   templateUrl: './vehicle-details-modal.html',
   styleUrl: './vehicle-details-modal.css'

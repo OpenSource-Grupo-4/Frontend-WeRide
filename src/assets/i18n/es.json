@@ -99,6 +99,11 @@
     "error": "Error al cargar los vehículos. Por favor, intente nuevamente.",
     "filterError": "Error al aplicar filtros.",
     "noResults": "No se encontraron vehículos con los filtros aplicados.",
+    "priceAndRating": "Precio y Valoración",
+    "pricePerMinute": "Precio por Minuto",
+    "minPrice": "Precio Min ($/min)",
+    "maxPrice": "Precio Max ($/min)",
+    "loadingFavorites": "Cargando favoritos...",
     "vehicle": {
       "status": "Estado",
       "price": "Precio",
@@ -122,6 +127,8 @@
     }
   },
   "user": {
+    "loadingStats": "Cargando estadísticas...",
+    "loadingUserInfo": "Cargando información del usuario...",
     "wallet": {
       "title": "Cartera",
       "totalSpent": "Total Gastado",
@@ -191,6 +198,13 @@
     "duration": "Duración (minutos)",
     "bookNow": "Reservar Ahora",
     "saveDraft": "Guardar como Borrador",
+    "scheduleUnlock": "Programar Desbloqueo",
+    "selectDate": "Seleccionar Fecha",
+    "durationHours": "Duración (horas)",
+    "hour": "hora",
+    "hours": "horas",
+    "scheduleUnlockButton": "Programar Desbloqueo",
+    "loadingBookings": "Cargando reservas...",
     "summary": {
       "title": "Resumen de Reserva",
       "vehicle": "Vehículo",
@@ -215,7 +229,12 @@
     "tripHistory": "Historial de Viajes",
     "startTrip": "Iniciar Viaje",
     "endTrip": "Finalizar Viaje",
-    "tripDetails": "Detalles del Viaje"
+    "tripDetails": "Detalles del Viaje",
+    "tripDuration": "Duración del viaje",
+    "location": "Ubicación",
+    "remainingTime": "Tiempo restante",
+    "extraTime": "Tiempo Extra",
+    "loadingTrip": "Cargando datos del viaje..."
   },
   "plans": {
     "title": "Planes",
@@ -223,7 +242,16 @@
     "monthly": "Mensual",
     "annual": "Anual",
     "perMonth": "por mes",
-    "perYear": "por año"
+    "perYear": "por año",
+    "loading": "Cargando planes...",
+    "loadingPlan": "Cargando plan...",
+    "duration": "Duración",
+    "price": "Precio",
+    "pricePerMinute": "Precio por minuto",
+    "discount": "Descuento",
+    "freeMinutesPerMonth": "Minutos gratis al mes",
+    "benefits": "Beneficios",
+    "pay": "Pagar"
   },
   "home": {
     "welcome": "Bienvenido a WeRide",

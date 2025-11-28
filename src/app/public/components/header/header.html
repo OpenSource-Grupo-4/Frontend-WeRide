@@ -9,6 +9,7 @@
   </div>
 
   <div class="right-section">
+    <app-language-switcher></app-language-switcher>
     <button mat-icon-button class="notification-btn">
       <mat-icon>notifications</mat-icon>
     </button>
@@ -16,7 +17,7 @@
       <button mat-icon-button>
         <mat-icon>account_circle</mat-icon>
       </button>
-      <span class="user-name-nav">User</span>
+      <span class="user-name-nav">{{ 'navigation.user' | translate }}</span>
     </div>
     <button mat-icon-button class="more-btn">
       <mat-icon>more_vert</mat-icon>

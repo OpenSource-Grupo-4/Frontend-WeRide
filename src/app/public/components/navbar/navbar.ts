@@ -3,6 +3,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { TranslateModule } from '@ngx-translate/core';
+import { LanguageSwitcher } from '../language-switcher/language-switcher';
 
 @Component({
   selector: 'app-navbar',
@@ -10,7 +11,8 @@ import { TranslateModule } from '@ngx-translate/core';
     MatToolbarModule,
     MatIconModule,
     MatButtonModule,
-    TranslateModule
+    TranslateModule,
+    LanguageSwitcher
   ],
   templateUrl: './navbar.html',
   styleUrl: './navbar.css'

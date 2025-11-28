@@ -16,7 +16,6 @@
   padding: 0 3rem;
 }
 
-/* Pantallas medianas: 2 columnas */
 @media (min-width: 768px) and (max-width: 1200px) {
   .vehicle-grid {
     grid-template-columns: repeat(2, 1fr);
@@ -25,7 +24,6 @@
   }
 }
 
-/* Pantallas pequeñas: 1 columna */
 @media (max-width: 767px) {
   .vehicle-grid {
     grid-template-columns: 1fr;

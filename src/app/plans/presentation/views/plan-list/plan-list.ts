@@ -4,6 +4,7 @@ import { Router, RouterModule } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCard, MatCardHeader, MatCardTitle, MatCardContent, MatCardActions } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
+import { TranslateModule } from '@ngx-translate/core';
 import { Plan } from '../../../domain/model/plan.entity';
 import { PlanStore } from '../../../application/plan.store';
 import { Observable } from 'rxjs';
@@ -20,7 +21,8 @@ import { Observable } from 'rxjs';
     MatCardTitle,
     MatCardContent,
     MatCardActions,
-    MatButtonModule
+    MatButtonModule,
+    TranslateModule
   ],
   templateUrl: './plan-list.html',
   styleUrl: './plan-list.css'

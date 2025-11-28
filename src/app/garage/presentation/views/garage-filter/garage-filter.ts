@@ -4,6 +4,7 @@ import {MatInput} from '@angular/material/input';
 import {FormsModule} from '@angular/forms';
 import {MatOption, MatSelect} from '@angular/material/select';
 import {MatButton} from '@angular/material/button';
+import {TranslateModule} from '@ngx-translate/core';
 import {VehicleFilter} from '../../../domain/model/vehicle-filter.model';
 import {CommonModule} from '@angular/common';
 
@@ -18,7 +19,8 @@ import {CommonModule} from '@angular/common';
     FormsModule,
     MatSelect,
     MatOption,
-    MatButton
+    MatButton,
+    TranslateModule
   ],
   templateUrl: './garage-filter.html',
   styleUrl: './garage-filter.css'

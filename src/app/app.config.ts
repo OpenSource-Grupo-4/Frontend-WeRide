@@ -32,7 +32,7 @@ export const appConfig: ApplicationConfig = {
       accessToken: 'pk.eyJ1IjoiamhpbXlwb29sIiwiYSI6ImNtZGY4cjVoMDBheHcyaXEzaDV5a2g4eGIifQ.QYmwDCEn26DEW-8RbIG2jg'
     }),
     ...TranslateModule.forRoot({
-      defaultLanguage: 'es',
+      fallbackLang: 'es',
       loader: {
         provide: TranslateLoader,
         useFactory: HttpLoaderFactory,

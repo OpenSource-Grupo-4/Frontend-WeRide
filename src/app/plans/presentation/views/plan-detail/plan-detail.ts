@@ -3,6 +3,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatCard, MatCardActions, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
+import { TranslateModule } from '@ngx-translate/core';
 import { Plan } from '../../../domain/model/plan.entity';
 import { PlanStore } from '../../../application/plan.store';
 import { Observable } from 'rxjs';
@@ -10,7 +11,7 @@ import { Observable } from 'rxjs';
 @Component({
   selector: 'app-plan-detail',
   standalone: true,
-  imports: [CommonModule, MatCard, MatCardHeader, MatCardTitle, MatCardContent, MatCardActions, MatButtonModule],
+  imports: [CommonModule, MatCard, MatCardHeader, MatCardTitle, MatCardContent, MatCardActions, MatButtonModule, TranslateModule],
   templateUrl: './plan-detail.html',
   styleUrl: './plan-detail.css'
 })
