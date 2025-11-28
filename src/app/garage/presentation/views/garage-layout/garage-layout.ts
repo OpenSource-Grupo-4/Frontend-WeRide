@@ -5,6 +5,9 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { GarageFilter } from '../garage-filter/garage-filter';
 import { VehicleCard } from '../vehicle-card/vehicle-card';
 import { VehicleDetailsModal } from '../vehicle-details-modal/vehicle-details-modal';
+import { QrScannerModal } from '../qr-scanner-modal/qr-scanner-modal';
+import { ManualUnlockModal } from '../manual-unlock-modal/manual-unlock-modal';
+import { ReportProblemModal } from '../report-problem-modal/report-problem-modal';
 import { MatButton } from '@angular/material/button';
 import { Vehicle } from '../../../domain/model/vehicle.model';
 import { VehicleFilter } from '../../../domain/model/vehicle-filter.model';
@@ -83,6 +86,37 @@ export class GarageLayout implements OnInit {
       panelClass: 'vehicle-details-dialog',
       autoFocus: false,
       restoreFocus: false
+    });
+  }
+
+  openQrScannerModal(vehicle?: Vehicle) {
+    this.dialog.open(QrScannerModal, {
+      data: vehicle,
+      width: '500px',
+      maxWidth: '95vw',
+      panelClass: 'qr-scanner-dialog',
+      autoFocus: false
+    });
+  }
+
+  openManualUnlockModal(vehicle: Vehicle) {
+    this.dialog.open(ManualUnlockModal, {
+      data: vehicle,
+      width: '800px',
+      maxWidth: '95vw',
+      panelClass: 'manual-unlock-dialog',
+      autoFocus: false
+    });
+  }
+
+  openReportProblemModal(vehicle: Vehicle) {
+    this.dialog.open(ReportProblemModal, {
+      data: vehicle,
+      width: '900px',
+      maxWidth: '95vw',
+      maxHeight: '90vh',
+      panelClass: 'report-problem-dialog',
+      autoFocus: false
     });
   }
 }

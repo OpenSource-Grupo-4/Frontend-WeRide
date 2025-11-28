@@ -159,7 +159,35 @@
         "electric_scooter": "Scooter Eléctrico",
         "bike": "Bicicleta",
         "electric_bike": "Bicicleta Eléctrica"
-      }
+      },
+      "id": "ID vehículo"
+    },
+    "qrScanner": {
+      "title": "Escanea el código QR del vehículo",
+      "ok": "Todo OK.",
+      "scanHere": "Escanea aquí"
+    },
+    "manualUnlock": {
+      "title": "Reserva de vehiculo",
+      "phoneNumber": "Ingresa tu numero de celular:",
+      "password": "Ingresa tu contrasena:",
+      "responsibility": "Soy responsable del uso del siguiente vehiculo y me hago cargo de posibles danos",
+      "unlock": "Desbloquear"
+    },
+    "reportProblem": {
+      "title": "Reportar un problema",
+      "category": "Señala la categoría del problema:",
+      "categories": {
+        "mechanical": "Falla mecánica",
+        "tires": "Neumáticos",
+        "gps": "GPS",
+        "battery": "Batería",
+        "lock": "Bloqueo",
+        "other": "Otro (señalar)"
+      },
+      "description": "Descríbenos tu problema:",
+      "descriptionPlaceholder": "Descripción opcional...",
+      "submit": "Enviar reporte"
     }
   },
   "user": {
@@ -313,6 +341,22 @@
         "emailConfirmation": "Confirmación por email",
         "pushNotification": "Notificación push al desbloquear"
       }
+    },
+    "confirmBooking": {
+      "title": "¿Confirmar reserva de este vehículo?",
+      "reserveWithQR": "Reservar con QR",
+      "reserveWithCode": "Reservar con codigo"
+    },
+    "activeBooking": {
+      "title": "Reserva activa",
+      "message": "Tu reserva ha comenzado. Tienes **{minutes} min** para iniciar tu viaje",
+      "understand": "Entiendo."
+    },
+    "bookingEnding": {
+      "title": "¡Tu reserva está por finalizar!",
+      "message": "Te quedan **{minutes} minutos** antes de que termine tu tiempo",
+      "extendTime": "Extender tiempo (s/.{cost})",
+      "endReservation": "Finalizar reserva"
     }
   },
   "trip": {
@@ -338,7 +382,12 @@
     "tripId": "Id del Viaje",
     "printReceipt": "Imprimir recibo",
     "viewDetails": "Ver detalles",
-    "seeMore": "Ver más"
+    "seeMore": "Ver más",
+    "rateTrip": {
+      "title": "Califica tu viaje!",
+      "subtitle": "Tu opinión nos ayuda a mejorar nuestro servicio",
+      "commentPlaceholder": "Escribe un comentario aquí...."
+    }
   },
   "plans": {
     "title": "Planes",

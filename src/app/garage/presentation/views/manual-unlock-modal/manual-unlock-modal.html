@@ -1,0 +1,47 @@
+<div class="manual-unlock-modal">
+  <div class="modal-header">
+    <h2 mat-dialog-title>{{ 'garage.manualUnlock.title' | translate }}</h2>
+    <button mat-icon-button (click)="onClose()" class="close-button">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <div mat-dialog-content class="modal-content">
+    <div class="content-grid">
+      <div class="form-section">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>{{ 'garage.manualUnlock.phoneNumber' | translate }}</mat-label>
+          <input matInput [(ngModel)]="phoneNumber" type="tel" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>{{ 'garage.manualUnlock.password' | translate }}</mat-label>
+          <input matInput [(ngModel)]="password" type="password" />
+        </mat-form-field>
+
+        <div class="checkbox-container">
+          <mat-checkbox [(ngModel)]="acceptTerms">
+            {{ 'garage.manualUnlock.responsibility' | translate }}
+          </mat-checkbox>
+        </div>
+      </div>
+
+      <div class="vehicle-card">
+        <img [src]="vehicle.image" [alt]="vehicle.brand + ' ' + vehicle.model" class="vehicle-image" />
+        <div class="vehicle-info">
+          <p class="vehicle-type">{{ 'garage.vehicle.types.electric_scooter' | translate }}</p>
+          <p class="vehicle-id">{{ 'garage.vehicle.id' | translate }}: {{ vehicle.id }}</p>
+          <p class="vehicle-battery">{{ 'garage.vehicle.battery' | translate }}: {{ vehicle.battery }}%</p>
+          <p class="vehicle-brand">{{ 'garage.brand' | translate }}: {{ vehicle.brand }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div mat-dialog-actions class="modal-actions">
+    <button mat-raised-button (click)="onUnlock()" [disabled]="!isFormValid()" class="unlock-button">
+      {{ 'garage.manualUnlock.unlock' | translate }}
+    </button>
+  </div>
+</div>
+

@@ -159,7 +159,35 @@
         "electric_scooter": "Electric Scooter",
         "bike": "Bicycle",
         "electric_bike": "Electric Bike"
-      }
+      },
+      "id": "Vehicle ID"
+    },
+    "qrScanner": {
+      "title": "Scan the vehicle's QR code",
+      "ok": "All OK.",
+      "scanHere": "Scan here"
+    },
+    "manualUnlock": {
+      "title": "Vehicle Reservation",
+      "phoneNumber": "Enter your cell phone number:",
+      "password": "Enter your password:",
+      "responsibility": "I am responsible for the use of the following vehicle and I take responsibility for possible damages",
+      "unlock": "Unlock"
+    },
+    "reportProblem": {
+      "title": "Report a problem",
+      "category": "Indicate the problem category:",
+      "categories": {
+        "mechanical": "Mechanical failure",
+        "tires": "Tires",
+        "gps": "GPS",
+        "battery": "Battery",
+        "lock": "Lock",
+        "other": "Other (specify)"
+      },
+      "description": "Describe your problem:",
+      "descriptionPlaceholder": "Optional description...",
+      "submit": "Send report"
     }
   },
   "user": {
@@ -312,6 +340,22 @@
         "emailConfirmation": "Email confirmation",
         "pushNotification": "Push notification when unlocking"
       }
+    },
+    "confirmBooking": {
+      "title": "Confirm reservation of this vehicle?",
+      "reserveWithQR": "Reserve with QR",
+      "reserveWithCode": "Reserve with code"
+    },
+    "activeBooking": {
+      "title": "Active reservation",
+      "message": "Your reservation has started. You have **{minutes} min** to start your trip",
+      "understand": "Understood."
+    },
+    "bookingEnding": {
+      "title": "Your reservation is about to end!",
+      "message": "You have **{minutes} minutes** left before your time ends",
+      "extendTime": "Extend time (s/.{cost})",
+      "endReservation": "End reservation"
     }
   },
   "trip": {
@@ -336,7 +380,12 @@
     "tripId": "Trip ID",
     "printReceipt": "Print receipt",
     "viewDetails": "View details",
-    "seeMore": "See more"
+    "seeMore": "See more",
+    "rateTrip": {
+      "title": "Rate your trip!",
+      "subtitle": "Your opinion helps us improve our service",
+      "commentPlaceholder": "Write a comment here...."
+    }
   },
   "plans": {
     "title": "Plans",
