@@ -8,10 +8,11 @@ import {Vehicle} from '../../../domain/model/vehicle.entity';
 import {Location} from '../../../domain/model/location.entity';
 import {MatDialog} from '@angular/material/dialog';
 import {VehicleDetailsModal} from '../../../../garage/presentation/views/vehicle-details-modal/vehicle-details-modal';
+import {ActiveTripPanel} from '../active-trip-panel/active-trip-panel';
 
 @Component({
   selector: 'app-trip-map',
-  imports: [MapComponent, MarkerComponent, CommonModule],
+  imports: [MapComponent, MarkerComponent, CommonModule, ActiveTripPanel],
   templateUrl: './trip-map.html',
   styleUrl: './trip-map.css'
 })
@@ -38,14 +39,27 @@ export class TripMap implements OnInit, OnDestroy {
   nearbyVehicles = computed(() => this.tripStore.nearbyVehicles());
   selectedLocation = computed(() => this.tripStore.selectedLocation());
   connectionError = computed(() => this.tripStore.connectionError());
+  isActiveTrip = computed(() => this.tripStore.isActiveTrip());
+  currentVehicle = computed(() => this.tripStore.currentVehicle());
+  currentLocation = computed(() => this.tripStore.currentLocation());
+  destinationLocation = computed(() => this.tripStore.destinationLocation());
+  tripStartTime = computed(() => this.tripStore.tripStartTime());
+  estimatedEndTime = computed(() => this.tripStore.estimatedEndTime());
+
+  elapsedTime = signal<string>('00:00:00');
+  remainingTime = signal<string>('00:00:00');
+  currentBattery = signal<number>(0);
+  estimatedDistance = signal<number>(0);
 
   private watchId?: number;
+  private tripUpdateInterval?: number;
   private readonly NEARBY_DISTANCE_KM = 2;
 
   ngOnInit(): void {
     this.loadLocations();
     this.loadVehicles();
     this.startLocationTracking();
+    this.startTripUpdates();
   }
 
   loadLocations() {
@@ -177,8 +191,41 @@ export class TripMap implements OnInit, OnDestroy {
     if (vehicleLocation) {
       this.tripStore.setCurrentVehicle(vehicle);
       this.tripStore.setCurrentLocation(vehicleLocation);
-      console.log('Vehículo reservado:', vehicle);
+      
+      const destinationLocation = this.getRandomDestination(vehicleLocation);
+      if (destinationLocation) {
+        this.tripStore.setDestinationLocation(destinationLocation);
+      }
+      
+      const startTime = new Date();
+      const estimatedEndTime = new Date(startTime.getTime() + 30 * 60000);
+      this.tripStore.startTrip(startTime, estimatedEndTime);
+      
+      this.currentBattery.set(vehicle.battery);
+      const distance = this.calculateDistanceBetweenLocations(vehicleLocation, destinationLocation!);
+      this.estimatedDistance.set(distance);
+      
+      this.clearSelection();
     }
+  }
+
+  getRandomDestination(startLocation: Location): Location | null {
+    const locations = this.tripStore.locations();
+    const availableDestinations = locations.filter(loc => loc.id !== startLocation.id);
+    if (availableDestinations.length > 0) {
+      const randomIndex = Math.floor(Math.random() * availableDestinations.length);
+      return availableDestinations[randomIndex];
+    }
+    return null;
+  }
+
+  calculateDistanceBetweenLocations(loc1: Location, loc2: Location): number {
+    return this.calculateDistance(
+      loc1.coordinates.lat,
+      loc1.coordinates.lng,
+      loc2.coordinates.lat,
+      loc2.coordinates.lng
+    );
   }
 
   startLocationTracking() {
@@ -202,9 +249,63 @@ export class TripMap implements OnInit, OnDestroy {
     }
   }
 
+  startTripUpdates() {
+    this.tripUpdateInterval = window.setInterval(() => {
+      if (this.isActiveTrip()) {
+        this.updateTripInfo();
+      }
+    }, 1000);
+  }
+
+  updateTripInfo() {
+    const startTime = this.tripStartTime();
+    const endTime = this.estimatedEndTime();
+    
+    if (startTime && endTime) {
+      const now = new Date();
+      const elapsed = now.getTime() - startTime.getTime();
+      const remaining = endTime.getTime() - now.getTime();
+      
+      this.elapsedTime.set(this.formatTime(elapsed));
+      this.remainingTime.set(remaining > 0 ? this.formatTime(remaining) : '00:00:00');
+      
+      const vehicle = this.currentVehicle();
+      if (vehicle) {
+        const batteryDrain = (elapsed / 60000) * 0.5;
+        const newBattery = Math.max(0, vehicle.battery - batteryDrain);
+        this.currentBattery.set(Math.round(newBattery));
+      }
+    }
+  }
+
+  formatTime(milliseconds: number): string {
+    const totalSeconds = Math.floor(milliseconds / 1000);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+    
+    return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+  }
+
+  endTrip() {
+    this.tripStore.endTrip();
+    this.elapsedTime.set('00:00:00');
+    this.remainingTime.set('00:00:00');
+    this.currentBattery.set(0);
+    this.estimatedDistance.set(0);
+  }
+
+  retryTripUpdate() {
+    this.tripStore.setConnectionError(false);
+    this.updateTripInfo();
+  }
+
   ngOnDestroy(): void {
     if(this.watchId) {
       navigator.geolocation.clearWatch(this.watchId);
+    }
+    if(this.tripUpdateInterval) {
+      clearInterval(this.tripUpdateInterval);
     }
   }
 }

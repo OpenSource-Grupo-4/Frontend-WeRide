@@ -5,40 +5,60 @@
     [center]="[-77.0935755943619, -12.076630586486122]"
     (mapClick)="onMapClick($event)"
   >
-    @for (marker of markers; track $index) {
-      <mgl-marker
-        [lngLat]="[marker.lng, marker.lat]"
-      >
-        <img
-          src="https://cdn-icons-png.flaticon.com/512/684/684908.png"
-          class="location-marker"
-          alt="marker"
-        />
-      </mgl-marker>
+    @if (!isActiveTrip()) {
+      @for (marker of markers; track $index) {
+        <mgl-marker
+          [lngLat]="[marker.lng, marker.lat]"
+        >
+          <img
+            src="https://cdn-icons-png.flaticon.com/512/684/684908.png"
+            class="location-marker"
+            alt="marker"
+          />
+        </mgl-marker>
+      }
+
+      @for (item of vehicleMarkers(); track item.vehicle.id) {
+        <mgl-marker
+          [lngLat]="[item.location!.coordinates.lng, item.location!.coordinates.lat]"
+        >
+          <div class="vehicle-marker">
+            <img
+              [src]="item.vehicle.type === 'bike' 
+                ? 'https://cdn-icons-png.flaticon.com/512/2972/2972185.png' 
+                : 'https://cdn-icons-png.flaticon.com/512/3774/3774278.png'"
+              class="vehicle-icon"
+              [alt]="item.vehicle.brand"
+            />
+            <div class="battery-indicator">{{item.vehicle.battery}}%</div>
+          </div>
+        </mgl-marker>
+      }
+
+      @if (selectedLocation()) {
+        <mgl-marker
+          [lngLat]="[selectedLocation()!.lng, selectedLocation()!.lat]"
+        >
+          <div class="selected-marker"></div>
+        </mgl-marker>
+      }
     }
 
-    @for (item of vehicleMarkers(); track item.vehicle.id) {
+    @if (isActiveTrip() && currentLocation() && destinationLocation()) {
       <mgl-marker
-        [lngLat]="[item.location!.coordinates.lng, item.location!.coordinates.lat]"
+        [lngLat]="[currentLocation()!.coordinates.lng, currentLocation()!.coordinates.lat]"
       >
-        <div class="vehicle-marker">
-          <img
-            [src]="item.vehicle.type === 'bike' 
-              ? 'https://cdn-icons-png.flaticon.com/512/2972/2972185.png' 
-              : 'https://cdn-icons-png.flaticon.com/512/3774/3774278.png'"
-            class="vehicle-icon"
-            [alt]="item.vehicle.brand"
-          />
-          <div class="battery-indicator">{{item.vehicle.battery}}%</div>
+        <div class="start-marker">
+          <div class="marker-label">Inicio</div>
         </div>
       </mgl-marker>
-    }
 
-    @if (selectedLocation()) {
       <mgl-marker
-        [lngLat]="[selectedLocation()!.lng, selectedLocation()!.lat]"
+        [lngLat]="[destinationLocation()!.coordinates.lng, destinationLocation()!.coordinates.lat]"
       >
-        <div class="selected-marker"></div>
+        <div class="destination-marker">
+          <div class="marker-label">Destino</div>
+        </div>
       </mgl-marker>
     }
 
@@ -52,7 +72,19 @@
 
   </mgl-map>
 
-  @if (connectionError()) {
+  @if (isActiveTrip() && currentVehicle() && currentLocation() && destinationLocation()) {
+    <app-active-trip-panel
+      [elapsedTime]="elapsedTime()"
+      [remainingTime]="remainingTime()"
+      [currentBattery]="currentBattery()"
+      [estimatedDistance]="estimatedDistance()"
+      [connectionError]="connectionError()"
+      (onEndTrip)="endTrip()"
+      (onRetryUpdate)="retryTripUpdate()"
+    />
+  }
+
+  @if (connectionError() && !isActiveTrip()) {
     <div class="error-overlay">
       <div class="error-content">
         <div class="error-icon">⚠️</div>
@@ -63,7 +95,7 @@
     </div>
   }
 
-  @if (selectedLocation() && !connectionError()) {
+  @if (selectedLocation() && !connectionError() && !isActiveTrip()) {
     <div class="info-panel">
       <div class="info-header">
         <h3 class="info-title">Vehículos Cercanos</h3>
