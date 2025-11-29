@@ -17,7 +17,7 @@
   align-items: center;
   padding: 1.25rem;
   border-bottom: 2px solid #f3f4f6;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background:#7c3aed;
   border-radius: 16px 16px 0 0;
 }
 
@@ -44,9 +44,16 @@
 
 .end-trip-button:hover {
   background-color: white;
-  color: #667eea;
-  transform: translateY(-2px);
+  color: #2544cf;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.trip-status {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  border-radius: 10px;    
 }
 
 .vehicle-trip-info {
@@ -58,7 +65,7 @@
   gap: 1rem;
   margin-bottom: 1.5rem;
   padding: 1rem;
-  background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+  background: #f3f4f6;
   border-radius: 12px;
 }
 
@@ -112,7 +119,6 @@
 
 .trip-stat:hover {
   border-color: #667eea;
-  transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(102, 126, 234, 0.15);
 }
 
@@ -141,7 +147,7 @@
 }
 
 .trip-route-info {
-  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  background: #fde68a;
   border-radius: 12px;
   padding: 1.25rem;
   margin-bottom: 1rem;
@@ -184,13 +190,6 @@
   top: 2rem;
   bottom: 2rem;
   width: 2px;
-  background: repeating-linear-gradient(
-    to bottom,
-    #94a3b8 0px,
-    #94a3b8 8px,
-    transparent 8px,
-    transparent 16px
-  );
 }
 
 .route-details {
@@ -210,15 +209,6 @@
   font-size: 0.9375rem;
   color: #1f2937;
   font-weight: 700;
-}
-
-.trip-status {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 1rem;
-  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
-  border-radius: 10px;
 }
 
 .status-indicator {

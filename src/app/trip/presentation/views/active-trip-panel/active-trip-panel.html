@@ -1,7 +1,11 @@
 <div class="trip-info-panel">
   <div class="trip-header">
-    <h3 class="trip-title">🚴 Viaje en Curso</h3>
+    <h3 class="trip-title">Viaje en Curso</h3>
     <button class="end-trip-button" (click)="endTrip()">Finalizar</button>
+  </div>
+  <div class="trip-status">
+    <div class="status-indicator"></div>
+    <span class="status-text">Viaje en progreso</span>
   </div>
 
   <div class="vehicle-trip-info">
@@ -67,10 +71,6 @@
       </div>
     </div>
 
-    <div class="trip-status">
-      <div class="status-indicator"></div>
-      <span class="status-text">Viaje en progreso</span>
-    </div>
   </div>
 </div>
 
