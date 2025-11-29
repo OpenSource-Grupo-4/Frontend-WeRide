@@ -1,7 +1,12 @@
 <div class="trip-info-panel">
   <div class="trip-header">
     <h3 class="trip-title">Viaje en Curso</h3>
-    <button class="end-trip-button" (click)="endTrip()">Finalizar</button>
+    <div class="header-actions">
+      <button class="report-problem-button" (click)="reportProblem()" title="{{ 'trip.reportProblem.reportButton' | translate }}">
+        <span class="button-icon">⚠️</span>
+      </button>
+      <button class="end-trip-button" (click)="endTrip()">Finalizar</button>
+    </div>
   </div>
   <div class="trip-status">
     <div class="status-indicator"></div>

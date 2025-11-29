@@ -386,7 +386,31 @@
     "rateTrip": {
       "title": "Califica tu viaje!",
       "subtitle": "Tu opinión nos ayuda a mejorar nuestro servicio",
-      "commentPlaceholder": "Escribe un comentario aquí...."
+      "commentPlaceholder": "Escribe un comentario aquí....",
+      "thankYou": "¡Gracias por tu calificación!",
+      "savedOffline": "Tu calificación se guardó localmente y se enviará cuando haya conexión"
+    },
+    "reportProblem": {
+      "title": "Reportar un problema",
+      "category": "Señala la categoría del problema:",
+      "categories": {
+        "mechanical": "Falla mecánica",
+        "tires": "Neumáticos",
+        "gps": "GPS",
+        "battery": "Batería",
+        "lock": "Bloqueo",
+        "other": "Otro (señalar)"
+      },
+      "description": "Descríbenos tu problema:",
+      "descriptionPlaceholder": "Descripción opcional...",
+      "submit": "Enviar reporte",
+      "reportButton": "Reportar Problema",
+      "success": "¡Reporte enviado con éxito!",
+      "savedOffline": "Tu reporte se guardó localmente y se enviará cuando haya conexión"
+    },
+    "vehicleInfo": {
+      "battery": "Batería",
+      "brand": "Marca"
     }
   },
   "plans": {

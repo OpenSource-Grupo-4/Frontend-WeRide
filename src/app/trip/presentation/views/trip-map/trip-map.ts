@@ -9,6 +9,13 @@ import {Location} from '../../../domain/model/location.entity';
 import {MatDialog} from '@angular/material/dialog';
 import {VehicleDetailsModal} from '../../../../garage/presentation/views/vehicle-details-modal/vehicle-details-modal';
 import {ActiveTripPanel} from '../active-trip-panel/active-trip-panel';
+import {ReportProblemModal} from '../report-problem-modal/report-problem-modal';
+import {RateTripModal} from '../rate-trip-modal/rate-trip-modal';
+import {ProblemReportsApiEndpoint} from '../../../infrastructure/problem-reports-api-endpoint';
+import {RatingsApiEndpoint} from '../../../infrastructure/ratings-api-endpoint';
+import {OfflineSyncService} from '../../../application/offline-sync.service';
+import {MatSnackBar} from '@angular/material/snack-bar';
+import {TranslateService} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-trip-map',
@@ -21,6 +28,11 @@ export class TripMap implements OnInit, OnDestroy {
   private vehiclesApi = inject(VehiclesApiEndpoint);
   protected tripStore = inject(TripStore);
   private dialog = inject(MatDialog);
+  private problemReportsApi = inject(ProblemReportsApiEndpoint);
+  private ratingsApi = inject(RatingsApiEndpoint);
+  private offlineSyncService = inject(OfflineSyncService);
+  private snackBar = inject(MatSnackBar);
+  private translate = inject(TranslateService);
 
   userLocation = signal<[number, number] | null>(null);
   markers: Array<{lng: number, lat: number}> = [];
@@ -60,6 +72,13 @@ export class TripMap implements OnInit, OnDestroy {
     this.loadVehicles();
     this.startLocationTracking();
     this.startTripUpdates();
+    
+    // Try to sync offline data on component init if there's connection
+    setTimeout(() => {
+      if (!this.connectionError()) {
+        this.syncOfflineData();
+      }
+    }, 2000);
   }
 
   loadLocations() {
@@ -162,6 +181,27 @@ export class TripMap implements OnInit, OnDestroy {
     this.tripStore.setConnectionError(false);
     this.loadLocations();
     this.loadVehicles();
+    
+    // Attempt to sync offline data when connection is restored
+    this.syncOfflineData();
+  }
+
+  private syncOfflineData() {
+    const pendingCount = this.offlineSyncService.getPendingCount();
+    
+    if (pendingCount.total > 0) {
+      this.offlineSyncService.syncAll().then(() => {
+        const remainingCount = this.offlineSyncService.getPendingCount();
+        if (remainingCount.total === 0) {
+          this.showMessage(
+            this.translate.instant('common.success') + ': Datos sincronizados',
+            'success'
+          );
+        }
+      }).catch((error) => {
+        console.error('Error syncing offline data:', error);
+      });
+    }
   }
 
   clearSelection() {
@@ -288,11 +328,183 @@ export class TripMap implements OnInit, OnDestroy {
   }
 
   endTrip() {
+    const currentTrip = this.tripStore.currentTrip();
+    
+    // Open rate trip modal after ending trip
+    this.openRateTripModal();
+    
+    // End the trip in store
     this.tripStore.endTrip();
     this.elapsedTime.set('00:00:00');
     this.remainingTime.set('00:00:00');
     this.currentBattery.set(0);
     this.estimatedDistance.set(0);
+  }
+
+  openReportProblemModal() {
+    const vehicle = this.currentVehicle();
+    if (!vehicle) return;
+
+    const dialogRef = this.dialog.open(ReportProblemModal, {
+      data: vehicle,
+      width: '900px',
+      maxWidth: '95vw',
+      maxHeight: '90vh',
+      panelClass: 'report-problem-dialog',
+      autoFocus: false,
+      restoreFocus: false
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.submitProblemReport(result);
+      }
+    });
+  }
+
+  submitProblemReport(reportData: any) {
+    const isOffline = this.connectionError();
+
+    if (isOffline) {
+      // Save to local storage for later sync
+      this.offlineSyncService.queueProblemReport({
+        vehicleId: reportData.vehicleId,
+        categories: reportData.categories,
+        description: reportData.description,
+        tripId: this.tripStore.currentTrip()?.id
+      });
+
+      this.showMessage(
+        this.translate.instant('trip.reportProblem.savedOffline'),
+        'info'
+      );
+    } else {
+      // Submit directly to API
+      this.problemReportsApi.create({
+        vehicleId: reportData.vehicleId,
+        categories: reportData.categories,
+        description: reportData.description,
+        tripId: this.tripStore.currentTrip()?.id
+      }).subscribe({
+        next: () => {
+          this.showMessage(
+            this.translate.instant('trip.reportProblem.success'),
+            'success'
+          );
+        },
+        error: (error) => {
+          console.error('Error submitting problem report:', error);
+          // Fallback to offline queue if submission fails
+          this.offlineSyncService.queueProblemReport({
+            vehicleId: reportData.vehicleId,
+            categories: reportData.categories,
+            description: reportData.description,
+            tripId: this.tripStore.currentTrip()?.id
+          });
+          this.showMessage(
+            this.translate.instant('trip.reportProblem.savedOffline'),
+            'info'
+          );
+        }
+      });
+    }
+  }
+
+  openRateTripModal() {
+    const trip = this.tripStore.currentTrip();
+    if (!trip) {
+      // Create a mock trip object for now
+      const mockTrip = {
+        id: `trip_${Date.now()}`,
+        vehicleId: this.currentVehicle()?.id || '',
+        startLocationId: this.currentLocation()?.id || '',
+        endLocationId: this.destinationLocation()?.id || ''
+      };
+
+      const dialogRef = this.dialog.open(RateTripModal, {
+        data: mockTrip,
+        width: '600px',
+        maxWidth: '95vw',
+        panelClass: 'rate-trip-dialog',
+        autoFocus: false,
+        restoreFocus: false
+      });
+
+      dialogRef.afterClosed().subscribe((result) => {
+        if (result) {
+          this.submitRating(result);
+        }
+      });
+    } else {
+      const dialogRef = this.dialog.open(RateTripModal, {
+        data: trip,
+        width: '600px',
+        maxWidth: '95vw',
+        panelClass: 'rate-trip-dialog',
+        autoFocus: false,
+        restoreFocus: false
+      });
+
+      dialogRef.afterClosed().subscribe((result) => {
+        if (result) {
+          this.submitRating(result);
+        }
+      });
+    }
+  }
+
+  submitRating(ratingData: any) {
+    const isOffline = this.connectionError();
+
+    if (isOffline) {
+      // Save to local storage for later sync
+      this.offlineSyncService.queueRating({
+        tripId: ratingData.tripId,
+        rating: ratingData.rating,
+        comment: ratingData.comment
+      });
+
+      this.showMessage(
+        this.translate.instant('trip.rateTrip.savedOffline'),
+        'info'
+      );
+    } else {
+      // Submit directly to API
+      this.ratingsApi.create({
+        tripId: ratingData.tripId,
+        rating: ratingData.rating,
+        comment: ratingData.comment
+      }).subscribe({
+        next: () => {
+          this.showMessage(
+            this.translate.instant('trip.rateTrip.thankYou'),
+            'success'
+          );
+        },
+        error: (error) => {
+          console.error('Error submitting rating:', error);
+          // Fallback to offline queue if submission fails
+          this.offlineSyncService.queueRating({
+            tripId: ratingData.tripId,
+            rating: ratingData.rating,
+            comment: ratingData.comment
+          });
+          this.showMessage(
+            this.translate.instant('trip.rateTrip.savedOffline'),
+            'info'
+          );
+        }
+      });
+    }
+  }
+
+  private showMessage(message: string, type: 'success' | 'error' | 'info') {
+    this.snackBar.open(message, this.translate.instant('common.close'), {
+      duration: 4000,
+      horizontalPosition: 'center',
+      verticalPosition: 'bottom',
+      panelClass: [`snackbar-${type}`]
+    });
   }
 
   retryTripUpdate() {

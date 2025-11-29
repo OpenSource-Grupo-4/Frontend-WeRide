@@ -1,10 +1,11 @@
 import {Component, computed, inject, input, output} from '@angular/core';
 import {CommonModule} from '@angular/common';
+import {TranslateModule} from '@ngx-translate/core';
 import {TripStore} from '../../../application/trip.store';
 
 @Component({
   selector: 'app-active-trip-panel',
-  imports: [CommonModule],
+  imports: [CommonModule, TranslateModule],
   templateUrl: './active-trip-panel.html',
   styleUrl: './active-trip-panel.css'
 })
@@ -19,6 +20,7 @@ export class ActiveTripPanel {
 
   onEndTrip = output<void>();
   onRetryUpdate = output<void>();
+  onReportProblem = output<void>();
 
   currentVehicle = computed(() => this.tripStore.currentVehicle());
   currentLocation = computed(() => this.tripStore.currentLocation());
@@ -30,5 +32,9 @@ export class ActiveTripPanel {
 
   retryUpdate() {
     this.onRetryUpdate.emit();
+  }
+
+  reportProblem() {
+    this.onReportProblem.emit();
   }
 }

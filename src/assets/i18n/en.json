@@ -384,7 +384,31 @@
     "rateTrip": {
       "title": "Rate your trip!",
       "subtitle": "Your opinion helps us improve our service",
-      "commentPlaceholder": "Write a comment here...."
+      "commentPlaceholder": "Write a comment here....",
+      "thankYou": "Thank you for your rating!",
+      "savedOffline": "Your rating has been saved locally and will be sent when there is a connection"
+    },
+    "reportProblem": {
+      "title": "Report a problem",
+      "category": "Indicate the problem category:",
+      "categories": {
+        "mechanical": "Mechanical failure",
+        "tires": "Tires",
+        "gps": "GPS",
+        "battery": "Battery",
+        "lock": "Lock",
+        "other": "Other (specify)"
+      },
+      "description": "Describe your problem:",
+      "descriptionPlaceholder": "Optional description...",
+      "submit": "Send report",
+      "reportButton": "Report Problem",
+      "success": "Report sent successfully!",
+      "savedOffline": "Your report has been saved locally and will be sent when there is a connection"
+    },
+    "vehicleInfo": {
+      "battery": "Battery",
+      "brand": "Brand"
     }
   },
   "plans": {
