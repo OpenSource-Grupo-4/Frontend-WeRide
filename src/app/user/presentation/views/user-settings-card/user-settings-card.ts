@@ -39,8 +39,11 @@ export class UserSettingsCard implements OnInit {
   }
 
   savePreferences(): void {
-    // TODO: Implementar guardado de preferencias
     console.log('Guardando preferencias:', this.preferences);
+  }
+
+  openPersonalInfo(): void {
+    this.stateService.setActiveSection('account');
   }
 
   getLanguageName(code: string): string {

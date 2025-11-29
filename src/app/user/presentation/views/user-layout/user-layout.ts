@@ -9,6 +9,7 @@ import { UserHistoryCard } from '../user-history-card/user-history-card';
 import { UserSecurityCard } from '../user-security-card/user-security-card';
 import { UserHelpCard } from '../user-help-card/user-help-card';
 import { UserSettingsCard } from '../user-settings-card/user-settings-card';
+import { UserPersonalInfoCard } from '../user-personal-info-card/user-personal-info-card';
 import { UserSettingsStateService, UserSettingsSection } from '../../../application/user-settings-state.service';
 
 @Component({
@@ -23,7 +24,8 @@ import { UserSettingsStateService, UserSettingsSection } from '../../../applicat
     UserHistoryCard,
     UserSecurityCard,
     UserHelpCard,
-    UserSettingsCard
+    UserSettingsCard,
+    UserPersonalInfoCard
   ],
   templateUrl: './user-layout.html',
   styleUrl: './user-layout.css'

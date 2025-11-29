@@ -14,7 +14,7 @@
       "emergencyContact": "+51987654322",
       "verificationStatus": "verified",
       "registrationDate": "2024-01-15T10:00:00Z",
-      "preferences": {
+      "preferences": {  
         "language": "es",
         "notifications": true,
         "theme": "light"

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 
-export type UserSettingsSection = 'wallet' | 'history' | 'security' | 'help' | 'settings' | null;
+export type UserSettingsSection = 'wallet' | 'history' | 'security' | 'help' | 'settings' | 'account' | null;
 
 @Injectable({
   providedIn: 'root'

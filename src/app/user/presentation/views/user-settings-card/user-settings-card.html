@@ -67,7 +67,7 @@
               <span class="setting-description">{{ user.name }} - {{ user.email }}</span>
             </div>
           </div>
-          <button class="setting-action" type="button">
+          <button class="setting-action" type="button" (click)="openPersonalInfo()">
             <mat-icon>edit</mat-icon>
             {{ 'common.edit' | translate }}
           </button>
