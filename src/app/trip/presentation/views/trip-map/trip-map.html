@@ -74,13 +74,20 @@
         <div class="vehicles-list">
           @for (vehicle of nearbyVehicles(); track vehicle.id) {
             <div class="vehicle-card">
-              <img [src]="vehicle.image" [alt]="vehicle.brand" class="vehicle-image">
+              <div class="vehicle-card-image">
+                <img [src]="vehicle.image" [alt]="vehicle.brand" class="vehicle-image">
+                <div class="battery-badge">{{vehicle.battery}}%</div>
+              </div>
               <div class="vehicle-info">
                 <h4 class="vehicle-name">{{vehicle.brand}} {{vehicle.model}}</h4>
-                <p class="vehicle-details">Batería: {{vehicle.battery}}%</p>
-                <p class="vehicle-details">Precio: ${{vehicle.pricePerMinute}}/min</p>
-                <div class="vehicle-rating">⭐ {{vehicle.rating}}</div>
+                <div class="vehicle-details-row">
+                  <span class="vehicle-price">💰 ${{vehicle.pricePerMinute}}/min</span>
+                  <span class="vehicle-rating">⭐ {{vehicle.rating}}</span>
+                </div>
               </div>
+              <button class="details-button" (click)="openVehicleDetails(vehicle)">
+                Ver Detalles
+              </button>
             </div>
           }
         </div>

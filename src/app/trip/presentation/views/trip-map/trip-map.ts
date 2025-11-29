@@ -6,6 +6,8 @@ import {TripStore} from '../../../application/trip.store';
 import {CommonModule} from '@angular/common';
 import {Vehicle} from '../../../domain/model/vehicle.entity';
 import {Location} from '../../../domain/model/location.entity';
+import {MatDialog} from '@angular/material/dialog';
+import {VehicleDetailsModal} from '../../../../garage/presentation/views/vehicle-details-modal/vehicle-details-modal';
 
 @Component({
   selector: 'app-trip-map',
@@ -17,6 +19,7 @@ export class TripMap implements OnInit, OnDestroy {
   private locationsApi = inject(LocationsApiEndpoint);
   private vehiclesApi = inject(VehiclesApiEndpoint);
   protected tripStore = inject(TripStore);
+  private dialog = inject(MatDialog);
 
   userLocation = signal<[number, number] | null>(null);
   markers: Array<{lng: number, lat: number}> = [];
@@ -150,6 +153,32 @@ export class TripMap implements OnInit, OnDestroy {
   clearSelection() {
     this.tripStore.setSelectedLocation(null);
     this.tripStore.setNearbyVehicles([]);
+  }
+
+  openVehicleDetails(vehicle: Vehicle) {
+    const dialogRef = this.dialog.open(VehicleDetailsModal, {
+      width: '800px',
+      maxWidth: '95vw',
+      data: vehicle,
+      panelClass: 'vehicle-details-dialog'
+    });
+
+    dialogRef.componentInstance.dialogRef.afterClosed().subscribe((result) => {
+      if (result === 'reserve') {
+        this.reserveVehicle(vehicle);
+      }
+    });
+  }
+
+  reserveVehicle(vehicle: Vehicle) {
+    const locations = this.tripStore.locations();
+    const vehicleLocation = locations.find(loc => loc.id === vehicle.location);
+    
+    if (vehicleLocation) {
+      this.tripStore.setCurrentVehicle(vehicle);
+      this.tripStore.setCurrentLocation(vehicleLocation);
+      console.log('Vehículo reservado:', vehicle);
+    }
   }
 
   startLocationTracking() {
