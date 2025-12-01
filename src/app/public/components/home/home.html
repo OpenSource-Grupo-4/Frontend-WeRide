@@ -37,7 +37,7 @@
         <mat-icon>lock_open</mat-icon>
         {{ 'home.actions.checkStatus' | translate }}
       </button>
-      <button class="btn-secondary" routerLink="/schedule-unlock">
+      <button class="btn-secondary" (click)="onScheduleUnlock()">
         <mat-icon>schedule</mat-icon>
         {{ 'home.actions.schedule' | translate }}
       </button>

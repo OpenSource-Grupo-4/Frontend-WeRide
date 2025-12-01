@@ -68,9 +68,13 @@
       mat-raised-button
       color="primary"
       [disabled]="vehicle.status !== 'available'"
+      (click)="onReserve()"
     >
-      @if (vehicle.status === 'available') { {{ 'garage.vehicle.reserve' | translate }} } @else { {{ 'common.notAvailable' | translate }} }
+      @if (vehicle.status === 'available') { {{ 'garage.vehicle.reserve' |
+      translate }} } @else { {{ 'common.notAvailable' | translate }} }
     </button>
-    <button mat-button (click)="onViewDetails()">{{ 'garage.vehicle.viewDetails' | translate }}</button>
+    <button mat-button (click)="onViewDetails()">
+      {{ 'garage.vehicle.viewDetails' | translate }}
+    </button>
   </mat-card-actions>
 </mat-card>

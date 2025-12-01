@@ -33,6 +33,7 @@ export class VehicleCard {
   @Input() vehicle!: Vehicle;
   @Output() toggleFavorite = new EventEmitter<string>();
   @Output() viewDetails = new EventEmitter<Vehicle>();
+  @Output() reserve = new EventEmitter<Vehicle>();
   private translate = inject(TranslateService);
 
   onToggleFavorite() {
@@ -41,6 +42,10 @@ export class VehicleCard {
 
   onViewDetails() {
     this.viewDetails.emit(this.vehicle);
+  }
+
+  onReserve() {
+    this.reserve.emit(this.vehicle);
   }
 
   getStatusLabel(): string {

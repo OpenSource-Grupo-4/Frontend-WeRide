@@ -1,7 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { Router } from '@angular/router';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { ActiveBookingService } from '../../../../booking/application/active-booking.service';
+import { BookingConfirmationModal } from '../../../../booking/presentation/views/booking-confirmation-modal/booking-confirmation-modal';
 import { GarageFilter } from '../garage-filter/garage-filter';
 import { VehicleCard } from '../vehicle-card/vehicle-card';
 import { VehicleDetailsModal } from '../vehicle-details-modal/vehicle-details-modal';
@@ -33,6 +37,10 @@ export class GarageLayout implements OnInit {
   filteredVehicles: Vehicle[] = [];
   isLoading = false;
   error: string | null = null;
+
+  private router = inject(Router);
+  private snackBar = inject(MatSnackBar);
+  private activeBookingService = inject(ActiveBookingService);
 
   constructor(
     private dialog: MatDialog,
@@ -117,6 +125,46 @@ export class GarageLayout implements OnInit {
       maxHeight: '90vh',
       panelClass: 'report-problem-dialog',
       autoFocus: false
+    });
+  }
+
+  navigateToScheduleUnlock(vehicle: Vehicle): void {
+    const activeBooking = this.activeBookingService.getActiveBooking();
+
+    if (activeBooking) {
+      const snackBarRef = this.snackBar.open(
+        'Ya tienes una reserva activa',
+        'Ver Reserva',
+        {
+          duration: 5000,
+          horizontalPosition: 'end',
+          verticalPosition: 'top',
+          panelClass: ['info-snackbar']
+        }
+      );
+
+      snackBarRef.onAction().subscribe(() => {
+        this.router.navigate(['/trip/details']);
+      });
+      return;
+    }
+
+    // Open confirmation modal
+    const dialogRef = this.dialog.open(BookingConfirmationModal, {
+      data: { vehicle },
+      width: '500px',
+      maxWidth: '95vw',
+      panelClass: 'booking-confirmation-dialog',
+      autoFocus: false
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        const immediate = result.action === 'book_now';
+        this.router.navigate(['/schedule-unlock'], {
+          state: { vehicle, immediate }
+        });
+      }
     });
   }
 }
