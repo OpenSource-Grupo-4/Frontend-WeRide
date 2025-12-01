@@ -1,10 +1,10 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, computed, signal } from '@angular/core';
 import {MatCard} from '@angular/material/card';
 import {MatButton} from '@angular/material/button';
 import {CommonModule} from '@angular/common';
 import {Router} from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { TripService, TripWithDetails } from '../../../../core/services/trip.service';
+import { TripStore } from '../../../application/trip.store';
 
 @Component({
   selector: 'app-trip-details',
@@ -17,57 +17,84 @@ import { TripService, TripWithDetails } from '../../../../core/services/trip.ser
   templateUrl: './trip-details.html',
   styleUrl: './trip-details.css'
 })
-export class TripDetails implements OnInit {
+export class TripDetails implements OnInit, OnDestroy {
   private router = inject(Router);
-  private tripService = inject(TripService);
+  private tripStore = inject(TripStore);
 
-  currentTrip: TripWithDetails | null = null;
-  location = '';
-  battery = 0;
-  remainingTime = '';
-  extraTime = '';
-  rating = 0;
-  loading = false;
+  isActiveTrip = computed(() => this.tripStore.isActiveTrip());
+  currentVehicle = computed(() => this.tripStore.currentVehicle());
+  currentLocation = computed(() => this.tripStore.currentLocation());
+  destinationLocation = computed(() => this.tripStore.destinationLocation());
+  tripStartTime = computed(() => this.tripStore.tripStartTime());
+  estimatedEndTime = computed(() => this.tripStore.estimatedEndTime());
+
+  elapsedTime = signal<string>('00:00');
+  remainingTime = signal<string>('00:00');
+  extraTime = signal<string>('Aún no sobrepasas tu tiempo');
+  rating = signal<number>(0);
+
+  private timeUpdateInterval?: number;
 
   ngOnInit() {
-    this.loadCurrentTripData();
+    if (this.isActiveTrip()) {
+      this.startTimeUpdates();
+    }
   }
 
-  loadCurrentTripData() {
-    this.loading = true;
-
-    this.tripService.loadLatestTrip().subscribe({
-      next: (tripWithDetails: TripWithDetails | null) => {
-        if (tripWithDetails) {
-          this.currentTrip = tripWithDetails;
-          this.updateDisplayData(tripWithDetails);
-        }
-        this.loading = false;
-      },
-      error: (error: any) => {
-        console.error('Error loading trip data:', error);
-        this.loading = false;
-      }
-    });
+  ngOnDestroy() {
+    if (this.timeUpdateInterval) {
+      clearInterval(this.timeUpdateInterval);
+    }
   }
 
-  private updateDisplayData(trip: TripWithDetails) {
-    if (trip.endLocation) {
-      this.location = trip.endLocation.address;
-    }
+  private startTimeUpdates() {
+    this.updateTimes();
+    this.timeUpdateInterval = window.setInterval(() => {
+      this.updateTimes();
+    }, 1000);
+  }
 
-    if (trip.vehicle) {
-      this.battery = trip.vehicle.battery;
-    }
+  private updateTimes() {
+    const startTime = this.tripStartTime();
+    const estimatedEnd = this.estimatedEndTime();
+    
+    if (!startTime || !estimatedEnd) return;
 
-    const durationMinutes = Math.floor(trip.duration);
-    const durationSeconds = Math.floor((trip.duration % 1) * 60);
-    this.remainingTime = `${durationMinutes}:${durationSeconds.toString().padStart(2, '0')} min`;
-    this.extraTime = 'Aun no sobrepasas tu tiempo';
+    const now = new Date();
+    const elapsed = now.getTime() - startTime.getTime();
+    const remaining = estimatedEnd.getTime() - now.getTime();
+
+    const elapsedMinutes = Math.floor(elapsed / 60000);
+    const elapsedSeconds = Math.floor((elapsed % 60000) / 1000);
+    this.elapsedTime.set(`${elapsedMinutes.toString().padStart(2, '0')}:${elapsedSeconds.toString().padStart(2, '0')} min`);
+
+    if (remaining > 0) {
+      const remainingMinutes = Math.floor(remaining / 60000);
+      const remainingSeconds = Math.floor((remaining % 60000) / 1000);
+      this.remainingTime.set(`${remainingMinutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')} min`);
+      this.extraTime.set('Aún no sobrepasas tu tiempo');
+    } else {
+      const overtimeMinutes = Math.floor(Math.abs(remaining) / 60000);
+      const overtimeSeconds = Math.floor((Math.abs(remaining) % 60000) / 1000);
+      this.remainingTime.set('00:00 min');
+      this.extraTime.set(`Tiempo extra: ${overtimeMinutes.toString().padStart(2, '0')}:${overtimeSeconds.toString().padStart(2, '0')} min`);
+    }
+  }
+
+  getVehicleType(): string {
+    const vehicle = this.currentVehicle();
+    if (!vehicle) return 'Electric Scooter';
+    
+    const typeMap: { [key: string]: string } = {
+      'electric_scooter': 'Scooter Eléctrico',
+      'bike': 'Bicicleta',
+      'electric_bike': 'Bicicleta Eléctrica'
+    };
+    return typeMap[vehicle.type] || 'Electric Scooter';
   }
 
   setRating(stars: number) {
-    this.rating = stars;
+    this.rating.set(stars);
   }
 
   goToHistory() {
@@ -75,7 +102,15 @@ export class TripDetails implements OnInit {
   }
 
   goToSettings() {
-    this.router.navigate(['/trip/settings']);
+    this.router.navigate(['/user/profile']);
+  }
+
+  goToGarage() {
+    this.router.navigate(['/garage']);
+  }
+
+  goToScheduleBooking() {
+    this.router.navigate(['/garage']);
   }
 }
 
