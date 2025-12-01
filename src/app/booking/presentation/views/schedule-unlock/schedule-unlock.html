@@ -24,6 +24,11 @@
       </option>
     </select>
 
+    <div *ngIf="availabilityError" class="error-message">
+      <mat-icon>error</mat-icon>
+      <span>{{ availabilityError }}</span>
+    </div>
+
     <div class="summary" *ngIf="selectedVehicle">
       <h3>{{ 'booking.summary.title' | translate }}</h3>
       <div class="summary-content">

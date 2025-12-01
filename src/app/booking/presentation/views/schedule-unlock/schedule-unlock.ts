@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+  import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
@@ -6,11 +6,18 @@ import { MatButtonModule } from '@angular/material/button';
 import { TranslateModule } from '@ngx-translate/core';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
 import { Vehicle } from '../../../../garage/domain/model/vehicle.model';
 import { BookingsApiEndpoint } from '../../../infraestructure/bookings-api-endpoint';
 import { toDomainBooking } from '../../../infraestructure/booking-assembler';
 import { ActiveBookingService } from '../../../application/active-booking.service';
 import { BookingStore } from '../../../application/booking.store';
+import { UnlockMethodSelectionModal } from '../unlock-method-selection-modal/unlock-method-selection-modal';
+import { UnlockRequestsApiEndpoint } from '../../../infraestructure/unlockRequests-api-endpoint';
+import { UnlockRequest } from '../../../domain/model/unlockRequest.entity';
+import { firstValueFrom } from 'rxjs';
+import { ManualUnlockModal } from '../../../../garage/presentation/views/manual-unlock-modal/manual-unlock-modal';
+import { QrScannerModal } from '../../../../garage/presentation/views/qr-scanner-modal/qr-scanner-modal';
 
 @Component({
   selector: 'app-schedule-unlock',
@@ -24,6 +31,10 @@ export class ScheduleUnlockComponent implements OnInit {
   private bookingsApi = inject(BookingsApiEndpoint);
   private activeBookingService = inject(ActiveBookingService);
   private bookingStore = inject(BookingStore);
+  private dialog = inject(MatDialog);
+  private unlockRequestsApi = inject(UnlockRequestsApiEndpoint);
+
+  availabilityError: string = '';
 
   searchTerm: string = '';
   selectedVehicle: Vehicle | null = null;
@@ -42,7 +53,7 @@ export class ScheduleUnlockComponent implements OnInit {
     // Get vehicle from router state
     const navigation = this.router.getCurrentNavigation();
     const state = navigation?.extras?.state || history.state;
-    
+
     if (state?.vehicle) {
       this.selectedVehicle = state.vehicle;
       this.searchTerm = `${state.vehicle.brand} ${state.vehicle.model}`;
@@ -90,38 +101,329 @@ export class ScheduleUnlockComponent implements OnInit {
     if (!this.selectedDate || !this.unlockTime) {
       return 'Select date and time';
     }
-    
+
     const date = new Date(this.selectedDate);
     const time = this.unlockTime;
-    
+
     const formattedDate = date.toLocaleDateString('en-US', {
       month: 'short',
       day: 'numeric',
       year: 'numeric'
     });
-    
+
     const [hours, minutes] = time.split(':');
     const hour12 = parseInt(hours) > 12 ? parseInt(hours) - 12 : parseInt(hours);
     const ampm = parseInt(hours) >= 12 ? 'PM' : 'AM';
     const formattedTime = `${hour12}:${minutes} ${ampm}`;
-    
+
     return `${formattedDate} at ${formattedTime}`;
   }
 
   calculateTotal(): string {
     if (!this.selectedVehicle) return '0.00';
-    // Convert hours to minutes for calculation
     const totalMinutes = this.duration * 60;
     return (this.selectedVehicle.pricePerMinute * totalMinutes).toFixed(2);
   }
 
-  scheduleUnlock() {
+  /**
+   * Valida que la fecha y hora sean futuras
+   */
+  private validateDateTime(): boolean {
+    if (!this.selectedDate || !this.unlockTime) {
+      return false;
+    }
+
+    const [hours, minutes] = this.unlockTime.split(':');
+    const selectedDateTime = new Date(this.selectedDate);
+    selectedDateTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+    const now = new Date();
+
+    return selectedDateTime > now;
+  }
+
+  /**
+   * Verifica la disponibilidad del vehículo en el rango de fechas seleccionado
+   */
+  private async checkVehicleAvailability(startDate: Date, endDate: Date): Promise<{ available: boolean; message?: string }> {
+    if (!this.selectedVehicle) {
+      return { available: false, message: 'Vehículo no seleccionado' };
+    }
+
+    try {
+      const bookings = await firstValueFrom(this.bookingsApi.getByVehicleId(this.selectedVehicle.id));
+
+      // Filtrar bookings activos (pending, confirmed)
+      const activeBookings = bookings.filter(b =>
+        b.status === 'pending' || b.status === 'confirmed'
+      );
+
+      // Verificar solapamiento de fechas
+      for (const booking of activeBookings) {
+        const bookingStart = new Date(booking.startDate);
+        const bookingEnd = booking.endDate ? new Date(booking.endDate) : null;
+
+        // Verificar si hay solapamiento
+        if (bookingEnd) {
+          // Hay solapamiento si:
+          // - La nueva reserva empieza antes de que termine la existente Y
+          // - La nueva reserva termina después de que empiece la existente
+          if (startDate < bookingEnd && endDate > bookingStart) {
+            const conflictStart = bookingStart.toLocaleString('es-ES', {
+              day: 'numeric',
+              month: 'short',
+              hour: '2-digit',
+              minute: '2-digit'
+            });
+            const conflictEnd = bookingEnd.toLocaleString('es-ES', {
+              day: 'numeric',
+              month: 'short',
+              hour: '2-digit',
+              minute: '2-digit'
+            });
+
+            return {
+              available: false,
+              message: `El vehículo no está disponible del ${conflictStart} al ${conflictEnd}. Por favor, selecciona otro horario.`
+            };
+          }
+        } else {
+          // Si no hay endDate, verificar solapamiento con startDate
+          if (startDate < bookingStart && endDate > bookingStart) {
+            return {
+              available: false,
+              message: `El vehículo tiene una reserva activa que comienza el ${bookingStart.toLocaleString('es-ES')}.`
+            };
+          }
+        }
+      }
+
+      return { available: true };
+    } catch (error) {
+      console.error('Error checking vehicle availability:', error);
+      // En caso de error, permitir continuar pero mostrar advertencia
+      return { available: true };
+    }
+  }
+
+  /**
+   * Genera un código de desbloqueo único
+   */
+  private generateUnlockCode(): string {
+    const prefix = 'UNLOCK';
+    const randomPart = Math.random().toString(36).substring(2, 10).toUpperCase();
+    return `${prefix}${randomPart}`;
+  }
+
+  /**
+   * Obtiene la ubicación actual del usuario
+   */
+  private async getCurrentLocation(): Promise<{ lat: number; lng: number }> {
+    return new Promise((resolve) => {
+      if ('geolocation' in navigator) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            resolve({
+              lat: position.coords.latitude,
+              lng: position.coords.longitude
+            });
+          },
+          () => {
+            // Ubicación por defecto si no se puede obtener (Lima, Perú)
+            resolve({ lat: -12.046374, lng: -77.042793 });
+          },
+          { timeout: 5000 }
+        );
+      } else {
+        // Ubicación por defecto
+        resolve({ lat: -12.046374, lng: -77.042793 });
+      }
+    });
+  }
+
+  /**
+   * Crea un unlock request
+   */
+  private async createUnlockRequest(bookingId: string, scheduledUnlockTime: Date, method: 'manual' | 'qr_code'): Promise<UnlockRequest | null> {
+    try {
+      const userId = '1'; // TODO: Get from AuthService
+      const location = await this.getCurrentLocation();
+      const unlockCode = this.generateUnlockCode();
+
+      const unlockRequestData = {
+        userId: userId,
+        vehicleId: this.selectedVehicle!.id,
+        bookingId: bookingId,
+        requestedAt: new Date().toISOString(),
+        scheduledUnlockTime: scheduledUnlockTime.toISOString(),
+        actualUnlockTime: null,
+        status: 'pending' as const,
+        method: method,
+        location: location,
+        unlockCode: unlockCode,
+        attempts: 0,
+        errorMessage: null
+      };
+
+      const response = await firstValueFrom(this.unlockRequestsApi.create(unlockRequestData));
+
+      // Convertir a dominio
+      return new UnlockRequest(
+        response.id,
+        response.userId,
+        response.vehicleId,
+        response.bookingId,
+        new Date(response.requestedAt),
+        new Date(response.scheduledUnlockTime),
+        response.actualUnlockTime ? new Date(response.actualUnlockTime) : null,
+        response.status,
+        response.method,
+        response.location,
+        response.unlockCode,
+        response.attempts,
+        response.errorMessage
+      );
+    } catch (error) {
+      console.error('Error creating unlock request:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Abre el modal de selección de método y maneja el flujo completo
+   */
+  private async openUnlockMethodSelection(booking: any) {
+    const dialogRef = this.dialog.open(UnlockMethodSelectionModal, {
+      data: {
+        booking: booking,
+        vehicle: this.selectedVehicle!
+      },
+      width: '500px',
+      maxWidth: '95vw',
+      panelClass: 'unlock-method-selection-dialog',
+      autoFocus: false
+    });
+
+    dialogRef.afterClosed().subscribe(async (result) => {
+      if (result && result.method) {
+        try {
+          // Crear unlock request
+          const unlockRequest = await this.createUnlockRequest(
+            booking.id,
+            booking.startDate,
+            result.method
+          );
+
+          if (!unlockRequest) {
+            throw new Error('No se pudo crear la solicitud de desbloqueo');
+          }
+
+          // Abrir el modal correspondiente según el método
+          if (result.method === 'manual') {
+            this.openManualUnlockModal(booking, unlockRequest);
+          } else {
+            this.openQrScannerModal(booking, unlockRequest);
+          }
+        } catch (error) {
+          console.error('Error creating unlock request:', error);
+          this.snackBar.open('Error al crear la solicitud de desbloqueo. Intenta de nuevo.', 'Cerrar', {
+            duration: 4000,
+            horizontalPosition: 'end',
+            verticalPosition: 'top',
+            panelClass: ['error-snackbar']
+          });
+        }
+      }
+    });
+  }
+
+  /**
+   * Abre el modal de desbloqueo manual
+   */
+  private openManualUnlockModal(booking: any, unlockRequest: UnlockRequest) {
+    const dialogRef = this.dialog.open(ManualUnlockModal, {
+      data: {
+        vehicle: this.selectedVehicle!,
+        booking: booking,
+        unlockRequest: unlockRequest
+      },
+      width: '600px',
+      maxWidth: '95vw',
+      panelClass: 'manual-unlock-dialog',
+      autoFocus: false
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result && result.unlocked) {
+        this.snackBar.open('Vehículo desbloqueado exitosamente', 'Ver', {
+          duration: 4000,
+          horizontalPosition: 'end',
+          verticalPosition: 'top',
+          panelClass: ['success-snackbar']
+        }).onAction().subscribe(() => {
+          this.router.navigate(['/trip/details']);
+        });
+
+        setTimeout(() => {
+          this.router.navigate(['/trip/details']);
+        }, 1000);
+      }
+    });
+  }
+
+  /**
+   * Abre el modal de escáner QR
+   */
+  private openQrScannerModal(booking: any, unlockRequest: UnlockRequest) {
+    const dialogRef = this.dialog.open(QrScannerModal, {
+      data: {
+        vehicle: this.selectedVehicle!,
+        booking: booking,
+        unlockRequest: unlockRequest
+      },
+      width: '500px',
+      maxWidth: '95vw',
+      panelClass: 'qr-scanner-dialog',
+      autoFocus: false
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result && result.unlocked) {
+        this.snackBar.open('Vehículo desbloqueado exitosamente', 'Ver', {
+          duration: 4000,
+          horizontalPosition: 'end',
+          verticalPosition: 'top',
+          panelClass: ['success-snackbar']
+        }).onAction().subscribe(() => {
+          this.router.navigate(['/trip/details']);
+        });
+
+        setTimeout(() => {
+          this.router.navigate(['/trip/details']);
+        }, 1000);
+      }
+    });
+  }
+
+  async scheduleUnlock() {
+    // Validar campos requeridos
     if (!this.selectedVehicle || !this.selectedDate || !this.unlockTime) {
       this.snackBar.open('Por favor completa todos los campos requeridos', 'Cerrar', {
         duration: 3000,
         horizontalPosition: 'end',
         verticalPosition: 'top'
       });
+      this.availabilityError = 'Completa todos los campos requeridos';
+      return;
+    }
+
+    // Validar fecha y hora futura
+    if (!this.validateDateTime()) {
+      this.snackBar.open('La fecha y hora deben ser futuras', 'Cerrar', {
+        duration: 3000,
+        horizontalPosition: 'end',
+        verticalPosition: 'top'
+      });
+      this.availabilityError = 'La fecha y hora deben ser futuras';
       return;
     }
 
@@ -132,6 +434,21 @@ export class ScheduleUnlockComponent implements OnInit {
 
     // Calculate endDate based on duration
     const endDate = new Date(startDate.getTime() + this.duration * 60 * 60 * 1000);
+
+    // Verificar disponibilidad del vehículo
+    this.availabilityError = '';
+    const availability = await this.checkVehicleAvailability(startDate, endDate);
+
+    if (!availability.available) {
+      this.snackBar.open(availability.message || 'El vehículo no está disponible en el horario seleccionado', 'Cerrar', {
+        duration: 5000,
+        horizontalPosition: 'end',
+        verticalPosition: 'top',
+        panelClass: ['error-snackbar']
+      });
+      this.availabilityError = availability.message || 'Vehículo no disponible';
+      return;
+    }
 
     // Get current user ID (replace with actual user service)
     const userId = '1'; // TODO: Get from AuthService
@@ -164,7 +481,7 @@ export class ScheduleUnlockComponent implements OnInit {
 
     // Create booking via API
     this.bookingsApi.create(bookingData).subscribe({
-      next: (response) => {
+      next: async (response) => {
         const booking = toDomainBooking(response);
 
         // Save to active booking service and store
@@ -172,32 +489,38 @@ export class ScheduleUnlockComponent implements OnInit {
         this.bookingStore.addBooking(booking);
 
         // Show success message
-        const message = this.isImmediate 
+        const message = this.isImmediate
           ? 'Reserva confirmada. ¡Disfruta tu viaje!'
           : 'Reserva programada exitosamente';
-        
-        this.snackBar.open(message, 'Ver', {
-          duration: 4000,
+
+        this.snackBar.open(message, 'Cerrar', {
+          duration: 2000,
           horizontalPosition: 'end',
           verticalPosition: 'top',
           panelClass: ['success-snackbar']
-        }).onAction().subscribe(() => {
-          this.router.navigate(['/trip/details']);
         });
 
-        // Navigate to trip details after delay
-        setTimeout(() => {
-          this.router.navigate(['/trip/details']);
-        }, 1000);
+        // Abrir modal de selección de método de desbloqueo
+        await this.openUnlockMethodSelection(booking);
       },
       error: (error) => {
         console.error('Error creating booking:', error);
-        this.snackBar.open('Error al crear la reserva. Intenta de nuevo.', 'Cerrar', {
+        let errorMessage = 'Error al crear la reserva. Intenta de nuevo.';
+
+        // Mensajes de error más específicos
+        if (error.status === 409) {
+          errorMessage = 'El vehículo ya está reservado en ese horario. Por favor, selecciona otro horario.';
+        } else if (error.status === 400) {
+          errorMessage = 'Los datos de la reserva no son válidos. Verifica la información.';
+        }
+
+        this.snackBar.open(errorMessage, 'Cerrar', {
           duration: 4000,
           horizontalPosition: 'end',
           verticalPosition: 'top',
           panelClass: ['error-snackbar']
         });
+        this.availabilityError = errorMessage;
       }
     });
   }
