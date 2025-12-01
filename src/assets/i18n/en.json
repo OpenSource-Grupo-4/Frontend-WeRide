@@ -356,6 +356,20 @@
       "message": "You have **{minutes} minutes** left before your time ends",
       "extendTime": "Extend time (s/.{cost})",
       "endReservation": "End reservation"
+    },
+    "notifications": {
+      "started": {
+        "title": "Reservation Started",
+        "message": "Your reservation #{bookingId} has started. You can now unlock your vehicle and begin your trip."
+      },
+      "expiring": {
+        "title": "Reservation About to Expire",
+        "message": "Your reservation will expire in {minutes} minutes. Start your trip now or extend your time."
+      },
+      "expired": {
+        "title": "Reservation Expired",
+        "message": "Your reservation has expired without starting a trip. The vehicle has been released automatically."
+      }
     }
   },
   "trip": {
