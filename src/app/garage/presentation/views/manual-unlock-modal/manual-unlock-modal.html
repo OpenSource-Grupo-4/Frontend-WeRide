@@ -10,12 +10,16 @@
     <div class="content-grid">
       <div class="form-section">
         <mat-form-field appearance="outline" class="full-width">
-          <mat-label>{{ 'garage.manualUnlock.phoneNumber' | translate }}</mat-label>
+          <mat-label
+            >{{ 'garage.manualUnlock.phoneNumber' | translate }}</mat-label
+          >
           <input matInput [(ngModel)]="phoneNumber" type="tel" />
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="full-width">
-          <mat-label>{{ 'garage.manualUnlock.password' | translate }}</mat-label>
+          <mat-label
+            >{{ 'garage.manualUnlock.password' | translate }}</mat-label
+          >
           <input matInput [(ngModel)]="password" type="password" />
         </mat-form-field>
 
@@ -27,21 +31,43 @@
       </div>
 
       <div class="vehicle-card">
-        <img [src]="vehicle.image" [alt]="vehicle.brand + ' ' + vehicle.model" class="vehicle-image" />
+        <img
+          [src]="vehicle.image"
+          [alt]="vehicle.brand + ' ' + vehicle.model"
+          class="vehicle-image"
+        />
         <div class="vehicle-info">
-          <p class="vehicle-type">{{ 'garage.vehicle.types.electric_scooter' | translate }}</p>
-          <p class="vehicle-id">{{ 'garage.vehicle.id' | translate }}: {{ vehicle.id }}</p>
-          <p class="vehicle-battery">{{ 'garage.vehicle.battery' | translate }}: {{ vehicle.battery }}%</p>
-          <p class="vehicle-brand">{{ 'garage.brand' | translate }}: {{ vehicle.brand }}</p>
+          <p class="vehicle-type">
+            {{ 'garage.vehicle.types.electric_scooter' | translate }}
+          </p>
+          <p class="vehicle-id">
+            {{ 'garage.vehicle.id' | translate }}: {{ vehicle.id }}
+          </p>
+          <p class="vehicle-battery">
+            {{ 'garage.vehicle.battery' | translate }}: {{ vehicle.battery }}%
+          </p>
+          <p class="vehicle-brand">
+            {{ 'garage.brand' | translate }}: {{ vehicle.brand }}
+          </p>
+          <p *ngIf="unlockRequest" class="unlock-code">
+            Código: {{ unlockRequest.unlockCode }}
+          </p>
         </div>
       </div>
     </div>
   </div>
 
   <div mat-dialog-actions class="modal-actions">
-    <button mat-raised-button (click)="onUnlock()" [disabled]="!isFormValid()" class="unlock-button">
-      {{ 'garage.manualUnlock.unlock' | translate }}
+    <button
+      mat-raised-button
+      (click)="onUnlock()"
+      [disabled]="!isFormValid() || isUnlocking"
+      class="unlock-button"
+    >
+      <span *ngIf="!isUnlocking"
+        >{{ 'garage.manualUnlock.unlock' | translate }}</span
+      >
+      <span *ngIf="isUnlocking">Desbloqueando...</span>
     </button>
   </div>
 </div>
-

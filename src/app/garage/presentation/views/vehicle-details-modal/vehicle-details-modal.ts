@@ -31,6 +31,10 @@ export class VehicleDetailsModal {
     this.dialogRef.close();
   }
 
+  onReserve(): void {
+    this.dialogRef.close('reserve');
+  }
+
   formatDate(dateString: string): string {
     const date = new Date(dateString);
     return date.toLocaleDateString('es-ES', {

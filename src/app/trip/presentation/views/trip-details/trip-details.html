@@ -1,28 +1,39 @@
 <div class="trip-container">
+  @if (isActiveTrip() && currentVehicle() && currentLocation()) {
   <mat-card class="trip-details-card">
-    <div class="card-content" *ngIf="!loading">
+    <div class="card-content">
       <div class="trip-info">
-        <h3>{{ 'trip.electricScooter' | translate }}</h3>
-        <p><strong>{{ 'trip.location' | translate }}:</strong> {{ location || ('common.loading' | translate) }}</p>
-        <p><strong>{{ 'garage.vehicle.battery' | translate }}:</strong> {{ battery }}%</p>
+        <h3>{{ getVehicleType() }}</h3>
         <p>
-          <strong>{{ 'trip.remainingTime' | translate }}:</strong> {{ remainingTime || ('common.loading' | translate) }}
+          <strong>{{ 'trip.location' | translate }}:</strong>
+          {{ currentLocation()?.address || 'Ubicación actual' }}
         </p>
-        <p><strong>{{ 'trip.extraTime' | translate }}:</strong> {{ extraTime || ('common.loading' | translate) }}</p>
+        <p>
+          <strong>{{ 'garage.vehicle.battery' | translate }}:</strong>
+          {{ currentVehicle()?.battery }}%
+        </p>
+        <p>
+          <strong>{{ 'trip.remainingTime' | translate }}:</strong>
+          {{ remainingTime() }}
+        </p>
+        <p>
+          <strong>{{ 'trip.extraTime' | translate }}:</strong>
+          {{ extraTime() }}
+        </p>
       </div>
 
       <div class="trip-footer">
         <div class="trip-rating">
           <div class="stars">
-            <ng-container *ngFor="let star of [1,2,3,4,5]">
-              <span
-                class="star"
-                [class.filled]="star <= rating"
-                (click)="setRating(star)"
-              >
-                ★
-              </span>
-            </ng-container>
+            @for (star of [1,2,3,4,5]; track star) {
+            <span
+              class="star"
+              [class.filled]="star <= rating()"
+              (click)="setRating(star)"
+            >
+              ★
+            </span>
+            }
           </div>
           <span class="rating-label">{{ 'trip.leaveRating' | translate }}</span>
         </div>
@@ -41,9 +52,42 @@
         </div>
       </div>
     </div>
+  </mat-card>
+  }
 
-    <div class="loading-content" *ngIf="loading">
-      <p>{{ 'trip.loadingTrip' | translate }}</p>
+  @if (!isActiveTrip()) {
+  <mat-card class="no-trip-card">
+    <div class="no-trip-content">
+      <h2>Aún no tienes un viaje en curso 
+        en este momento, quizás deseas...</h2>
+
+      <div class="no-trip-actions">
+        <button
+          mat-raised-button
+          color="primary"
+          class="primary-action-btn"
+          (click)="goToGarage()"
+        >
+          Reservar un vehículo ahora
+        </button>
+
+        <button
+          mat-stroked-button
+          class="secondary-action-btn"
+          (click)="goToScheduleBooking()"
+        >
+          Programar una reserva
+        </button>
+
+        <button
+          mat-stroked-button
+          class="secondary-action-btn"
+          (click)="goToHistory()"
+        >
+          Historial de Viajes
+        </button>
+      </div>
     </div>
   </mat-card>
+  }
 </div>

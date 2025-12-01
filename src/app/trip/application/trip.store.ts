@@ -8,6 +8,7 @@ interface TripState {
   currentTrip: Trip | null;
   currentVehicle: Vehicle | null;
   currentLocation: Location | null;
+  destinationLocation: Location | null;
   locations: Location[];
   vehicles: Vehicle[];
   nearbyVehicles: Vehicle[];
@@ -15,6 +16,9 @@ interface TripState {
   loading: boolean;
   error: string | null;
   connectionError: boolean;
+  isActiveTrip: boolean;
+  tripStartTime: Date | null;
+  estimatedEndTime: Date | null;
 }
 
 @Injectable({
@@ -26,19 +30,24 @@ export class TripStore {
     currentTrip: null,
     currentVehicle: null,
     currentLocation: null,
+    destinationLocation: null,
     locations: [],
     vehicles: [],
     nearbyVehicles: [],
     selectedLocation: null,
     loading: false,
     error: null,
-    connectionError: false
+    connectionError: false,
+    isActiveTrip: false,
+    tripStartTime: null,
+    estimatedEndTime: null
   });
 
   trips = computed(() => this.state().trips);
   currentTrip = computed(() => this.state().currentTrip);
   currentVehicle = computed(() => this.state().currentVehicle);
   currentLocation = computed(() => this.state().currentLocation);
+  destinationLocation = computed(() => this.state().destinationLocation);
   locations = computed(() => this.state().locations);
   vehicles = computed(() => this.state().vehicles);
   nearbyVehicles = computed(() => this.state().nearbyVehicles);
@@ -46,6 +55,9 @@ export class TripStore {
   loading = computed(() => this.state().loading);
   error = computed(() => this.state().error);
   connectionError = computed(() => this.state().connectionError);
+  isActiveTrip = computed(() => this.state().isActiveTrip);
+  tripStartTime = computed(() => this.state().tripStartTime);
+  estimatedEndTime = computed(() => this.state().estimatedEndTime);
 
   setTrips(trips: Trip[]) {
     this.state.update(state => ({ ...state, trips }));
@@ -89,6 +101,32 @@ export class TripStore {
 
   setConnectionError(connectionError: boolean) {
     this.state.update(state => ({ ...state, connectionError }));
+  }
+
+  setDestinationLocation(destinationLocation: Location | null) {
+    this.state.update(state => ({ ...state, destinationLocation }));
+  }
+
+  startTrip(startTime: Date, estimatedEndTime: Date, vehicle?: Vehicle) {
+    this.state.update(state => ({
+      ...state,
+      isActiveTrip: true,
+      tripStartTime: startTime,
+      estimatedEndTime: estimatedEndTime,
+      currentVehicle: vehicle || state.currentVehicle
+    }));
+  }
+
+  endTrip() {
+    this.state.update(state => ({
+      ...state,
+      isActiveTrip: false,
+      tripStartTime: null,
+      estimatedEndTime: null,
+      currentVehicle: null,
+      currentLocation: null,
+      destinationLocation: null
+    }));
   }
 }
 

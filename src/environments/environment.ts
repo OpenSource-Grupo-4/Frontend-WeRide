@@ -12,6 +12,8 @@ export const environment = {
     favorites: '/favorites',
     trips: '/trips',
     payments: '/payments',
-    unlockRequests: '/unlockRequests'
+    unlockRequests: '/unlockRequests',
+    problemReports: '/problemReports',
+    ratings: '/ratings'
   }
 };

@@ -151,7 +151,7 @@
 
   <div mat-dialog-actions class="modal-actions">
     <button mat-button (click)="onClose()" class="cancel-button">{{ 'common.close' | translate }}</button>
-    <button mat-raised-button color="primary" class="reserve-button">
+    <button mat-raised-button color="primary" class="reserve-button" (click)="onReserve()">
       <mat-icon>bookmark</mat-icon>
       {{ 'garage.details.reserveVehicle' | translate }}
     </button>
