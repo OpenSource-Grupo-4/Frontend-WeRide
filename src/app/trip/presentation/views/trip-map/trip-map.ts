@@ -16,6 +16,8 @@ import {RatingsApiEndpoint} from '../../../infrastructure/ratings-api-endpoint';
 import {OfflineSyncService} from '../../../application/offline-sync.service';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {TranslateService} from '@ngx-translate/core';
+import { ActiveBookingService } from '../../../../booking/application/active-booking.service';
+import { TripInitializerService } from '../../../application/trip-initializer.service';
 
 @Component({
   selector: 'app-trip-map',
@@ -33,6 +35,8 @@ export class TripMap implements OnInit, OnDestroy {
   private offlineSyncService = inject(OfflineSyncService);
   private snackBar = inject(MatSnackBar);
   private translate = inject(TranslateService);
+  private activeBookingService = inject(ActiveBookingService);
+  private tripInitializer = inject(TripInitializerService);
 
   userLocation = signal<[number, number] | null>(null);
   markers: Array<{lng: number, lat: number}> = [];
@@ -67,12 +71,37 @@ export class TripMap implements OnInit, OnDestroy {
   private tripUpdateInterval?: number;
   private readonly NEARBY_DISTANCE_KM = 2;
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     this.loadLocations();
     this.loadVehicles();
     this.startLocationTracking();
     this.startTripUpdates();
-    
+
+    // Verificar si hay un viaje activo, si no, intentar inicializar desde booking
+    if (!this.isActiveTrip()) {
+      // Esperar un momento para que las ubicaciones y vehículos se carguen
+      setTimeout(async () => {
+        const activeBooking = this.activeBookingService.getActiveBooking();
+
+        if (activeBooking && this.tripInitializer.canInitializeTripFromBooking(activeBooking)) {
+          // Intentar inicializar el viaje desde el booking
+          await this.tripInitializer.initializeTripFromBooking(activeBooking);
+
+          // Si se inicializó correctamente, actualizar la batería y distancia
+          if (this.isActiveTrip() && this.currentVehicle()) {
+            this.currentBattery.set(this.currentVehicle()!.battery);
+            if (this.currentLocation() && this.destinationLocation()) {
+              const distance = this.calculateDistanceBetweenLocations(
+                this.currentLocation()!,
+                this.destinationLocation()!
+              );
+              this.estimatedDistance.set(distance);
+            }
+          }
+        }
+      }, 500);
+    }
+
     // Try to sync offline data on component init if there's connection
     setTimeout(() => {
       if (!this.connectionError()) {
@@ -129,20 +158,20 @@ export class TripMap implements OnInit, OnDestroy {
   findNearbyVehicles(selectedLocation: { lat: number, lng: number }) {
     const vehicles = this.tripStore.vehicles();
     const locations = this.tripStore.locations();
-    
+
     const nearbyVehicles = vehicles.filter(vehicle => {
       if (vehicle.status !== 'available') return false;
-      
+
       const vehicleLocation = locations.find(loc => loc.id === vehicle.location);
       if (!vehicleLocation) return false;
-      
+
       const distance = this.calculateDistance(
         selectedLocation.lat,
         selectedLocation.lng,
         vehicleLocation.coordinates.lat,
         vehicleLocation.coordinates.lng
       );
-      
+
       return distance <= this.NEARBY_DISTANCE_KM;
     });
 
@@ -153,7 +182,7 @@ export class TripMap implements OnInit, OnDestroy {
     const R = 6371;
     const dLat = this.toRad(lat2 - lat1);
     const dLng = this.toRad(lng2 - lng1);
-    const a = 
+    const a =
       Math.sin(dLat / 2) * Math.sin(dLat / 2) +
       Math.cos(this.toRad(lat1)) * Math.cos(this.toRad(lat2)) *
       Math.sin(dLng / 2) * Math.sin(dLng / 2);
@@ -181,14 +210,14 @@ export class TripMap implements OnInit, OnDestroy {
     this.tripStore.setConnectionError(false);
     this.loadLocations();
     this.loadVehicles();
-    
+
     // Attempt to sync offline data when connection is restored
     this.syncOfflineData();
   }
 
   private syncOfflineData() {
     const pendingCount = this.offlineSyncService.getPendingCount();
-    
+
     if (pendingCount.total > 0) {
       this.offlineSyncService.syncAll().then(() => {
         const remainingCount = this.offlineSyncService.getPendingCount();
@@ -227,24 +256,24 @@ export class TripMap implements OnInit, OnDestroy {
   reserveVehicle(vehicle: Vehicle) {
     const locations = this.tripStore.locations();
     const vehicleLocation = locations.find(loc => loc.id === vehicle.location);
-    
+
     if (vehicleLocation) {
       this.tripStore.setCurrentVehicle(vehicle);
       this.tripStore.setCurrentLocation(vehicleLocation);
-      
+
       const destinationLocation = this.getRandomDestination(vehicleLocation);
       if (destinationLocation) {
         this.tripStore.setDestinationLocation(destinationLocation);
       }
-      
+
       const startTime = new Date();
       const estimatedEndTime = new Date(startTime.getTime() + 30 * 60000);
       this.tripStore.startTrip(startTime, estimatedEndTime, vehicle);
-      
+
       this.currentBattery.set(vehicle.battery);
       const distance = this.calculateDistanceBetweenLocations(vehicleLocation, destinationLocation!);
       this.estimatedDistance.set(distance);
-      
+
       this.clearSelection();
     }
   }
@@ -300,15 +329,15 @@ export class TripMap implements OnInit, OnDestroy {
   updateTripInfo() {
     const startTime = this.tripStartTime();
     const endTime = this.estimatedEndTime();
-    
+
     if (startTime && endTime) {
       const now = new Date();
       const elapsed = now.getTime() - startTime.getTime();
       const remaining = endTime.getTime() - now.getTime();
-      
+
       this.elapsedTime.set(this.formatTime(elapsed));
       this.remainingTime.set(remaining > 0 ? this.formatTime(remaining) : '00:00:00');
-      
+
       const vehicle = this.currentVehicle();
       if (vehicle) {
         const batteryDrain = (elapsed / 60000) * 0.5;
@@ -323,16 +352,16 @@ export class TripMap implements OnInit, OnDestroy {
     const hours = Math.floor(totalSeconds / 3600);
     const minutes = Math.floor((totalSeconds % 3600) / 60);
     const seconds = totalSeconds % 60;
-    
+
     return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
   }
 
   endTrip() {
     const currentTrip = this.tripStore.currentTrip();
-    
+
     // Open rate trip modal after ending trip
     this.openRateTripModal();
-    
+
     // End the trip in store
     this.tripStore.endTrip();
     this.elapsedTime.set('00:00:00');

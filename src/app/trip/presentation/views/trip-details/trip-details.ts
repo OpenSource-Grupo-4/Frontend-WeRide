@@ -5,6 +5,8 @@ import {CommonModule} from '@angular/common';
 import {Router} from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { TripStore } from '../../../application/trip.store';
+import { ActiveBookingService } from '../../../../booking/application/active-booking.service';
+import { TripInitializerService } from '../../../application/trip-initializer.service';
 
 @Component({
   selector: 'app-trip-details',
@@ -20,6 +22,8 @@ import { TripStore } from '../../../application/trip.store';
 export class TripDetails implements OnInit, OnDestroy {
   private router = inject(Router);
   private tripStore = inject(TripStore);
+  private activeBookingService = inject(ActiveBookingService);
+  private tripInitializer = inject(TripInitializerService);
 
   isActiveTrip = computed(() => this.tripStore.isActiveTrip());
   currentVehicle = computed(() => this.tripStore.currentVehicle());
@@ -35,9 +39,23 @@ export class TripDetails implements OnInit, OnDestroy {
 
   private timeUpdateInterval?: number;
 
-  ngOnInit() {
+  async ngOnInit() {
+    // Verificar si hay un viaje activo
     if (this.isActiveTrip()) {
       this.startTimeUpdates();
+      return;
+    }
+
+    // Si no hay viaje activo, verificar si hay un booking activo desbloqueado
+    const activeBooking = this.activeBookingService.getActiveBooking();
+
+    if (activeBooking && this.tripInitializer.canInitializeTripFromBooking(activeBooking)) {
+      // Intentar inicializar el viaje desde el booking
+      const initialized = await this.tripInitializer.initializeTripFromBooking(activeBooking);
+
+      if (initialized && this.isActiveTrip()) {
+        this.startTimeUpdates();
+      }
     }
   }
 
@@ -57,7 +75,7 @@ export class TripDetails implements OnInit, OnDestroy {
   private updateTimes() {
     const startTime = this.tripStartTime();
     const estimatedEnd = this.estimatedEndTime();
-    
+
     if (!startTime || !estimatedEnd) return;
 
     const now = new Date();
@@ -84,7 +102,7 @@ export class TripDetails implements OnInit, OnDestroy {
   getVehicleType(): string {
     const vehicle = this.currentVehicle();
     if (!vehicle) return 'Electric Scooter';
-    
+
     const typeMap: { [key: string]: string } = {
       'electric_scooter': 'Scooter Eléctrico',
       'bike': 'Bicicleta',

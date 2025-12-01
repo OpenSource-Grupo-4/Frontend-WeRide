@@ -18,6 +18,7 @@ import { UnlockRequest } from '../../../domain/model/unlockRequest.entity';
 import { firstValueFrom } from 'rxjs';
 import { ManualUnlockModal } from '../../../../garage/presentation/views/manual-unlock-modal/manual-unlock-modal';
 import { QrScannerModal } from '../../../../garage/presentation/views/qr-scanner-modal/qr-scanner-modal';
+import { BookingSuccessModal } from '../../../../public/components/booking-success-modal/booking-success-modal';
 
 @Component({
   selector: 'app-schedule-unlock',
@@ -337,6 +338,59 @@ export class ScheduleUnlockComponent implements OnInit {
   }
 
   /**
+   * Actualiza el booking en la API cuando se desbloquea
+   */
+  private async updateBookingOnUnlock(booking: any): Promise<void> {
+    try {
+      const updateData = {
+        status: 'confirmed' as const,
+        actualStartDate: new Date().toISOString()
+      };
+
+      const updatedBooking = await firstValueFrom(
+        this.bookingsApi.update(booking.id, updateData)
+      );
+
+      // Actualizar el booking local
+      booking.status = updatedBooking.status;
+      booking.actualStartDate = updatedBooking.actualStartDate
+        ? new Date(updatedBooking.actualStartDate)
+        : new Date();
+
+      // Actualizar en el servicio y store
+      const domainBooking = toDomainBooking(updatedBooking);
+      this.activeBookingService.setActiveBooking(domainBooking);
+      this.bookingStore.updateBooking(domainBooking);
+    } catch (error) {
+      console.error('Error actualizando booking:', error);
+      // Continuar aunque falle la actualización en la API
+      booking.actualStartDate = new Date();
+      booking.status = 'confirmed';
+    }
+  }
+
+  /**
+   * Abre el modal de confirmación de reserva exitosa
+   */
+  private openBookingSuccessModal(booking: any) {
+    const successDialogRef = this.dialog.open(BookingSuccessModal, {
+      data: {
+        vehicle: this.selectedVehicle!,
+        booking: booking
+      },
+      width: '600px',
+      maxWidth: '95vw',
+      panelClass: 'booking-success-dialog',
+      autoFocus: false,
+      disableClose: false
+    });
+
+    successDialogRef.afterClosed().subscribe(() => {
+      // La navegación se maneja dentro del modal
+    });
+  }
+
+  /**
    * Abre el modal de desbloqueo manual
    */
   private openManualUnlockModal(booking: any, unlockRequest: UnlockRequest) {
@@ -352,20 +406,13 @@ export class ScheduleUnlockComponent implements OnInit {
       autoFocus: false
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
+    dialogRef.afterClosed().subscribe(async (result) => {
       if (result && result.unlocked) {
-        this.snackBar.open('Vehículo desbloqueado exitosamente', 'Ver', {
-          duration: 4000,
-          horizontalPosition: 'end',
-          verticalPosition: 'top',
-          panelClass: ['success-snackbar']
-        }).onAction().subscribe(() => {
-          this.router.navigate(['/trip/details']);
-        });
+        // Actualizar el booking en la API
+        await this.updateBookingOnUnlock(booking);
 
-        setTimeout(() => {
-          this.router.navigate(['/trip/details']);
-        }, 1000);
+        // Abrir modal de confirmación
+        this.openBookingSuccessModal(booking);
       }
     });
   }
@@ -386,20 +433,13 @@ export class ScheduleUnlockComponent implements OnInit {
       autoFocus: false
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
+    dialogRef.afterClosed().subscribe(async (result) => {
       if (result && result.unlocked) {
-        this.snackBar.open('Vehículo desbloqueado exitosamente', 'Ver', {
-          duration: 4000,
-          horizontalPosition: 'end',
-          verticalPosition: 'top',
-          panelClass: ['success-snackbar']
-        }).onAction().subscribe(() => {
-          this.router.navigate(['/trip/details']);
-        });
+        // Actualizar el booking en la API
+        await this.updateBookingOnUnlock(booking);
 
-        setTimeout(() => {
-          this.router.navigate(['/trip/details']);
-        }, 1000);
+        // Abrir modal de confirmación
+        this.openBookingSuccessModal(booking);
       }
     });
   }
