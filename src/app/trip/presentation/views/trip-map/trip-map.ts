@@ -239,7 +239,7 @@ export class TripMap implements OnInit, OnDestroy {
       
       const startTime = new Date();
       const estimatedEndTime = new Date(startTime.getTime() + 30 * 60000);
-      this.tripStore.startTrip(startTime, estimatedEndTime);
+      this.tripStore.startTrip(startTime, estimatedEndTime, vehicle);
       
       this.currentBattery.set(vehicle.battery);
       const distance = this.calculateDistanceBetweenLocations(vehicleLocation, destinationLocation!);

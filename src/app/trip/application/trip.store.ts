@@ -107,12 +107,13 @@ export class TripStore {
     this.state.update(state => ({ ...state, destinationLocation }));
   }
 
-  startTrip(startTime: Date, estimatedEndTime: Date) {
+  startTrip(startTime: Date, estimatedEndTime: Date, vehicle?: Vehicle) {
     this.state.update(state => ({
       ...state,
       isActiveTrip: true,
       tripStartTime: startTime,
-      estimatedEndTime: estimatedEndTime
+      estimatedEndTime: estimatedEndTime,
+      currentVehicle: vehicle || state.currentVehicle
     }));
   }
 
