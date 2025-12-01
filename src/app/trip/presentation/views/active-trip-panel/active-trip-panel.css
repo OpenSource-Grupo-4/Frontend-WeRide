@@ -23,7 +23,7 @@
 
 .trip-title {
   font-size: 1.25rem;
-  font-weight: 800;
+  font-weight: 600;
   color: white;
   margin: 0;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -44,7 +44,6 @@
   font-size: 1.125rem;
   cursor: pointer;
   transition: all 0.3s;
-  backdrop-filter: blur(10px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -72,7 +71,6 @@
   font-weight: 700;
   cursor: pointer;
   transition: all 0.3s;
-  backdrop-filter: blur(10px);
 }
 
 .end-trip-button:hover {
@@ -119,7 +117,7 @@
 
 .vehicle-trip-name {
   font-size: 1.125rem;
-  font-weight: 700;
+  font-weight: 600;
   color: #1f2937;
   margin: 0 0 0.25rem 0;
 }
@@ -175,7 +173,7 @@
 
 .stat-value {
   font-size: 1.125rem;
-  font-weight: 800;
+  font-weight: 600;
   color: #1f2937;
 }
 
@@ -241,7 +239,7 @@
 .route-name {
   font-size: 0.9375rem;
   color: #1f2937;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .status-indicator {
@@ -264,7 +262,7 @@
 .status-text {
   font-size: 0.9375rem;
   color: #1e40af;
-  font-weight: 700;
+  font-weight: 500;
 }
 
 .trip-error-banner {
