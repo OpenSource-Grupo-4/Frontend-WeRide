@@ -1,41 +1,6 @@
 <div class="garage-container">
   <h1>{{ 'garage.title' | translate }}</h1>
 
-  <div
-    style="
-      margin-bottom: 16px;
-      padding: 12px;
-      background: #f5f5f5;
-      border-radius: 8px;
-    "
-  >
-    <p style="margin: 0 0 8px 0; font-weight: 600">
-      Probar Modales (Temporal):
-    </p>
-    <div style="display: flex; gap: 8px; flex-wrap: wrap">
-      <button mat-button color="primary" (click)="openQrScannerModal()">
-        QR Scanner
-      </button>
-      <button
-        mat-button
-        color="primary"
-        (click)="openManualUnlockModal(filteredVehicles[0])"
-        [disabled]="!filteredVehicles.length"
-      >
-        Manual Unlock
-      </button>
-      <button
-        mat-button
-        color="primary"
-        (click)="openReportProblemModal(filteredVehicles[0])"
-        [disabled]="!filteredVehicles.length"
-      >
-        Reportar Problema
-      </button>
-    </div>
-  </div>
-
-  <!-- View Tabs -->
   <mat-tab-group
     [selectedIndex]="currentView === 'all' ? 0 : 1"
     (selectedIndexChange)="switchView($event === 0 ? 'all' : 'favorites')"

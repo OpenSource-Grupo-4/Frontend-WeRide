@@ -114,16 +114,27 @@ export class GarageLayout implements OnInit {
 
   switchView(view: 'all' | 'favorites') {
     this.currentView = view;
-    // Reapply current filters with new view
+    console.log('Switching to view:', view);
+    // Update favorite status first to ensure we have the latest from localStorage
+    this.updateFavoriteStatus();
+    // Then reapply current filters with new view
     this.applyFilter({});
   }
 
   async toggleFavorite(vehicleId: string) {
     const currentUser = this.authStore.currentUser();
     if (currentUser) {
+      console.log('Toggling favorite for vehicle:', vehicleId);
       this.toggleFavoriteUseCase.execute(currentUser.id, vehicleId);
-      // Wait a bit for the store to update, then refresh
-      setTimeout(() => this.updateFavoriteStatus(), 300);
+      // Update immediately - the store will handle the backend sync
+      // Use a small delay to allow the rxMethod to process
+      setTimeout(() => {
+        this.updateFavoriteStatus();
+        // If we're in favorites view, reapply filter to update the list
+        if (this.currentView === 'favorites') {
+          this.applyFilter({});
+        }
+      }, 200);
     }
   }
 

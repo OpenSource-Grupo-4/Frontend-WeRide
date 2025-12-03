@@ -1,7 +1,7 @@
 import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
 import { inject } from '@angular/core';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { pipe, switchMap, tap, catchError, of, map } from 'rxjs';
+import { pipe, switchMap, tap, catchError, of } from 'rxjs';
 import { Favorite } from '../domain/model/favorite.model';
 import { FavoriteRepository } from './repositories/favorite.repository';
 
@@ -12,9 +12,31 @@ interface FavoriteState {
   error: string | null;
 }
 
+// Helper functions for localStorage
+function loadFavoritesFromLocalStorage(): string[] {
+  if (typeof window === 'undefined') return [];
+  try {
+    const stored = localStorage.getItem('favoriteVehicleIds');
+    return stored ? JSON.parse(stored) : [];
+  } catch (error) {
+    console.error('Error loading favorites from localStorage:', error);
+    return [];
+  }
+}
+
+function saveFavoritesToLocalStorage(vehicleIds: string[]): void {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.setItem('favoriteVehicleIds', JSON.stringify(vehicleIds));
+    console.log('✓ Favorites saved to localStorage:', vehicleIds);
+  } catch (error) {
+    console.error('Error saving favorites to localStorage:', error);
+  }
+}
+
 const initialState: FavoriteState = {
   favorites: [],
-  favoriteVehicleIds: [],
+  favoriteVehicleIds: loadFavoritesFromLocalStorage(),
   isLoading: false,
   error: null
 };
@@ -27,11 +49,21 @@ export const FavoriteStore = signalStore(
     return {
       loadUserFavorites: rxMethod<string>(
         pipe(
-          tap(() => patchState(store, { isLoading: true, error: null })),
-          switchMap((userId) =>
-            favoriteRepository.getUserFavorites(userId).pipe(
+          tap(() => {
+            console.log('Loading user favorites...');
+            patchState(store, { isLoading: true, error: null });
+          }),
+          switchMap((userId) => {
+            console.log('Fetching favorites for user:', userId);
+            return favoriteRepository.getUserFavorites(userId).pipe(
               tap((favorites) => {
                 const favoriteVehicleIds = favorites.map(fav => fav.vehicleId);
+                console.log('✓ Favorites loaded from backend:', {
+                  count: favorites.length,
+                  vehicleIds: favoriteVehicleIds
+                });
+                // Save to localStorage
+                saveFavoritesToLocalStorage(favoriteVehicleIds);
                 patchState(store, {
                   favorites,
                   favoriteVehicleIds,
@@ -40,14 +72,15 @@ export const FavoriteStore = signalStore(
                 });
               }),
               catchError((error) => {
+                console.error('✗ Error loading favorites:', error);
                 patchState(store, {
                   isLoading: false,
                   error: error.message || 'Error al cargar favoritos'
                 });
                 return of(null);
               })
-            )
-          )
+            );
+          })
         )
       ),
 
@@ -59,6 +92,9 @@ export const FavoriteStore = signalStore(
               tap((newFavorite) => {
                 const updatedFavorites = [...store.favorites(), newFavorite];
                 const updatedIds = [...store.favoriteVehicleIds(), vehicleId];
+                console.log('✓ Favorite added:', vehicleId);
+                // Save to localStorage
+                saveFavoritesToLocalStorage(updatedIds);
                 patchState(store, {
                   favorites: updatedFavorites,
                   favoriteVehicleIds: updatedIds,
@@ -67,6 +103,7 @@ export const FavoriteStore = signalStore(
                 });
               }),
               catchError((error) => {
+                console.error('✗ Error adding favorite:', error);
                 patchState(store, {
                   isLoading: false,
                   error: error.message || 'Error al agregar favorito'
@@ -98,6 +135,9 @@ export const FavoriteStore = signalStore(
                   fav => fav.id !== favoriteToRemove.id
                 );
                 const updatedIds = updatedFavorites.map(fav => fav.vehicleId);
+                console.log('✓ Favorite removed:', vehicleId);
+                // Save to localStorage
+                saveFavoritesToLocalStorage(updatedIds);
                 patchState(store, {
                   favorites: updatedFavorites,
                   favoriteVehicleIds: updatedIds,
@@ -106,6 +146,7 @@ export const FavoriteStore = signalStore(
                 });
               }),
               catchError((error) => {
+                console.error('✗ Error removing favorite:', error);
                 patchState(store, {
                   isLoading: false,
                   error: error.message || 'Error al eliminar favorito'
@@ -121,6 +162,7 @@ export const FavoriteStore = signalStore(
         pipe(
           switchMap(({ userId, vehicleId }) => {
             const isFavorite = store.favoriteVehicleIds().includes(vehicleId);
+            console.log('Toggling favorite:', { vehicleId, isFavorite });
             
             if (isFavorite) {
               // Remove from favorites
@@ -138,13 +180,16 @@ export const FavoriteStore = signalStore(
                     fav => fav.id !== favoriteToRemove.id
                   );
                   const updatedIds = updatedFavorites.map(fav => fav.vehicleId);
+                  console.log('✓ Favorite toggled (removed):', vehicleId);
+                  // Save to localStorage
+                  saveFavoritesToLocalStorage(updatedIds);
                   patchState(store, {
                     favorites: updatedFavorites,
                     favoriteVehicleIds: updatedIds
                   });
                 }),
                 catchError((error) => {
-                  console.error('Error removing favorite:', error);
+                  console.error('✗ Error removing favorite:', error);
                   return of(null);
                 })
               );
@@ -154,13 +199,16 @@ export const FavoriteStore = signalStore(
                 tap((newFavorite) => {
                   const updatedFavorites = [...store.favorites(), newFavorite];
                   const updatedIds = [...store.favoriteVehicleIds(), vehicleId];
+                  console.log('✓ Favorite toggled (added):', vehicleId);
+                  // Save to localStorage
+                  saveFavoritesToLocalStorage(updatedIds);
                   patchState(store, {
                     favorites: updatedFavorites,
                     favoriteVehicleIds: updatedIds
                   });
                 }),
                 catchError((error) => {
-                  console.error('Error adding favorite:', error);
+                  console.error('✗ Error adding favorite:', error);
                   return of(null);
                 })
               );

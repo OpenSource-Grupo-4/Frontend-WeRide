@@ -33,20 +33,20 @@
       <div class="vehicle-card">
         <img
           [src]="vehicle.image"
-          [alt]="vehicle.brand + ' ' + vehicle.model"
+          [alt]="(vehicle.brand || '') + ' ' + (vehicle.model || '')"
           class="vehicle-image"
         />
         <div class="vehicle-info">
           <p class="vehicle-type">
             {{ 'garage.vehicle.types.electric_scooter' | translate }}
           </p>
-          <p class="vehicle-id">
+          <p class="vehicle-id" *ngIf="vehicle">
             {{ 'garage.vehicle.id' | translate }}: {{ vehicle.id }}
           </p>
-          <p class="vehicle-battery">
+          <p class="vehicle-battery" *ngIf="vehicle">
             {{ 'garage.vehicle.battery' | translate }}: {{ vehicle.battery }}%
           </p>
-          <p class="vehicle-brand">
+          <p class="vehicle-brand" *ngIf="vehicle">
             {{ 'garage.brand' | translate }}: {{ vehicle.brand }}
           </p>
           <p *ngIf="unlockRequest" class="unlock-code">

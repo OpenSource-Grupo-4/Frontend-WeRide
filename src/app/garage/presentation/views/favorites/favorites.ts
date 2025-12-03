@@ -1,4 +1,4 @@
-import {Component, OnInit, inject, computed} from '@angular/core';
+import {Component, OnInit, inject, computed, signal} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {RouterLink} from '@angular/router';
 import {TranslateModule} from '@ngx-translate/core';
@@ -22,36 +22,57 @@ export class Favorites implements OnInit {
   private favoriteStore = inject(FavoriteStore);
   private authStore = inject(AuthStore);
 
-  favoriteVehicles: Vehicle[] = [];
+  // Use signal for reactivity
+  allVehicles = signal<Vehicle[]>([]);
   isLoading = computed(() => this.favoriteStore.isLoading());
   error = computed(() => this.favoriteStore.error());
-  favorites = computed(() => this.favoriteStore.favorites());
+  
+  // Reactive computed property that automatically updates when favorites change
+  favoriteVehicles = computed(() => {
+    const favoriteIds = this.favoriteStore.favoriteVehicleIds();
+    const vehicles = this.allVehicles();
+    
+    console.log('=== COMPUTING FAVORITE VEHICLES ===');
+    console.log('Total vehicles loaded:', vehicles.length);
+    console.log('Favorite IDs from store:', favoriteIds);
+    console.log('Vehicle IDs:', vehicles.map(v => v.id));
+    
+    const filtered = vehicles.filter(v => {
+      const match = favoriteIds.includes(v.id);
+      if (match) {
+        console.log(`✓ Vehicle ${v.id} (${v.brand} ${v.model}) is a favorite`);
+      }
+      return match;
+    });
+    
+    console.log('Filtered count:', filtered.length);
+    console.log('=================================');
+    
+    return filtered.map(v => ({
+      ...v,
+      favorite: true
+    }));
+  });
 
   async ngOnInit() {
     // Load user's favorites from backend
     const currentUser = this.authStore.currentUser();
+    console.log('Current user:', currentUser);
     if (currentUser) {
       this.favoriteStore.loadUserFavorites(currentUser.id);
     }
     
-    // Load vehicles and filter by favorites
-    await this.loadFavoriteVehicles();
+    // Load all vehicles once
+    await this.loadVehicles();
   }
 
-  async loadFavoriteVehicles() {
+  async loadVehicles() {
     try {
-      const allVehicles = await this.getVehiclesUseCase.execute();
-      const favoriteIds = this.favoriteStore.favoriteVehicleIds();
-      
-      // Filter vehicles to show only favorites and mark them
-      this.favoriteVehicles = allVehicles
-        .filter(v => favoriteIds.includes(v.id))
-        .map(v => ({
-          ...v,
-          favorite: true
-        }));
+      const vehicles = await this.getVehiclesUseCase.execute();
+      console.log('Loaded vehicles:', vehicles.length);
+      this.allVehicles.set(vehicles);
     } catch (error) {
-      console.error('Error loading favorite vehicles:', error);
+      console.error('Error loading vehicles:', error);
     }
   }
 
@@ -59,12 +80,13 @@ export class Favorites implements OnInit {
     const currentUser = this.authStore.currentUser();
     if (currentUser) {
       this.toggleFavoriteUseCase.execute(currentUser.id, vehicleId);
-      // Wait a bit for the store to update, then reload
-      setTimeout(() => this.loadFavoriteVehicles(), 300);
+      // No need to reload - the computed signal will update automatically
     }
   }
 
   get hasFavorites(): boolean {
-    return this.favoriteVehicles.length > 0;
+    return this.favoriteVehicles().length > 0;
   }
 }
+
+// Debug log

@@ -11,7 +11,7 @@
   </div>
   } @if (!isLoading() && !error()) {
   <div class="vehicle-grid">
-    @for (vehicle of favoriteVehicles; track vehicle.id) {
+    @for (vehicle of favoriteVehicles(); track vehicle.id) {
     <app-vehicle-card
       [vehicle]="vehicle"
       (toggleFavorite)="toggleFavorite($event)"
