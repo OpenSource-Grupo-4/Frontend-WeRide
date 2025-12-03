@@ -76,7 +76,6 @@ export class Navbar implements OnInit {
       this.notificationsApi.getByUserId(user.id).subscribe({
         next: (responses: NotificationResponse[]) => {
           const notificationList = responses.map(r => toDomainNotification(r));
-          // Sort by date, most recent first, limit to 10
           const sortedNotifications = notificationList
             .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
             .slice(0, 10);

@@ -62,13 +62,11 @@
   }
 }
 
-/* Badge customization */
 ::ng-deep .mat-badge-content {
   background-color: #6255c4 !important;
   color: white !important;
 }
 
-/* Notification Menu Styles */
 ::ng-deep .notification-menu {
   max-width: 400px;
   min-width: 320px;
@@ -208,7 +206,6 @@
   margin: 0;
 }
 
-/* User Menu Styles */
 ::ng-deep .user-menu {
   min-width: 280px;
 }

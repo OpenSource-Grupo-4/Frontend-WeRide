@@ -68,7 +68,6 @@
   }
 }
 
-/* Badge */
 .badge {
   position: absolute;
   top: 4px;
@@ -83,12 +82,10 @@
   text-align: center;
 }
 
-/* Dropdown Container */
 .dropdown-container {
   position: relative;
 }
 
-/* Dropdown Base Styles */
 .dropdown {
   position: absolute;
   top: calc(100% + 8px);
@@ -113,7 +110,6 @@
   }
 }
 
-/* Notification Dropdown */
 .notification-dropdown {
   max-height: 500px;
   overflow: hidden;
@@ -256,7 +252,6 @@
   margin: 0;
 }
 
-/* User Dropdown */
 .user-dropdown {
   min-width: 280px;
 }

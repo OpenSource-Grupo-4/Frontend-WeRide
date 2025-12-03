@@ -11,7 +11,6 @@
   <div class="right-section">
     <app-language-switcher></app-language-switcher>
 
-    <!-- Notifications Button -->
     <button
       mat-icon-button
       class="notification-btn"
@@ -25,7 +24,6 @@
       <mat-icon>notifications</mat-icon>
     </button>
 
-    <!-- User Profile Button -->
     <div class="user-profile">
       <span class="user-name-nav"
         >{{ currentUser()?.name || ('navigation.user' | translate) }}</span
@@ -37,7 +35,6 @@
   </div>
 </header>
 
-<!-- Notifications Menu -->
 <mat-menu
   #notificationMenu="matMenu"
   class="notification-menu"
@@ -89,7 +86,6 @@
   }
 </mat-menu>
 
-<!-- User Profile Menu -->
 <mat-menu #userMenu="matMenu" class="user-menu" xPosition="before">
   <div class="user-menu-header" (click)="$event.stopPropagation()">
     <div class="user-avatar">

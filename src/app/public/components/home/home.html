@@ -1,16 +1,5 @@
-<div class="home-page" [class.dark-theme]="isDarkTheme()">
-  <!-- Theme Toggle -->
-  <div class="theme-toggle">
-    <button
-      mat-icon-button
-      (click)="toggleTheme()"
-      [attr.aria-label]="'home.theme.toggle' | translate"
-    >
-      <mat-icon>{{ isDarkTheme() ? 'light_mode' : 'dark_mode' }}</mat-icon>
-    </button>
-  </div>
+<div class="home-page">
 
-  <!-- Hero Section -->
   <section class="hero-section">
     <div class="hero-content">
       <h1 class="hero-title">{{ 'home.welcome' | translate }}</h1>
@@ -25,7 +14,6 @@
     <div class="hero-banner"></div>
   </section>
 
-  <!-- Active Booking Section -->
   @if (activeBooking()) {
   <section class="active-booking-section">
     <app-active-booking-card
@@ -47,7 +35,6 @@
   </section>
   }
 
-  <!-- Loading State -->
   @if (isLoading()) {
   <section class="features-section">
     <div class="features-grid">
@@ -58,15 +45,12 @@
   </section>
   }
 
-  <!-- Error State -->
   @if (hasError() && error()) {
   <section class="error-section">
     <app-error-state [message]="error()!" (retry)="onRetry()">
     </app-error-state>
   </section>
   }
-
-  <!-- Features Grid -->
   @if (!isLoading() && !hasError()) {
   <section class="features-section">
     <h2 class="section-title">{{ 'home.features.title' | translate }}</h2>
@@ -81,8 +65,6 @@
     </div>
   </section>
   }
-
-  <!-- Quick Actions -->
   <section class="quick-actions">
     <h2>{{ 'home.quickActions' | translate }}</h2>
     <div class="action-buttons">

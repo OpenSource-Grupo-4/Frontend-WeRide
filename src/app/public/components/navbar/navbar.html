@@ -9,7 +9,6 @@
 
   <app-language-switcher></app-language-switcher>
 
-  <!-- Notifications Button -->
   <div class="dropdown-container">
     <button
       class="nav-button notification-button"
@@ -21,7 +20,6 @@
       }
     </button>
 
-    <!-- Notifications Dropdown -->
     @if (isNotificationMenuOpen()) {
     <div class="dropdown notification-dropdown">
       <div class="dropdown-header">
@@ -70,7 +68,6 @@
     }
   </div>
 
-  <!-- User Profile Button -->
   <div class="dropdown-container">
     <button class="nav-button user-button" (click)="toggleUserMenu()">
       <span class="user-name-nav"
@@ -79,7 +76,6 @@
       <span class="icon">👤</span>
     </button>
 
-    <!-- User Dropdown -->
     @if (isUserMenuOpen()) {
     <div class="dropdown user-dropdown">
       <div class="user-menu-header">
