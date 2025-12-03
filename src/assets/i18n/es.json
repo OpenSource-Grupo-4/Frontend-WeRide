@@ -125,10 +125,19 @@
     "applyFilters": "Aplicar Filtros",
     "clear": "Limpiar",
     "all": "Todos",
+    "tabs": {
+      "allVehicles": "Todos los Vehículos",
+      "favorites": "Favoritos"
+    },
     "favorites": {
       "title": "Mis Vehículos Favoritos",
       "noFavorites": "No tienes vehículos favoritos aún.",
-      "explore": "Explora el garaje y marca tus vehículos preferidos."
+      "addMessage": "Marca tus vehículos preferidos para encontrarlos fácilmente aquí.",
+      "exploreVehicles": "Explorar Vehículos",
+      "loading": "Cargando favoritos...",
+      "addedToFavorites": "Agregado a favoritos",
+      "removedFromFavorites": "Eliminado de favoritos",
+      "error": "Error al actualizar favoritos"
     },
     "details": {
       "basicInfo": "Información Básica",

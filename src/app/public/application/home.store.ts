@@ -37,7 +37,6 @@ export class HomeStore {
     this._error.set(null);
     this._status.set('loading');
 
-    // Simulate minimum loading time for better UX
     setTimeout(() => {
       try {
         this.initializeFeatures();
@@ -89,7 +88,7 @@ export class HomeStore {
         icon: 'card_membership',
         titleKey: 'home.features.plans.title',
         descriptionKey: 'home.features.plans.description',
-        route: '/plans',
+        route: '/plan',
         order: 3
       },
       {

@@ -1,19 +1,19 @@
 <div class="favorites-container">
   <h1>{{ 'garage.favorites.title' | translate }}</h1>
 
-  @if (isLoading) {
+  @if (isLoading()) {
     <div class="loading">
-      <p>{{ 'garage.loadingFavorites' | translate }}</p>
+      <p>{{ 'garage.favorites.loading' | translate }}</p>
     </div>
   }
 
-  @if (error) {
+  @if (error()) {
     <div class="error">
-      <p>{{ error }}</p>
+      <p>{{ error() }}</p>
     </div>
   }
 
-  @if (!isLoading && !error) {
+  @if (!isLoading() && !error()) {
     <div class="vehicle-grid">
       @for (vehicle of favoriteVehicles; track vehicle.id) {
         <app-vehicle-card
@@ -22,10 +22,13 @@
         </app-vehicle-card>
       }
 
-      @if (favoriteVehicles.length === 0) {
+      @if (!hasFavorites) {
         <div class="no-favorites">
           <p>{{ 'garage.favorites.noFavorites' | translate }}</p>
-          <p>{{ 'garage.favorites.explore' | translate }}</p>
+          <p>{{ 'garage.favorites.addMessage' | translate }}</p>
+          <a routerLink="/garage" class="explore-link">
+            {{ 'garage.favorites.exploreVehicles' | translate }}
+          </a>
         </div>
       }
     </div>

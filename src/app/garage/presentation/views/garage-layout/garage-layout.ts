@@ -4,6 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatTabsModule } from '@angular/material/tabs';
 import { ActiveBookingService } from '../../../../booking/application/active-booking.service';
 import { BookingConfirmationModal } from '../../../../booking/presentation/views/booking-confirmation-modal/booking-confirmation-modal';
 import { GarageFilter } from '../garage-filter/garage-filter';
@@ -18,6 +19,8 @@ import { VehicleFilter } from '../../../domain/model/vehicle-filter.model';
 import { GetVehiclesUseCase } from '../../../application/use-cases/get-vehicles.usecase';
 import { FilterVehiclesUseCase } from '../../../application/use-cases/filter-vehicles.usecase';
 import { ToggleFavoriteUseCase } from '../../../application/use-cases/toggle-favorite.usecase';
+import { FavoriteStore } from '../../../application/favorite.store';
+import { AuthStore } from '../../../../auth/application/auth.store';
 
 @Component({
   selector: 'app-garage-layout',
@@ -25,6 +28,7 @@ import { ToggleFavoriteUseCase } from '../../../application/use-cases/toggle-fav
   imports: [
     CommonModule,
     TranslateModule,
+    MatTabsModule,
     GarageFilter,
     VehicleCard,
     MatButton,
@@ -37,10 +41,13 @@ export class GarageLayout implements OnInit {
   filteredVehicles: Vehicle[] = [];
   isLoading = false;
   error: string | null = null;
+  currentView: 'all' | 'favorites' = 'all';
 
   private router = inject(Router);
   private snackBar = inject(MatSnackBar);
   private activeBookingService = inject(ActiveBookingService);
+  private favoriteStore = inject(FavoriteStore);
+  private authStore = inject(AuthStore);
 
   constructor(
     private dialog: MatDialog,
@@ -51,6 +58,12 @@ export class GarageLayout implements OnInit {
   ) {}
 
   async ngOnInit() {
+    // Load user's favorites
+    const currentUser = this.authStore.currentUser();
+    if (currentUser) {
+      this.favoriteStore.loadUserFavorites(currentUser.id);
+    }
+    
     await this.loadVehicles();
   }
 
@@ -60,6 +73,7 @@ export class GarageLayout implements OnInit {
     try {
       this.vehicles = await this.getVehiclesUseCase.execute();
       this.filteredVehicles = this.vehicles;
+      this.updateFavoriteStatus();
     } catch (error) {
       this.error = this.translate.instant('garage.error');
       console.error('Error loading vehicles:', error);
@@ -68,10 +82,28 @@ export class GarageLayout implements OnInit {
     }
   }
 
+  updateFavoriteStatus() {
+    const favoriteIds = this.favoriteStore.favoriteVehicleIds();
+    this.vehicles = this.vehicles.map(v => ({
+      ...v,
+      favorite: favoriteIds.includes(v.id)
+    }));
+    this.filteredVehicles = this.filteredVehicles.map(v => ({
+      ...v,
+      favorite: favoriteIds.includes(v.id)
+    }));
+  }
+
   async applyFilter(filter: VehicleFilter) {
     this.isLoading = true;
     try {
-      this.filteredVehicles = await this.filterVehiclesUseCase.execute(filter);
+      // Apply showFavoritesOnly based on current view
+      const enhancedFilter = {
+        ...filter,
+        showFavoritesOnly: this.currentView === 'favorites'
+      };
+      this.filteredVehicles = await this.filterVehiclesUseCase.execute(enhancedFilter);
+      this.updateFavoriteStatus();
     } catch (error) {
       this.error = this.translate.instant('garage.filterError');
       console.error('Error applying filters:', error);
@@ -80,9 +112,23 @@ export class GarageLayout implements OnInit {
     }
   }
 
+  switchView(view: 'all' | 'favorites') {
+    this.currentView = view;
+    // Reapply current filters with new view
+    this.applyFilter({});
+  }
+
   async toggleFavorite(vehicleId: string) {
-    await this.toggleFavoriteUseCase.execute(vehicleId);
-    await this.loadVehicles();
+    const currentUser = this.authStore.currentUser();
+    if (currentUser) {
+      this.toggleFavoriteUseCase.execute(currentUser.id, vehicleId);
+      // Wait a bit for the store to update, then refresh
+      setTimeout(() => this.updateFavoriteStatus(), 300);
+    }
+  }
+
+  get favoritesCount(): number {
+    return this.favoriteStore.favoriteVehicleIds().length;
   }
 
   openVehicleDetails(vehicle: Vehicle) {

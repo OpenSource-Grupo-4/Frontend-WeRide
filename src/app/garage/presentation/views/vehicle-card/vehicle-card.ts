@@ -5,6 +5,7 @@ import { MatCard, MatCardActions, MatCardContent, MatCardImage, MatCardHeader, M
 import { MatIcon } from '@angular/material/icon';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatChip, MatChipSet } from '@angular/material/chips';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { Vehicle } from '../../../domain/model/vehicle.model';
@@ -13,6 +14,8 @@ import { Vehicle as TripVehicle } from '../../../../trip/domain/model/vehicle.en
 import { Location } from '../../../../trip/domain/model/location.entity';
 import { LocationsApiEndpoint } from '../../../../trip/infrastructure/locations-api-endpoint';
 import { BookingConfirmationModal } from '../../../../booking/presentation/views/booking-confirmation-modal/booking-confirmation-modal';
+import { FavoriteStore } from '../../../application/favorite.store';
+import { AuthStore } from '../../../../auth/application/auth.store';
 
 @Component({
   selector: 'app-vehicle-card',
@@ -46,9 +49,57 @@ export class VehicleCard {
   private tripStore = inject(TripStore);
   private locationsApi = inject(LocationsApiEndpoint);
   private dialog = inject(MatDialog);
+  private snackBar = inject(MatSnackBar);
+  private favoriteStore = inject(FavoriteStore);
+  private authStore = inject(AuthStore);
+
+  isTogglingFavorite = false;
 
   onToggleFavorite() {
+    if (this.isTogglingFavorite) return;
+    
+    this.isTogglingFavorite = true;
+    const previousState = this.vehicle.favorite;
+    
+    // Optimistic UI update
+    this.vehicle.favorite = !this.vehicle.favorite;
+    
+    // Emit to parent
     this.toggleFavorite.emit(this.vehicle.id);
+    
+    // Show toast notification
+    const message = this.vehicle.favorite 
+      ? this.translate.instant('garage.favorites.addedToFavorites')
+      : this.translate.instant('garage.favorites.removedFromFavorites');
+    
+    this.snackBar.open(message, '', {
+      duration: 2000,
+      horizontalPosition: 'end',
+      verticalPosition: 'top',
+      panelClass: this.vehicle.favorite ? ['success-snackbar'] : ['info-snackbar']
+    });
+    
+    // Check for errors after a delay
+    setTimeout(() => {
+      const error = this.favoriteStore.error();
+      if (error) {
+        // Rollback on error
+        this.vehicle.favorite = previousState;
+        this.snackBar.open(
+          this.translate.instant('garage.favorites.error'),
+          this.translate.instant('common.retry'),
+          {
+            duration: 4000,
+            horizontalPosition: 'end',
+            verticalPosition: 'top',
+            panelClass: ['error-snackbar']
+          }
+        ).onAction().subscribe(() => {
+          this.onToggleFavorite();
+        });
+      }
+      this.isTogglingFavorite = false;
+    }, 500);
   }
 
   onViewDetails() {

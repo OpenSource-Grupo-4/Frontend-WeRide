@@ -125,10 +125,19 @@
     "applyFilters": "Apply Filters",
     "clear": "Clear",
     "all": "All",
+    "tabs": {
+      "allVehicles": "All Vehicles",
+      "favorites": "Favorites"
+    },
     "favorites": {
       "title": "My Favorite Vehicles",
       "noFavorites": "You don't have favorite vehicles yet.",
-      "explore": "Explore the garage and mark your preferred vehicles."
+      "addMessage": "Mark your preferred vehicles to easily find them here.",
+      "exploreVehicles": "Explore Vehicles",
+      "loading": "Loading favorites...",
+      "addedToFavorites": "Added to favorites",
+      "removedFromFavorites": "Removed from favorites",
+      "error": "Error updating favorites"
     },
     "details": {
       "basicInfo": "Basic Information",

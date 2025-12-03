@@ -1,11 +1,13 @@
-import { Injectable } from '@angular/core';
-import { FavoriteService } from '../services/favorite.service';
+import { Injectable, inject } from '@angular/core';
+import { FavoriteStore } from '../favorite.store';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ToggleFavoriteUseCase {
-  async execute(vehicleId: string): Promise<void> {
-    FavoriteService.toggleFavorite(vehicleId);
+  private favoriteStore = inject(FavoriteStore);
+
+  execute(userId: string, vehicleId: string): void {
+    this.favoriteStore.toggleFavorite({ userId, vehicleId });
   }
 }

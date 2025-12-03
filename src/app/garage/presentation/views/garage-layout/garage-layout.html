@@ -35,6 +35,26 @@
     </div>
   </div>
 
+  <!-- View Tabs -->
+  <mat-tab-group 
+    [selectedIndex]="currentView === 'all' ? 0 : 1" 
+    (selectedIndexChange)="switchView($event === 0 ? 'all' : 'favorites')"
+    class="garage-tabs">
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <span>{{ 'garage.tabs.allVehicles' | translate }}</span>
+      </ng-template>
+    </mat-tab>
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <span>{{ 'garage.tabs.favorites' | translate }}</span>
+        @if (favoritesCount > 0) {
+          <span class="favorites-badge">{{ favoritesCount }}</span>
+        }
+      </ng-template>
+    </mat-tab>
+  </mat-tab-group>
+
   <app-garage-filter (filterChange)="applyFilter($event)"></app-garage-filter>
 
   @if (isLoading) {
