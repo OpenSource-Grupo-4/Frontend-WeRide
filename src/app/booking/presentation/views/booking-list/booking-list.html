@@ -79,8 +79,8 @@
           <mat-icon>cancel</mat-icon>
           {{ 'booking.cancel' | translate }}
         </button>
-        <button 
-          class="btn-danger-outline" 
+        <button
+          class="btn-danger-outline"
           (click)="deleteBooking(booking.id)"
           [disabled]="booking.status === 'active'"
         >
