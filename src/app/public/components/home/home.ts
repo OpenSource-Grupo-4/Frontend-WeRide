@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, computed } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -6,6 +6,11 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { ActiveBookingService } from '../../../booking/application/active-booking.service';
+import { ThemeService } from '../../../core/services/theme.service';
+import { HomeStore } from '../../application/home.store';
+import { SkeletonLoaderComponent } from '../skeleton-loader/skeleton-loader';
+import { ErrorStateComponent } from '../error-state/error-state';
+import { ActiveBookingCardComponent } from '../active-booking-card/active-booking-card';
 
 @Component({
   selector: 'app-home',
@@ -15,7 +20,10 @@ import { ActiveBookingService } from '../../../booking/application/active-bookin
     RouterModule,
     MatIconModule,
     MatButtonModule,
-    TranslateModule
+    TranslateModule,
+    SkeletonLoaderComponent,
+    ErrorStateComponent,
+    ActiveBookingCardComponent
   ],
   templateUrl: './home.html',
   styleUrl: './home.css'
@@ -24,6 +32,36 @@ export class Home {
   private router = inject(Router);
   private snackBar = inject(MatSnackBar);
   private activeBookingService = inject(ActiveBookingService);
+  private themeService = inject(ThemeService);
+  private homeStore = inject(HomeStore);
+
+  // Theme signals
+  readonly isDarkTheme = computed(() => this.themeService.currentTheme() === 'dark');
+
+  // HomeStore signals
+  readonly isLoading = this.homeStore.isLoading;
+  readonly error = this.homeStore.error;
+  readonly hasError = this.homeStore.hasError;
+  readonly features = this.homeStore.features;
+
+  // Active booking signal
+  readonly activeBooking = computed(() => this.activeBookingService.getActiveBooking());
+
+  toggleTheme(): void {
+    this.themeService.toggleTheme();
+  }
+
+  onRetry(): void {
+    this.homeStore.retry();
+  }
+
+  navigateToTripDetails(): void {
+    this.router.navigate(['/trip/details']);
+  }
+
+  navigateToGarage(): void {
+    this.router.navigate(['/garage']);
+  }
 
   onScheduleUnlock(): void {
     const activeBooking = this.activeBookingService.getActiveBooking();

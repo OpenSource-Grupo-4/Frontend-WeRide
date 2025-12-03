@@ -469,7 +469,11 @@
   "home": {
     "welcome": "Welcome to WeRide",
     "subtitle": "Your electric micromobility platform",
+    "hero": {
+      "startRiding": "Start Riding"
+    },
     "features": {
+      "title": "Our Services",
       "scooters": {
         "title": "Electric Scooters",
         "description": "Rent electric scooters for short trips around the city"
@@ -485,6 +489,22 @@
       "status": {
         "title": "Unlock Status",
         "description": "Monitor your vehicle's unlock status in real-time"
+      },
+      "garage": {
+        "title": "Vehicle Garage",
+        "description": "Browse and select from our fleet of vehicles"
+      },
+      "trips": {
+        "title": "My Trips",
+        "description": "View your trip history and active rides"
+      },
+      "plans": {
+        "title": "Membership Plans",
+        "description": "Choose the plan that fits your needs"
+      },
+      "profile": {
+        "title": "My Profile",
+        "description": "Manage your account and preferences"
       }
     },
     "quickActions": "Quick Actions",
@@ -492,6 +512,28 @@
       "checkStatus": "Check Unlock Status",
       "schedule": "Schedule Unlock",
       "viewBookings": "View Bookings"
+    },
+    "cta": {
+      "title": "Ready to ride?",
+      "description": "Find a vehicle near you and start your journey"
+    },
+    "activeBooking": {
+      "active": "Active",
+      "bookingId": "Booking",
+      "remaining": "Time remaining",
+      "viewDetails": "View details"
+    },
+    "theme": {
+      "toggle": "Toggle theme",
+      "light": "Light mode",
+      "dark": "Dark mode"
+    },
+    "errors": {
+      "network": "Connection error. Please check your internet.",
+      "timeout": "Request timed out. Please try again.",
+      "unknown": "An unexpected error occurred.",
+      "maxRetries": "Maximum retry attempts reached.",
+      "retry": "Retry"
     }
   },
   "errors": {
