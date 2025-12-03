@@ -60,15 +60,8 @@ export class ManualUnlockModal {
     @Inject(MAT_DIALOG_DATA) public data: ManualUnlockModalData
   ) {
     this.unlockForm = this.fb.group({
-      vehiclePhone: ['', [
-        Validators.required,
-        Validators.pattern(/^\d{9,15}$/)
-      ]],
-      unlockCode: ['', [
-        Validators.required,
-        Validators.minLength(4),
-        Validators.maxLength(6)
-      ]]
+      vehiclePhone: ['', [Validators.required]],
+      unlockCode: ['', [Validators.required]]
     });
   }
 

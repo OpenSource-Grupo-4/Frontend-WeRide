@@ -350,12 +350,56 @@ export class VehicleUnlockStatusComponent implements OnInit, OnDestroy {
     return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
   }
 
-  lockVehicle() {
-    console.log('Lock vehicle requested');
+  async lockVehicle() {
+    if (!this.isActiveTrip()) return;
+
+    try {
+      const booking = this.activeBooking();
+      if (!booking) return;
+
+      await firstValueFrom(
+        this.unlockRequestsApi.update(booking.unlockRequestId || '', {
+          status: 'pending',
+          actualUnlockTime: null
+        })
+      );
+
+      this.vehicleInfo.update(info => ({ ...info, status: 'Locked' }));
+      
+      this.recentActivity.update(activities => [{
+        type: 'info',
+        message: 'Vehículo bloqueado',
+        time: this.formatTime(new Date())
+      }, ...activities]);
+    } catch (error) {
+      console.error('Error locking vehicle:', error);
+    }
   }
 
-  unlockVehicle() {
-    console.log('Unlock vehicle requested');
+  async unlockVehicle() {
+    if (!this.isActiveTrip()) return;
+
+    try {
+      const booking = this.activeBooking();
+      if (!booking) return;
+
+      await firstValueFrom(
+        this.unlockRequestsApi.update(booking.unlockRequestId || '', {
+          status: 'unlocked',
+          actualUnlockTime: new Date().toISOString()
+        })
+      );
+
+      this.vehicleInfo.update(info => ({ ...info, status: 'Unlocked' }));
+      
+      this.recentActivity.update(activities => [{
+        type: 'success',
+        message: 'Vehículo desbloqueado',
+        time: this.formatTime(new Date())
+      }, ...activities]);
+    } catch (error) {
+      console.error('Error unlocking vehicle:', error);
+    }
   }
 
   goToGarage() {

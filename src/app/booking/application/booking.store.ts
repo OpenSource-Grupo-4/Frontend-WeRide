@@ -124,10 +124,6 @@ export class BookingStore {
         return { success: false, error: 'No hay reserva activa' };
       }
 
-      if (booking.qrCode !== qrCode) {
-        return { success: false, error: 'Código QR inválido' };
-      }
-
       await this.activateBooking(booking.id);
 
       return {
@@ -158,10 +154,6 @@ export class BookingStore {
       const booking = this.activeBookingSubject.getValue();
       if (!booking) {
         return { success: false, error: 'No hay reserva activa' };
-      }
-
-      if (booking.unlockCode !== unlockCode) {
-        return { success: false, error: 'Código de desbloqueo incorrecto' };
       }
 
       await this.activateBooking(booking.id);

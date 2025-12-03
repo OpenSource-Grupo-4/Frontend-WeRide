@@ -8,13 +8,39 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 32px;
+  margin-bottom: 24px;
 }
 
 .header h1 {
   color: #333;
   font-size: 2rem;
   font-weight: 600;
+  margin: 0;
+}
+
+.filters {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 24px;
+  padding: 16px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.search-field {
+  flex: 2;
+  min-width: 200px;
+}
+
+.sort-field,
+.order-field {
+  flex: 1;
+  min-width: 150px;
+}
+
+.filters mat-form-field {
   margin: 0;
 }
 
