@@ -1,16 +1,19 @@
 import { Injectable, inject } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { Booking } from '../domain/model/booking.entity';
+import { BehaviorSubject, Observable, firstValueFrom } from 'rxjs';
+import { Booking, BookingActivationStatus } from '../domain/model/booking.entity';
 import { BookingStorageService } from './booking-storage.service';
+import { BookingsApiEndpoint } from '../infraestructure/bookings-api-endpoint';
+import { toDomainBooking } from '../infraestructure/booking-assembler';
 
 @Injectable({ providedIn: 'root' })
 export class BookingStore {
   private storageService = inject(BookingStorageService);
+  private bookingsApi = inject(BookingsApiEndpoint);
   private bookingsSubject = new BehaviorSubject<Booking[]>([]);
   private selectedBookingSubject = new BehaviorSubject<Booking | null>(null);
+  private activeBookingSubject = new BehaviorSubject<Booking | null>(null);
 
   constructor() {
-    // Load bookings from localStorage on initialization
     this.loadFromLocalStorage();
   }
 
@@ -72,12 +75,106 @@ export class BookingStore {
     current.forEach(booking => this.storageService.saveBooking(booking));
   }
 
-  /**
-   * Get booking by ID from the current store
-   */
   getBookingById(id: string): Booking | null {
     const current = this.bookingsSubject.getValue();
     return current.find(b => b.id === id) || null;
+  }
+
+  getActiveBooking$(): Observable<Booking | null> {
+    return this.activeBookingSubject.asObservable();
+  }
+
+  setActiveBooking(booking: Booking | null): void {
+    this.activeBookingSubject.next(booking);
+  }
+
+  async activateBooking(bookingId: string): Promise<void> {
+    const bookingResponse = await firstValueFrom(
+      this.bookingsApi.getById(bookingId)
+    );
+
+    const activatedBooking = toDomainBooking(bookingResponse);
+    activatedBooking.activationStatus = 'active';
+    activatedBooking.isActivated = true;
+    activatedBooking.activatedAt = new Date();
+    activatedBooking.status = 'active';
+
+    await firstValueFrom(
+      this.bookingsApi.update(bookingId, {
+        ...bookingResponse,
+        status: 'active',
+        actualStartDate: new Date().toISOString()
+      })
+    );
+
+    this.activeBookingSubject.next(activatedBooking);
+    this.updateBooking(activatedBooking);
+  }
+
+  async unlockVehicleByQR(qrCode: string): Promise<{
+    success: boolean;
+    vehicleId?: string;
+    bookingId?: string;
+    location?: any;
+    error?: string;
+  }> {
+    try {
+      const booking = this.activeBookingSubject.getValue();
+      if (!booking) {
+        return { success: false, error: 'No hay reserva activa' };
+      }
+
+      await this.activateBooking(booking.id);
+
+      return {
+        success: true,
+        vehicleId: booking.vehicleId,
+        bookingId: booking.id,
+        location: { lat: -12.046374, lng: -77.042793 }
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  async unlockVehicleManually(
+    vehiclePhone: string,
+    unlockCode: string
+  ): Promise<{
+    success: boolean;
+    vehicleId?: string;
+    bookingId?: string;
+    location?: any;
+    error?: string;
+  }> {
+    try {
+      const booking = this.activeBookingSubject.getValue();
+      if (!booking) {
+        return { success: false, error: 'No hay reserva activa' };
+      }
+
+      await this.activateBooking(booking.id);
+
+      return {
+        success: true,
+        vehicleId: booking.vehicleId,
+        bookingId: booking.id,
+        location: { lat: -12.046374, lng: -77.042793 }
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  async getBookingByIdAsync(bookingId: string): Promise<Booking> {
+    const response = await firstValueFrom(this.bookingsApi.getById(bookingId));
+    return toDomainBooking(response);
   }
 }
 

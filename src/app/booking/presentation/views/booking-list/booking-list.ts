@@ -6,6 +6,10 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { Router, RouterModule } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { FormsModule } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 import { BookingsApiEndpoint } from '../../../infraestructure/bookings-api-endpoint';
 import { VehiclesApiEndpoint } from '../../../infraestructure/vehicles-api-endpoint';
 import { LocationsApiEndpoint } from '../../../infraestructure/locations-api-endpoint';
@@ -14,6 +18,8 @@ import { BookingStore } from '../../../application/booking.store';
 import { ActiveBookingService } from '../../../application/active-booking.service';
 import { BookingConfirmationModal } from '../booking-confirmation-modal/booking-confirmation-modal';
 import { UnlockMethodSelectionModal } from '../unlock-method-selection-modal/unlock-method-selection-modal';
+import { BookingFilterService } from '../../../application/booking-filter.service';
+import { BookingFilter } from '../../../domain/model/booking-filter.model';
 import { forkJoin } from 'rxjs';
 
 interface BookingView {
@@ -25,12 +31,12 @@ interface BookingView {
   startDate: Date;
   duration: number | null;
   finalCost: number | null;
-  status: 'pending' | 'confirmed' | 'active' | 'completed' | 'cancelled';
+  status: 'draft' | 'pending' | 'confirmed' | 'active' | 'completed' | 'cancelled';
 }
 
 @Component({
   selector: 'app-booking-list',
-  imports: [CommonModule, MatIconModule, MatButtonModule, MatSnackBarModule, MatDialogModule, RouterModule, TranslateModule],
+  imports: [CommonModule, MatIconModule, MatButtonModule, MatSnackBarModule, MatDialogModule, RouterModule, TranslateModule, FormsModule, MatFormFieldModule, MatInputModule, MatSelectModule],
   templateUrl: './booking-list.html',
   styleUrl: './booking-list.css'
 })
@@ -45,10 +51,18 @@ export class BookingListComponent implements OnInit {
   private snackBar = inject(MatSnackBar);
   private dialog = inject(MatDialog);
   private translate = inject(TranslateService);
+  private filterService = inject(BookingFilterService);
 
   bookings: BookingView[] = [];
+  filteredBookings: BookingView[] = [];
   isLoading = true;
   isActivating = false;
+  
+  searchTerm = '';
+  sortBy: 'date' | 'vehicle' | 'status' = 'date';
+  sortOrder: 'asc' | 'desc' = 'desc';
+  
+  currentFilter: BookingFilter = this.filterService.getDefaultFilter();
 
   ngOnInit(): void {
     this.loadBookings();
@@ -92,6 +106,7 @@ export class BookingListComponent implements OnInit {
             status: booking.status
           };
         });
+        this.applyFilters();
         this.isLoading = false;
       },
       error: (error) => {
@@ -115,7 +130,37 @@ export class BookingListComponent implements OnInit {
       finalCost: booking.finalCost,
       status: booking.status
     }));
+    this.applyFilters();
     this.isLoading = false;
+  }
+
+  applyFilters(): void {
+    this.currentFilter = {
+      sortBy: this.sortBy,
+      sortOrder: this.sortOrder,
+      vehicleName: this.searchTerm,
+      status: ''
+    };
+    
+    this.filteredBookings = this.filterService.filterAndSortBookings(
+      this.bookings,
+      this.currentFilter
+    );
+  }
+
+  onSearchChange(): void {
+    this.applyFilters();
+  }
+
+  onSortChange(): void {
+    this.applyFilters();
+  }
+
+  clearFilters(): void {
+    this.searchTerm = '';
+    this.sortBy = 'date';
+    this.sortOrder = 'desc';
+    this.applyFilters();
   }
 
   editBooking(id: string): void {

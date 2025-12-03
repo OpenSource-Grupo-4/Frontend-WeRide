@@ -1091,5 +1091,34 @@
       "addedAt": "2025-10-01T11:00:00Z",
       "notes": "Buena relación calidad-precio"
     }
+  ],
+
+  "bookingDrafts": [
+    {
+      "id": "draft-001",
+      "userId": "1",
+      "vehicleId": "1",
+      "selectedDate": "2025-12-05",
+      "unlockTime": "14:30",
+      "duration": 2,
+      "smsReminder": true,
+      "emailConfirmation": true,
+      "pushNotification": false,
+      "savedAt": "2025-12-03T10:00:00Z",
+      "expiresAt": "2025-12-04T10:00:00Z"
+    },
+    {
+      "id": "draft-002",
+      "userId": "1",
+      "vehicleId": "3",
+      "selectedDate": "2025-12-06",
+      "unlockTime": "09:00",
+      "duration": 4,
+      "smsReminder": false,
+      "emailConfirmation": true,
+      "pushNotification": true,
+      "savedAt": "2025-12-03T15:30:00Z",
+      "expiresAt": "2025-12-04T15:30:00Z"
+    }
   ]
 }

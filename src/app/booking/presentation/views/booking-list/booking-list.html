@@ -7,12 +7,41 @@
     </button>
   </div>
 
+  <div class="filters" *ngIf="!isLoading">
+    <mat-form-field appearance="outline" class="search-field">
+      <mat-label>Buscar por vehículo</mat-label>
+      <input matInput [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()" placeholder="Nombre del vehículo">
+      <mat-icon matPrefix>search</mat-icon>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="sort-field">
+      <mat-label>Ordenar por</mat-label>
+      <mat-select [(ngModel)]="sortBy" (ngModelChange)="onSortChange()">
+        <mat-option value="date">Fecha</mat-option>
+        <mat-option value="vehicle">Vehículo</mat-option>
+        <mat-option value="status">Estado</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="order-field">
+      <mat-label>Orden</mat-label>
+      <mat-select [(ngModel)]="sortOrder" (ngModelChange)="onSortChange()">
+        <mat-option value="desc">Más recientes</mat-option>
+        <mat-option value="asc">Más antiguos</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <button mat-icon-button (click)="clearFilters()" matTooltip="Limpiar filtros">
+      <mat-icon>clear</mat-icon>
+    </button>
+  </div>
+
   <div *ngIf="isLoading" class="loading-state">
     <p>{{ 'booking.loadingBookings' | translate }}</p>
   </div>
 
   <div class="bookings-grid" *ngIf="!isLoading">
-    <div class="booking-card" *ngFor="let booking of bookings">
+    <div class="booking-card" *ngFor="let booking of filteredBookings">
       <div class="booking-header">
         <h3>{{ booking.vehicleName }}</h3>
         <span
@@ -91,7 +120,7 @@
     </div>
   </div>
 
-  <div class="empty-state" *ngIf="!isLoading && bookings.length === 0">
+  <div class="empty-state" *ngIf="!isLoading && filteredBookings.length === 0">
     <mat-icon>book_online</mat-icon>
     <h2>{{ 'booking.noBookings' | translate }}</h2>
     <p>{{ 'booking.createFirstBooking' | translate }}</p>

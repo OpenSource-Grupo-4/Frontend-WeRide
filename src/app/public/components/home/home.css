@@ -1,4 +1,3 @@
-/* CSS Variables for theming */
 :host {
   --bg-primary: #ffffff;
   --bg-secondary: #f9fafb;
@@ -11,18 +10,6 @@
   --shadow-color: rgba(0, 0, 0, 0.1);
 }
 
-.dark-theme {
-  --bg-primary: #1f2937;
-  --bg-secondary: #111827;
-  --bg-card: #374151;
-  --text-primary: #f9fafb;
-  --text-secondary: #9ca3af;
-  --accent-color: #8b5cf6;
-  --accent-hover: #7c3aed;
-  --border-color: #4b5563;
-  --shadow-color: rgba(0, 0, 0, 0.3);
-}
-
 .home-page {
   max-width: 1200px;
   margin: 0 auto;
@@ -32,7 +19,6 @@
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Theme Toggle */
 .theme-toggle {
   position: absolute;
   top: 16px;
@@ -44,7 +30,6 @@
   color: var(--text-primary);
 }
 
-/* Hero Section */
 .hero-section {
   display: flex;
   align-items: center;
@@ -95,7 +80,6 @@
   border-radius: 50%;
 }
 
-/* CTA Section */
 .cta-section {
   margin-bottom: 2rem;
 }
@@ -142,12 +126,10 @@
   color: var(--accent-color);
 }
 
-/* Active Booking Section */
 .active-booking-section {
   margin-bottom: 2rem;
 }
 
-/* Features Section */
 .features-section {
   margin-bottom: 3rem;
 }
@@ -200,12 +182,10 @@
   margin: 0;
 }
 
-/* Error Section */
 .error-section {
   margin-bottom: 2rem;
 }
 
-/* Quick Actions */
 .quick-actions {
   text-align: center;
   padding: 2rem 0;
@@ -280,7 +260,6 @@
   background-color: #1e4976;
 }
 
-/* Responsive - Mobile */
 @media (max-width: 576px) {
   .home-page {
     padding: 0 1rem;
@@ -325,7 +304,6 @@
   }
 }
 
-/* Responsive - Tablet */
 @media (min-width: 577px) and (max-width: 992px) {
   .home-page {
     padding: 0 1.5rem;
@@ -340,7 +318,6 @@
   }
 }
 
-/* Responsive - Desktop */
 @media (min-width: 993px) {
   .features-grid {
     grid-template-columns: repeat(4, 1fr);

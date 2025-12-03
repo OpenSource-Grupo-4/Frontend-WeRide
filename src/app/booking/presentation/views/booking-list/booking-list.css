@@ -8,7 +8,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 32px;
+  margin-bottom: 24px;
 }
 
 .header h1 {
@@ -18,8 +18,34 @@
   margin: 0;
 }
 
+.filters {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 24px;
+  padding: 16px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.search-field {
+  flex: 2;
+  min-width: 200px;
+}
+
+.sort-field,
+.order-field {
+  flex: 1;
+  min-width: 150px;
+}
+
+.filters mat-form-field {
+  margin: 0;
+}
+
 .btn-primary {
-  background-color: #1976d2;
+  background-color: #6d28d9;
   color: white;
   border: none;
   padding: 12px 24px;
@@ -34,7 +60,7 @@
 }
 
 .btn-primary:hover {
-  background-color: #1565c0;
+  background-color: #5a3299;
 }
 
 .bookings-grid {
