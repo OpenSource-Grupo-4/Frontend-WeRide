@@ -1,3 +1,9 @@
+export type BookingActivationStatus = 
+  | 'scheduled'
+  | 'active'
+  | 'completed'
+  | 'cancelled';
+
 export class Booking {
   constructor(
     public id: string,
@@ -20,6 +26,11 @@ export class Booking {
     public duration: number | null,
     public averageSpeed: number | null,
     public rating: { score: number; comment: string } | null,
-    public issues: string[]
+    public issues: string[],
+    public activationStatus?: BookingActivationStatus,
+    public isActivated?: boolean,
+    public activatedAt?: Date,
+    public qrCode?: string,
+    public unlockCode?: string
   ) {}
 }
