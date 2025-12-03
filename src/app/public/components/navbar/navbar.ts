@@ -119,12 +119,7 @@ export class Navbar implements OnInit {
 
   navigateToProfile() {
     this.closeMenus();
-    this.router.navigate(['/user/profile']);
-  }
-
-  navigateToSettings() {
-    this.closeMenus();
-    this.router.navigate(['/user/settings']);
+    this.router.navigate(['/profile']);
   }
 
   logout() {

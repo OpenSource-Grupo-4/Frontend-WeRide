@@ -77,11 +77,11 @@
   </div>
   } @else {
   <div class="notification-empty" (click)="$event.stopPropagation()">
-    <mat-icon class="empty-icon">notifications_none</mat-icon>
-    <p class="empty-text">{{ 'navbar.notifications.empty' | translate }}</p>
-    <p class="empty-subtext">
-      {{ 'navbar.notifications.emptySubtext' | translate }}
-    </p>
+    <img
+      src="/assets/auth/notification.png"
+      alt="No notifications"
+      class="empty-notification-image"
+    />
   </div>
   }
 </mat-menu>
@@ -106,11 +106,6 @@
   <button mat-menu-item (click)="navigateToProfile()">
     <mat-icon>person</mat-icon>
     <span>{{ 'navbar.userMenu.profile' | translate }}</span>
-  </button>
-
-  <button mat-menu-item (click)="navigateToSettings()">
-    <mat-icon>settings</mat-icon>
-    <span>{{ 'navbar.userMenu.settings' | translate }}</span>
   </button>
 
   <mat-divider></mat-divider>

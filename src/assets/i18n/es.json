@@ -34,14 +34,11 @@
   "navbar": {
     "notifications": {
       "title": "Notificaciones",
-      "empty": "No tienes notificaciones",
-      "emptySubtext": "Sigue usando WeRide para descubrir más.",
       "markAllRead": "Marcar todas como leídas"
     },
     "userMenu": {
-      "subtitle": "H2 Inter (18px)",
+      "subtitle": "¡Bienvenido!",
       "profile": "Perfil",
-      "settings": "Ajustes de cuenta",
       "logout": "Cerrar Sesión"
     }
   },

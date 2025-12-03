@@ -57,7 +57,11 @@
       </ul>
       } @else {
       <div class="notification-empty">
-        <span class="empty-icon">🔕</span>
+        <img
+          src="/assets/auth/notification.png"
+          alt="No notifications"
+          class="empty-notification-image"
+        />
         <p class="empty-text">{{ 'navbar.notifications.empty' | translate }}</p>
         <p class="empty-subtext">
           {{ 'navbar.notifications.emptySubtext' | translate }}
@@ -96,10 +100,6 @@
         <li class="user-menu-item" (click)="navigateToProfile()">
           <span class="menu-icon">👤</span>
           <span>{{ 'navbar.userMenu.profile' | translate }}</span>
-        </li>
-        <li class="user-menu-item" (click)="navigateToSettings()">
-          <span class="menu-icon">⚙️</span>
-          <span>{{ 'navbar.userMenu.settings' | translate }}</span>
         </li>
         <li class="menu-divider"></li>
         <li class="user-menu-item logout-item" (click)="logout()">

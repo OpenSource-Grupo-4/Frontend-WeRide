@@ -97,11 +97,7 @@ export class HeaderComponent implements OnInit {
   }
 
   navigateToProfile() {
-    this.router.navigate(['/user/profile']);
-  }
-
-  navigateToSettings() {
-    this.router.navigate(['/user/settings']);
+    this.router.navigate(['/user']);
   }
 
   logout() {

@@ -91,8 +91,9 @@
   top: calc(100% + 8px);
   right: 0;
   background-color: white;
-  border-radius: 8px;
+  border-radius: 20px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  border: 2px solid #e0e0e0;
   min-width: 320px;
   max-width: 400px;
   z-index: 1001;
@@ -237,6 +238,13 @@
   display: block;
   margin: 0 auto 16px;
   opacity: 0.3;
+}
+
+.empty-notification-image {
+  width: 200px;
+  height: auto;
+  display: block;
+  margin: 0 auto 16px;
 }
 
 .empty-text {

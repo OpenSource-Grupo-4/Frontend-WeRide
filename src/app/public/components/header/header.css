@@ -74,6 +74,9 @@
 
 ::ng-deep .notification-menu .mat-mdc-menu-content {
   padding: 0;
+  background-color: white;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
 }
 
 .notification-header {
@@ -193,6 +196,13 @@
   margin: 0 auto 16px;
 }
 
+.empty-notification-image {
+  width: 200px;
+  height: auto;
+  display: block;
+  margin: 0 auto 16px;
+}
+
 .empty-text {
   font-size: 16px;
   font-weight: 500;
@@ -212,6 +222,9 @@
 
 ::ng-deep .user-menu .mat-mdc-menu-content {
   padding: 0;
+  background-color: white;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
 }
 
 .user-menu-header {
