@@ -341,6 +341,7 @@
     "edit": "Editar",
     "cancel": "Cancelar",
     "delete": "Eliminar",
+    "activate": "Activar",
     "noBookings": "No hay reservas aún",
     "createFirstBooking": "Crea tu primera reserva para comenzar a usar WeRide",
     "createBooking": "Crear Reserva",
@@ -356,9 +357,15 @@
     "updateSuccess": "Reserva actualizada exitosamente",
     "updateError": "Error al actualizar la reserva",
     "notFound": "Reserva no encontrada",
+    "activatedSuccessfully": "Reserva activada exitosamente",
+    "activateError": "Error al activar la reserva",
+    "cannotActivate": "Esta reserva no puede ser activada",
+    "alreadyHasActive": "Ya tienes una reserva activa en curso",
+    "vehicleNotAvailable": "El vehículo no está disponible",
     "status": {
       "pending": "Pendiente",
       "confirmed": "Confirmada",
+      "active": "En curso",
       "completed": "Completada",
       "cancelled": "Cancelada"
     },

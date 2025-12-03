@@ -11,17 +11,21 @@ import { VehiclesApiEndpoint } from '../../../infraestructure/vehicles-api-endpo
 import { LocationsApiEndpoint } from '../../../infraestructure/locations-api-endpoint';
 import { BookingStorageService } from '../../../application/booking-storage.service';
 import { BookingStore } from '../../../application/booking.store';
+import { ActiveBookingService } from '../../../application/active-booking.service';
+import { BookingConfirmationModal } from '../booking-confirmation-modal/booking-confirmation-modal';
+import { UnlockMethodSelectionModal } from '../unlock-method-selection-modal/unlock-method-selection-modal';
 import { forkJoin } from 'rxjs';
 
 interface BookingView {
   id: string;
+  vehicleId: string;
   vehicleName: string;
   startLocationName: string;
   endLocationName: string;
   startDate: Date;
   duration: number | null;
   finalCost: number | null;
-  status: 'pending' | 'confirmed' | 'completed' | 'cancelled';
+  status: 'pending' | 'confirmed' | 'active' | 'completed' | 'cancelled';
 }
 
 @Component({
@@ -36,6 +40,7 @@ export class BookingListComponent implements OnInit {
   private locationsApi = inject(LocationsApiEndpoint);
   private bookingStorage = inject(BookingStorageService);
   private bookingStore = inject(BookingStore);
+  private activeBookingService = inject(ActiveBookingService);
   private router = inject(Router);
   private snackBar = inject(MatSnackBar);
   private dialog = inject(MatDialog);
@@ -43,6 +48,7 @@ export class BookingListComponent implements OnInit {
 
   bookings: BookingView[] = [];
   isLoading = true;
+  isActivating = false;
 
   ngOnInit(): void {
     this.loadBookings();
@@ -76,6 +82,7 @@ export class BookingListComponent implements OnInit {
 
           return {
             id: booking.id,
+            vehicleId: booking.vehicleId,
             vehicleName: vehicle ? `${vehicle.brand} ${vehicle.model}` : 'Unknown Vehicle',
             startLocationName: startLocation?.name || 'Unknown',
             endLocationName: endLocation?.name || 'Unknown',
@@ -99,6 +106,7 @@ export class BookingListComponent implements OnInit {
     const localBookings = this.bookingStorage.getBookings();
     this.bookings = localBookings.map(booking => ({
       id: booking.id,
+      vehicleId: booking.vehicleId,
       vehicleName: 'Vehicle',
       startLocationName: 'Start Location',
       endLocationName: 'End Location',
@@ -184,6 +192,123 @@ export class BookingListComponent implements OnInit {
         this.showErrorMessage('booking.deleteError');
       }
     }
+  }
+
+  async activateBooking(bookingView: BookingView): Promise<void> {
+    try {
+      this.isActivating = true;
+
+      // Validate booking can be activated
+      if (bookingView.status !== 'pending' && bookingView.status !== 'confirmed') {
+        this.showErrorMessage('booking.cannotActivate');
+        return;
+      }
+
+      // Check if there's already an active booking
+      const activeBooking = this.activeBookingService.getActiveBooking();
+      if (activeBooking) {
+        this.showErrorMessage('booking.alreadyHasActive');
+        return;
+      }
+
+      // Get full booking from storage
+      const booking = this.bookingStorage.getBookingById(bookingView.id);
+      if (!booking) {
+        this.showErrorMessage('booking.notFound');
+        return;
+      }
+
+      // Get vehicle information
+      this.vehiclesApi.getAll().subscribe({
+        next: (vehicles) => {
+          const vehicle = vehicles.find(v => v.id === bookingView.vehicleId);
+          
+          if (!vehicle) {
+            this.showErrorMessage('booking.vehicleNotAvailable');
+            this.isActivating = false;
+            return;
+          }
+
+          // Open booking confirmation modal (¿Cómo deseas reservar?)
+          const dialogRef = this.dialog.open(BookingConfirmationModal, {
+            width: '500px',
+            data: { vehicle },
+            disableClose: true
+          });
+
+          dialogRef.afterClosed().subscribe(result => {
+            this.isActivating = false;
+            
+            if (result === 'now') {
+              // Activate booking immediately
+              this.activateBookingNow(booking, vehicle);
+            } else if (result === 'schedule') {
+              // Navigate to schedule page
+              this.router.navigate(['/booking/schedule-unlock'], {
+                queryParams: { bookingId: booking.id }
+              });
+            }
+          });
+        },
+        error: (error) => {
+          console.error('Error loading vehicle:', error);
+          this.showErrorMessage('booking.vehicleNotAvailable');
+          this.isActivating = false;
+        }
+      });
+
+    } catch (error) {
+      console.error('Error activating booking:', error);
+      this.showErrorMessage('booking.activateError');
+      this.isActivating = false;
+    }
+  }
+
+  private activateBookingNow(booking: any, vehicle: any): void {
+    // Update booking status to active
+    booking.status = 'active';
+    booking.actualStartDate = new Date();
+    
+    this.bookingStorage.updateBooking(booking.id, booking);
+    this.bookingStore.loadFromLocalStorage();
+    this.activeBookingService.setActiveBooking(booking);
+
+    // Update the view
+    const bookingView = this.bookings.find(b => b.id === booking.id);
+    if (bookingView) {
+      bookingView.status = 'active';
+    }
+
+    // Open unlock method selection modal
+    const dialogRef = this.dialog.open(UnlockMethodSelectionModal, {
+      width: '500px',
+      data: { booking, vehicle },
+      disableClose: true
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result === 'manual') {
+        // Navigate to manual unlock
+        this.router.navigate(['/garage'], {
+          queryParams: { 
+            action: 'unlock-manual',
+            vehicleId: vehicle.id,
+            bookingId: booking.id 
+          }
+        });
+      } else if (result === 'qr_code') {
+        // Navigate to QR scanner
+        this.router.navigate(['/garage'], {
+          queryParams: { 
+            action: 'unlock-qr',
+            vehicleId: vehicle.id,
+            bookingId: booking.id 
+          }
+        });
+      }
+    });
+
+    this.showSuccessMessage('booking.activatedSuccessfully');
   }
 
   private showSuccessMessage(key: string): void {

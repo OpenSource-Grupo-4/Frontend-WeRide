@@ -91,4 +91,22 @@ export class ActiveBookingService {
   clearActiveBooking(): void {
     localStorage.removeItem(ACTIVE_BOOKING_KEY);
   }
+
+  /**
+   * Check if there's an active booking
+   */
+  hasActiveBooking(): boolean {
+    return this.getActiveBooking() !== null;
+  }
+
+  /**
+   * Update active booking status
+   */
+  updateActiveBooking(updates: Partial<Booking>): void {
+    const current = this.getActiveBooking();
+    if (current) {
+      const updated = { ...current, ...updates };
+      this.setActiveBooking(updated);
+    }
+  }
 }
