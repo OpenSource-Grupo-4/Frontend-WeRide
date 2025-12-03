@@ -8,4 +8,5 @@ export interface VehicleFilter {
   companyId?: string;
   minBattery?: number;
   color?: string;
+  showFavoritesOnly?: boolean;
 }

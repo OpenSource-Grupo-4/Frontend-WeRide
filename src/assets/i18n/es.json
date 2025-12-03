@@ -31,6 +31,17 @@
     "bookings": "Reservas",
     "user": "User"
   },
+  "navbar": {
+    "notifications": {
+      "title": "Notificaciones",
+      "markAllRead": "Marcar todas como leídas"
+    },
+    "userMenu": {
+      "subtitle": "¡Bienvenido!",
+      "profile": "Perfil",
+      "logout": "Cerrar Sesión"
+    }
+  },
   "auth": {
     "login": {
       "title": "Iniciar Sesión",
@@ -114,10 +125,19 @@
     "applyFilters": "Aplicar Filtros",
     "clear": "Limpiar",
     "all": "Todos",
+    "tabs": {
+      "allVehicles": "Todos los Vehículos",
+      "favorites": "Favoritos"
+    },
     "favorites": {
       "title": "Mis Vehículos Favoritos",
       "noFavorites": "No tienes vehículos favoritos aún.",
-      "explore": "Explora el garaje y marca tus vehículos preferidos."
+      "addMessage": "Marca tus vehículos preferidos para encontrarlos fácilmente aquí.",
+      "exploreVehicles": "Explorar Vehículos",
+      "loading": "Cargando favoritos...",
+      "addedToFavorites": "Agregado a favoritos",
+      "removedFromFavorites": "Eliminado de favoritos",
+      "error": "Error al actualizar favoritos"
     },
     "details": {
       "basicInfo": "Información Básica",
@@ -320,11 +340,35 @@
     "newBooking": "Nueva Reserva",
     "edit": "Editar",
     "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "activate": "Activar",
     "noBookings": "No hay reservas aún",
     "createFirstBooking": "Crea tu primera reserva para comenzar a usar WeRide",
     "createBooking": "Crear Reserva",
     "minutes": "minutos",
     "notAvailable": "N/A",
+    "confirmCancelMessage": "¿Estás seguro de que deseas cancelar esta reserva?",
+    "confirmDeleteMessage": "¿Estás seguro de que deseas eliminar esta reserva permanentemente?",
+    "cancelSuccess": "Reserva cancelada exitosamente",
+    "cancelError": "Error al cancelar la reserva",
+    "deleteSuccess": "Reserva eliminada exitosamente",
+    "deleteError": "Error al eliminar la reserva",
+    "createSuccess": "Reserva creada exitosamente",
+    "updateSuccess": "Reserva actualizada exitosamente",
+    "updateError": "Error al actualizar la reserva",
+    "notFound": "Reserva no encontrada",
+    "activatedSuccessfully": "Reserva activada exitosamente",
+    "activateError": "Error al activar la reserva",
+    "cannotActivate": "Esta reserva no puede ser activada",
+    "alreadyHasActive": "Ya tienes una reserva activa en curso",
+    "vehicleNotAvailable": "El vehículo no está disponible",
+    "status": {
+      "pending": "Pendiente",
+      "confirmed": "Confirmada",
+      "active": "En curso",
+      "completed": "Completada",
+      "cancelled": "Cancelada"
+    },
     "summary": {
       "title": "Resumen de Reserva",
       "vehicle": "Vehículo",
@@ -471,7 +515,11 @@
   "home": {
     "welcome": "Bienvenido a WeRide",
     "subtitle": "Tu plataforma de micromovilidad eléctrica",
+    "hero": {
+      "startRiding": "Comenzar a Viajar"
+    },
     "features": {
+      "title": "Nuestros Servicios",
       "scooters": {
         "title": "Scooters Eléctricos",
         "description": "Alquila scooters eléctricos para viajes cortos por la ciudad"
@@ -487,6 +535,22 @@
       "status": {
         "title": "Estado de Desbloqueo",
         "description": "Monitorea el estado de desbloqueo de tu vehículo en tiempo real"
+      },
+      "garage": {
+        "title": "Garaje de Vehículos",
+        "description": "Explora y selecciona de nuestra flota de vehículos"
+      },
+      "trips": {
+        "title": "Mis Viajes",
+        "description": "Ve tu historial de viajes y viajes activos"
+      },
+      "plans": {
+        "title": "Planes de Membresía",
+        "description": "Elige el plan que se adapte a tus necesidades"
+      },
+      "profile": {
+        "title": "Mi Perfil",
+        "description": "Administra tu cuenta y preferencias"
       }
     },
     "quickActions": "Acciones Rápidas",
@@ -494,6 +558,28 @@
       "checkStatus": "Verificar Estado",
       "schedule": "Programar Desbloqueo",
       "viewBookings": "Ver Reservas"
+    },
+    "cta": {
+      "title": "¿Listo para viajar?",
+      "description": "Encuentra un vehículo cerca de ti y comienza tu viaje"
+    },
+    "activeBooking": {
+      "active": "Activo",
+      "bookingId": "Reserva",
+      "remaining": "Tiempo restante",
+      "viewDetails": "Ver detalles"
+    },
+    "theme": {
+      "toggle": "Cambiar tema",
+      "light": "Modo claro",
+      "dark": "Modo oscuro"
+    },
+    "errors": {
+      "network": "Error de conexión. Por favor verifica tu internet.",
+      "timeout": "La solicitud tardó demasiado. Intenta de nuevo.",
+      "unknown": "Ocurrió un error inesperado.",
+      "maxRetries": "Se alcanzó el máximo de reintentos.",
+      "retry": "Reintentar"
     }
   },
   "errors": {

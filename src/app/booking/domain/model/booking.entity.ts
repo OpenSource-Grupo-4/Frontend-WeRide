@@ -10,7 +10,7 @@ export class Booking {
     public endDate: Date | null,
     public actualStartDate: Date | null,
     public actualEndDate: Date | null,
-    public status: 'pending' | 'confirmed' | 'completed' | 'cancelled',
+    public status: 'pending' | 'confirmed' | 'active' | 'completed' | 'cancelled',
     public totalCost: number | null,
     public discount: number | null,
     public finalCost: number | null,

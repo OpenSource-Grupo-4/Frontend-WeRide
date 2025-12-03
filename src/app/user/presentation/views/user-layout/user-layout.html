@@ -9,7 +9,6 @@
     </div>
     <div class="section-column">
       <div class="section-content">
-        <app-user-section *ngIf="!activeSection"></app-user-section>
         
         <app-user-wallet-card *ngIf="activeSection === 'wallet'"></app-user-wallet-card>
         <app-user-history-card *ngIf="activeSection === 'history'"></app-user-history-card>

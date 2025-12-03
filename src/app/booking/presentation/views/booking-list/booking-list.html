@@ -15,12 +15,24 @@
     <div class="booking-card" *ngFor="let booking of bookings">
       <div class="booking-header">
         <h3>{{ booking.vehicleName }}</h3>
-        <span class="status" [class]="booking.status">{{ booking.status }}</span>
+        <span
+          class="status"
+          [class.status-pending]="booking.status === 'pending'"
+          [class.status-completed]="booking.status === 'completed'"
+          [class.status-cancelled]="booking.status === 'cancelled'"
+          [class.status-confirmed]="booking.status === 'confirmed'"
+          [class.status-active]="booking.status === 'active'"
+        >
+          {{ 'booking.status.' + booking.status | translate }}
+        </span>
       </div>
       <div class="booking-details">
         <div class="detail">
           <mat-icon>location_on</mat-icon>
-          <span>{{ booking.startLocationName }} → {{ booking.endLocationName }}</span>
+          <span
+            >{{ booking.startLocationName }} → {{ booking.endLocationName
+            }}</span
+          >
         </div>
         <div class="detail">
           <mat-icon>schedule</mat-icon>
@@ -28,16 +40,53 @@
         </div>
         <div class="detail">
           <mat-icon>access_time</mat-icon>
-          <span>{{ booking.duration || ('booking.notAvailable' | translate) }} {{ 'booking.minutes' | translate }}</span>
+          <span
+            >{{ booking.duration || ('booking.notAvailable' | translate) }} {{
+            'booking.minutes' | translate }}</span
+          >
         </div>
         <div class="detail">
           <mat-icon>attach_money</mat-icon>
-          <span>${{ booking.finalCost ? booking.finalCost.toFixed(2) : ('booking.notAvailable' | translate) }}</span>
+          <span
+            >${{ booking.finalCost ? booking.finalCost.toFixed(2) :
+            ('booking.notAvailable' | translate) }}</span
+          >
         </div>
       </div>
       <div class="booking-actions">
-        <button class="btn-secondary" (click)="editBooking(booking.id)">{{ 'booking.edit' | translate }}</button>
-        <button class="btn-danger" (click)="cancelBooking(booking.id)" [disabled]="booking.status !== 'pending'">{{ 'booking.cancel' | translate }}</button>
+        <button
+          class="btn-activate"
+          (click)="activateBooking(booking)"
+          *ngIf="booking.status === 'pending' || booking.status === 'confirmed'"
+          [disabled]="isActivating"
+        >
+          <mat-icon>play_circle_filled</mat-icon>
+          {{ 'booking.activate' | translate }}
+        </button>
+        <button
+          class="btn-secondary"
+          (click)="editBooking(booking.id)"
+          [disabled]="booking.status === 'completed' || booking.status === 'active'"
+        >
+          <mat-icon>edit</mat-icon>
+          {{ 'booking.edit' | translate }}
+        </button>
+        <button
+          class="btn-danger"
+          (click)="cancelBooking(booking.id)"
+          [disabled]="booking.status !== 'pending'"
+        >
+          <mat-icon>cancel</mat-icon>
+          {{ 'booking.cancel' | translate }}
+        </button>
+        <button
+          class="btn-danger-outline"
+          (click)="deleteBooking(booking.id)"
+          [disabled]="booking.status === 'active'"
+        >
+          <mat-icon>delete</mat-icon>
+          {{ 'booking.delete' | translate }}
+        </button>
       </div>
     </div>
   </div>

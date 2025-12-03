@@ -10,7 +10,7 @@ export interface BookingResponse {
   endDate: string | null;
   actualStartDate: string | null;
   actualEndDate: string | null;
-  status: 'pending' | 'confirmed' | 'completed' | 'cancelled';
+  status: 'pending' | 'confirmed' | 'active' | 'completed' | 'cancelled';
   totalCost: number | null;
   discount: number | null;
   finalCost: number | null;

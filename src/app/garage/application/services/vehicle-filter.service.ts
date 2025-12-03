@@ -12,7 +12,8 @@ export class VehicleFilterService {
         (!filter.brand || v.brand.toLowerCase().includes(filter.brand.toLowerCase())) &&
         (!filter.companyId || v.companyId === filter.companyId) &&
         (!filter.minBattery || v.battery >= filter.minBattery) &&
-        (!filter.color || v.color.toLowerCase() === filter.color.toLowerCase());
+        (!filter.color || v.color.toLowerCase() === filter.color.toLowerCase()) &&
+        (!filter.showFavoritesOnly || v.favorite === true);
     });
   }
 }

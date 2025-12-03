@@ -31,6 +31,17 @@
     "bookings": "Bookings",
     "user": "User"
   },
+  "navbar": {
+    "notifications": {
+      "title": "Notifications",
+      "markAllRead": "Mark all as read"
+    },
+    "userMenu": {
+      "subtitle": "Welcome!",
+      "profile": "Profile",
+      "logout": "Log Out"
+    }
+  },
   "auth": {
     "login": {
       "title": "Sign In",
@@ -114,10 +125,19 @@
     "applyFilters": "Apply Filters",
     "clear": "Clear",
     "all": "All",
+    "tabs": {
+      "allVehicles": "All Vehicles",
+      "favorites": "Favorites"
+    },
     "favorites": {
       "title": "My Favorite Vehicles",
       "noFavorites": "You don't have favorite vehicles yet.",
-      "explore": "Explore the garage and mark your preferred vehicles."
+      "addMessage": "Mark your preferred vehicles to easily find them here.",
+      "exploreVehicles": "Explore Vehicles",
+      "loading": "Loading favorites...",
+      "addedToFavorites": "Added to favorites",
+      "removedFromFavorites": "Removed from favorites",
+      "error": "Error updating favorites"
     },
     "details": {
       "basicInfo": "Basic Information",
@@ -320,11 +340,35 @@
     "newBooking": "New Booking",
     "edit": "Edit",
     "cancel": "Cancel",
+    "delete": "Delete",
+    "activate": "Activate",
     "noBookings": "No bookings yet",
     "createFirstBooking": "Create your first booking to start using WeRide",
     "createBooking": "Create Booking",
     "minutes": "minutes",
     "notAvailable": "N/A",
+    "confirmCancelMessage": "Are you sure you want to cancel this booking?",
+    "confirmDeleteMessage": "Are you sure you want to permanently delete this booking?",
+    "cancelSuccess": "Booking cancelled successfully",
+    "cancelError": "Error cancelling booking",
+    "deleteSuccess": "Booking deleted successfully",
+    "deleteError": "Error deleting booking",
+    "createSuccess": "Booking created successfully",
+    "updateSuccess": "Booking updated successfully",
+    "updateError": "Error updating booking",
+    "notFound": "Booking not found",
+    "activatedSuccessfully": "Booking activated successfully",
+    "activateError": "Error activating booking",
+    "cannotActivate": "This booking cannot be activated",
+    "alreadyHasActive": "You already have an active booking in progress",
+    "vehicleNotAvailable": "Vehicle is not available",
+    "status": {
+      "pending": "Pending",
+      "confirmed": "Confirmed",
+      "active": "In progress",
+      "completed": "Completed",
+      "cancelled": "Cancelled"
+    },
     "summary": {
       "title": "Booking Summary",
       "vehicle": "Vehicle",
@@ -469,7 +513,11 @@
   "home": {
     "welcome": "Welcome to WeRide",
     "subtitle": "Your electric micromobility platform",
+    "hero": {
+      "startRiding": "Start Riding"
+    },
     "features": {
+      "title": "Our Services",
       "scooters": {
         "title": "Electric Scooters",
         "description": "Rent electric scooters for short trips around the city"
@@ -485,6 +533,22 @@
       "status": {
         "title": "Unlock Status",
         "description": "Monitor your vehicle's unlock status in real-time"
+      },
+      "garage": {
+        "title": "Vehicle Garage",
+        "description": "Browse and select from our fleet of vehicles"
+      },
+      "trips": {
+        "title": "My Trips",
+        "description": "View your trip history and active rides"
+      },
+      "plans": {
+        "title": "Membership Plans",
+        "description": "Choose the plan that fits your needs"
+      },
+      "profile": {
+        "title": "My Profile",
+        "description": "Manage your account and preferences"
       }
     },
     "quickActions": "Quick Actions",
@@ -492,6 +556,28 @@
       "checkStatus": "Check Unlock Status",
       "schedule": "Schedule Unlock",
       "viewBookings": "View Bookings"
+    },
+    "cta": {
+      "title": "Ready to ride?",
+      "description": "Find a vehicle near you and start your journey"
+    },
+    "activeBooking": {
+      "active": "Active",
+      "bookingId": "Booking",
+      "remaining": "Time remaining",
+      "viewDetails": "View details"
+    },
+    "theme": {
+      "toggle": "Toggle theme",
+      "light": "Light mode",
+      "dark": "Dark mode"
+    },
+    "errors": {
+      "network": "Connection error. Please check your internet.",
+      "timeout": "Request timed out. Please try again.",
+      "unknown": "An unexpected error occurred.",
+      "maxRetries": "Maximum retry attempts reached.",
+      "retry": "Retry"
     }
   },
   "errors": {
