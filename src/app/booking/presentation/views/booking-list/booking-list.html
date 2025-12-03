@@ -15,7 +15,13 @@
     <div class="booking-card" *ngFor="let booking of bookings">
       <div class="booking-header">
         <h3>{{ booking.vehicleName }}</h3>
-        <span class="status" [class]="booking.status">{{ booking.status }}</span>
+        <span class="status" 
+              [class.status-pending]="booking.status === 'pending'"
+              [class.status-completed]="booking.status === 'completed'"
+              [class.status-cancelled]="booking.status === 'cancelled'"
+              [class.status-confirmed]="booking.status === 'confirmed'">
+          {{ 'booking.status.' + booking.status | translate }}
+        </span>
       </div>
       <div class="booking-details">
         <div class="detail">
@@ -36,8 +42,23 @@
         </div>
       </div>
       <div class="booking-actions">
-        <button class="btn-secondary" (click)="editBooking(booking.id)">{{ 'booking.edit' | translate }}</button>
-        <button class="btn-danger" (click)="cancelBooking(booking.id)" [disabled]="booking.status !== 'pending'">{{ 'booking.cancel' | translate }}</button>
+        <button class="btn-secondary" 
+                (click)="editBooking(booking.id)"
+                [disabled]="booking.status === 'completed'">
+          <mat-icon>edit</mat-icon>
+          {{ 'booking.edit' | translate }}
+        </button>
+        <button class="btn-danger" 
+                (click)="cancelBooking(booking.id)" 
+                [disabled]="booking.status !== 'pending'">
+          <mat-icon>cancel</mat-icon>
+          {{ 'booking.cancel' | translate }}
+        </button>
+        <button class="btn-danger-outline" 
+                (click)="deleteBooking(booking.id)">
+          <mat-icon>delete</mat-icon>
+          {{ 'booking.delete' | translate }}
+        </button>
       </div>
     </div>
   </div>
