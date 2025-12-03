@@ -25,7 +25,7 @@ interface BookingView {
   startDate: Date;
   duration: number | null;
   finalCost: number | null;
-  status: 'pending' | 'confirmed' | 'active' | 'completed' | 'cancelled';
+  status: 'draft' | 'pending' | 'confirmed' | 'active' | 'completed' | 'cancelled';
 }
 
 @Component({

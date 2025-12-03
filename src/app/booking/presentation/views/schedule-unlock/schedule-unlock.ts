@@ -19,6 +19,8 @@ import { firstValueFrom } from 'rxjs';
 import { ManualUnlockModal } from '../../../../garage/presentation/views/manual-unlock-modal/manual-unlock-modal';
 import { QrScannerModal } from '../../../../garage/presentation/views/qr-scanner-modal/qr-scanner-modal';
 import { BookingSuccessModal } from '../../../../public/components/booking-success-modal/booking-success-modal';
+import { DraftBookingService } from '../../../application/draft-booking.service';
+import { BookingDraft } from '../../../domain/model/booking-draft.entity';
 
 @Component({
   selector: 'app-schedule-unlock',
@@ -34,8 +36,12 @@ export class ScheduleUnlockComponent implements OnInit {
   private bookingStore = inject(BookingStore);
   private dialog = inject(MatDialog);
   private unlockRequestsApi = inject(UnlockRequestsApiEndpoint);
+  private draftService = inject(DraftBookingService);
 
   availabilityError: string = '';
+  vehicleAvailable: boolean = false;
+  isSavingDraft: boolean = false;
+  showIconFallback: boolean = false;
 
   searchTerm: string = '';
   selectedVehicle: Vehicle | null = null;
@@ -49,6 +55,7 @@ export class ScheduleUnlockComponent implements OnInit {
 
   vehicles: Vehicle[] = [];
   filteredVehicles: Vehicle[] = [];
+  drafts$ = this.draftService.drafts$;
 
   ngOnInit() {
     // Get vehicle from router state
@@ -96,6 +103,34 @@ export class ScheduleUnlockComponent implements OnInit {
     this.selectedVehicle = vehicle;
     this.searchTerm = `${vehicle.brand} ${vehicle.model}`;
     this.filteredVehicles = [];
+  }
+
+  handleImageError(event: Event) {
+    const img = event.target as HTMLImageElement;
+    img.style.display = 'none';
+    this.showIconFallback = true;
+  }
+
+  getVehicleIcon(type?: string): string {
+    const iconMap: { [key: string]: string } = {
+      'electric_scooter': 'electric_scooter',
+      'bike': 'pedal_bike',
+      'electric_bike': 'electric_bike',
+      'default': 'two_wheeler'
+    };
+    return iconMap[type || 'default'];
+  }
+
+  get isFormValid(): boolean {
+    return !!(this.selectedVehicle && this.selectedDate && this.unlockTime);
+  }
+
+  get dateError(): string | null {
+    if (!this.selectedDate) return null;
+    if (!this.validateDateTime()) {
+      return 'La fecha debe ser futura';
+    }
+    return null;
   }
 
   formatDateTime(): string {
@@ -565,13 +600,69 @@ export class ScheduleUnlockComponent implements OnInit {
     });
   }
 
-  saveDraft() {
-    console.log('Saving draft...');
-    // Here you would save the current form state as a draft
-    this.snackBar.open('Borrador guardado', 'Cerrar', {
-      duration: 2000,
-      horizontalPosition: 'end',
-      verticalPosition: 'top'
+  async saveDraft() {
+    if (!this.selectedVehicle) {
+      this.snackBar.open('Selecciona un vehículo primero', 'Cerrar', {
+        duration: 3000
+      });
+      return;
+    }
+
+    this.isSavingDraft = true;
+
+    const draftData: Partial<BookingDraft> = {
+      userId: '1',
+      vehicleId: this.selectedVehicle.id,
+      selectedDate: this.selectedDate,
+      unlockTime: this.unlockTime,
+      duration: this.duration,
+      smsReminder: this.smsReminder,
+      emailConfirmation: this.emailConfirmation,
+      pushNotification: this.pushNotification
+    };
+
+    this.draftService.saveDraft(draftData).subscribe({
+      next: () => {
+        this.snackBar.open('Borrador guardado exitosamente', 'Ver borradores', {
+          duration: 4000,
+          horizontalPosition: 'end',
+          verticalPosition: 'top',
+          panelClass: ['success-snackbar']
+        });
+        
+        this.isSavingDraft = false;
+      },
+      error: (error) => {
+        console.error('Error saving draft:', error);
+        this.snackBar.open('Error al guardar borrador', 'Cerrar', {
+          duration: 3000,
+          panelClass: ['error-snackbar']
+        });
+        this.isSavingDraft = false;
+      }
+    });
+  }
+
+  loadDraft(draft: BookingDraft) {
+    this.selectedDate = draft.selectedDate;
+    this.unlockTime = draft.unlockTime;
+    this.duration = draft.duration;
+    this.smsReminder = draft.smsReminder;
+    this.emailConfirmation = draft.emailConfirmation;
+    this.pushNotification = draft.pushNotification;
+    
+    this.snackBar.open('Borrador cargado', 'Cerrar', { duration: 2000 });
+  }
+
+  deleteDraft(draftId: string) {
+    this.draftService.deleteDraft(draftId).subscribe({
+      next: () => {
+        this.snackBar.open('Borrador eliminado', 'Cerrar', { duration: 2000 });
+      },
+      error: (error) => {
+        console.error('Error deleting draft:', error);
+        this.snackBar.open('Error al eliminar borrador', 'Cerrar', { duration: 3000 });
+      }
     });
   }
 }
