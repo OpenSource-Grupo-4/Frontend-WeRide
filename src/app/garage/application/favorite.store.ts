@@ -28,7 +28,6 @@ function saveFavoritesToLocalStorage(vehicleIds: string[]): void {
   if (typeof window === 'undefined') return;
   try {
     localStorage.setItem('favoriteVehicleIds', JSON.stringify(vehicleIds));
-    console.log('✓ Favorites saved to localStorage:', vehicleIds);
   } catch (error) {
     console.error('Error saving favorites to localStorage:', error);
   }
@@ -50,18 +49,12 @@ export const FavoriteStore = signalStore(
       loadUserFavorites: rxMethod<string>(
         pipe(
           tap(() => {
-            console.log('Loading user favorites...');
             patchState(store, { isLoading: true, error: null });
           }),
           switchMap((userId) => {
-            console.log('Fetching favorites for user:', userId);
             return favoriteRepository.getUserFavorites(userId).pipe(
               tap((favorites) => {
                 const favoriteVehicleIds = favorites.map(fav => fav.vehicleId);
-                console.log('✓ Favorites loaded from backend:', {
-                  count: favorites.length,
-                  vehicleIds: favoriteVehicleIds
-                });
                 // Save to localStorage
                 saveFavoritesToLocalStorage(favoriteVehicleIds);
                 patchState(store, {
@@ -92,7 +85,6 @@ export const FavoriteStore = signalStore(
               tap((newFavorite) => {
                 const updatedFavorites = [...store.favorites(), newFavorite];
                 const updatedIds = [...store.favoriteVehicleIds(), vehicleId];
-                console.log('✓ Favorite added:', vehicleId);
                 // Save to localStorage
                 saveFavoritesToLocalStorage(updatedIds);
                 patchState(store, {
@@ -135,7 +127,6 @@ export const FavoriteStore = signalStore(
                   fav => fav.id !== favoriteToRemove.id
                 );
                 const updatedIds = updatedFavorites.map(fav => fav.vehicleId);
-                console.log('✓ Favorite removed:', vehicleId);
                 // Save to localStorage
                 saveFavoritesToLocalStorage(updatedIds);
                 patchState(store, {
@@ -162,14 +153,13 @@ export const FavoriteStore = signalStore(
         pipe(
           switchMap(({ userId, vehicleId }) => {
             const isFavorite = store.favoriteVehicleIds().includes(vehicleId);
-            console.log('Toggling favorite:', { vehicleId, isFavorite });
-            
+
             if (isFavorite) {
               // Remove from favorites
               const favoriteToRemove = store.favorites().find(
                 fav => fav.userId === userId && fav.vehicleId === vehicleId
               );
-              
+
               if (!favoriteToRemove) {
                 return of(null);
               }
@@ -180,7 +170,6 @@ export const FavoriteStore = signalStore(
                     fav => fav.id !== favoriteToRemove.id
                   );
                   const updatedIds = updatedFavorites.map(fav => fav.vehicleId);
-                  console.log('✓ Favorite toggled (removed):', vehicleId);
                   // Save to localStorage
                   saveFavoritesToLocalStorage(updatedIds);
                   patchState(store, {
@@ -199,7 +188,6 @@ export const FavoriteStore = signalStore(
                 tap((newFavorite) => {
                   const updatedFavorites = [...store.favorites(), newFavorite];
                   const updatedIds = [...store.favoriteVehicleIds(), vehicleId];
-                  console.log('✓ Favorite toggled (added):', vehicleId);
                   // Save to localStorage
                   saveFavoritesToLocalStorage(updatedIds);
                   patchState(store, {

@@ -305,7 +305,7 @@ export class TripMap implements OnInit, OnDestroy {
           this.userLocation.set([longitude, latitude]);
         },
         (error) => {
-          console.log('Error Obteniendo la ubicacion', error);
+          // Error obteniendo la ubicación
         },
         {
           enableHighAccuracy: true,

@@ -26,28 +26,17 @@ export class Favorites implements OnInit {
   allVehicles = signal<Vehicle[]>([]);
   isLoading = computed(() => this.favoriteStore.isLoading());
   error = computed(() => this.favoriteStore.error());
-  
+
   // Reactive computed property that automatically updates when favorites change
   favoriteVehicles = computed(() => {
     const favoriteIds = this.favoriteStore.favoriteVehicleIds();
     const vehicles = this.allVehicles();
-    
-    console.log('=== COMPUTING FAVORITE VEHICLES ===');
-    console.log('Total vehicles loaded:', vehicles.length);
-    console.log('Favorite IDs from store:', favoriteIds);
-    console.log('Vehicle IDs:', vehicles.map(v => v.id));
-    
+
     const filtered = vehicles.filter(v => {
       const match = favoriteIds.includes(v.id);
-      if (match) {
-        console.log(`✓ Vehicle ${v.id} (${v.brand} ${v.model}) is a favorite`);
-      }
       return match;
     });
-    
-    console.log('Filtered count:', filtered.length);
-    console.log('=================================');
-    
+
     return filtered.map(v => ({
       ...v,
       favorite: true
@@ -57,11 +46,10 @@ export class Favorites implements OnInit {
   async ngOnInit() {
     // Load user's favorites from backend
     const currentUser = this.authStore.currentUser();
-    console.log('Current user:', currentUser);
     if (currentUser) {
       this.favoriteStore.loadUserFavorites(currentUser.id);
     }
-    
+
     // Load all vehicles once
     await this.loadVehicles();
   }
@@ -69,7 +57,6 @@ export class Favorites implements OnInit {
   async loadVehicles() {
     try {
       const vehicles = await this.getVehiclesUseCase.execute();
-      console.log('Loaded vehicles:', vehicles.length);
       this.allVehicles.set(vehicles);
     } catch (error) {
       console.error('Error loading vehicles:', error);

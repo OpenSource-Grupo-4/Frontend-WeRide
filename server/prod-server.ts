@@ -30,11 +30,8 @@ app.use((req, res) => {
 });
 
 /**
- * TESTS PARA PRODUCCION 
+ * TESTS PARA PRODUCCION
  */
 const port = process.env['PORT'] || 8080;
 app.listen(port, () => {
-  console.log(` Servidor corriendo en http://localhost:${port}`);
-  console.log(` API disponible en http://localhost:${port}/api`);
-  console.log(` CORS habilitado para múltiples orígenes`);
 });
