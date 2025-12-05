@@ -1,6 +1,6 @@
 export const environment = {
   production: false,
-  apiUrl: 'http://localhost:4200/api',  // Local development server
+  apiUrl: 'https://db-weride-4.onrender.com',  // Local development server
   endpoints: {
     users: '/users',
     vehicles: '/vehicles',
