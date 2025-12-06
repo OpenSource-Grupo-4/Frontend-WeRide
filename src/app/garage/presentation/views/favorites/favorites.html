@@ -14,7 +14,6 @@
     @for (vehicle of favoriteVehicles(); track vehicle.id) {
     <app-vehicle-card
       [vehicle]="vehicle"
-      (toggleFavorite)="toggleFavorite($event)"
     >
     </app-vehicle-card>
     } @if (!hasFavorites) {

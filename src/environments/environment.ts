@@ -1,10 +1,10 @@
 //db.json deploy = https://db-weride-4.onrender.com
 export const environment = {
   production: false,
-  apiUrl: 'https://db-weride-4.onrender.com',  
+  apiUrl: 'http://localhost:8080/api/v1',
   endpoints: {
     users: '/users',
-    vehicles: '/vehicles',
+    vehicles: '/garage/vehicles',
     plans: '/plans',
     locations: '/locations',
     bookings: '/bookings',

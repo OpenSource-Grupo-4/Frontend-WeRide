@@ -39,7 +39,6 @@
     @for (vehicle of filteredVehicles; track vehicle.id) {
     <app-vehicle-card
       [vehicle]="vehicle"
-      (toggleFavorite)="toggleFavorite($event)"
       (viewDetails)="openVehicleDetails($event)"
       (reserve)="navigateToScheduleUnlock($event)"
     >

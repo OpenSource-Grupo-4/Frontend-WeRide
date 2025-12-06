@@ -7,7 +7,6 @@ import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { routes } from './app.routes';
-import { AUTH_PROVIDERS } from './auth/auth.providers';
 
 export class CustomTranslateLoader implements TranslateLoader {
   constructor(private http: HttpClient, private prefix: string = './assets/i18n/', private suffix: string = '.json') {}
@@ -39,6 +38,5 @@ export const appConfig: ApplicationConfig = {
         deps: [HttpClient]
       }
     }).providers!,
-    ...AUTH_PROVIDERS
   ]
 };

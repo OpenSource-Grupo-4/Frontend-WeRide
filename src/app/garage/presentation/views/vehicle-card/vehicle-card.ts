@@ -15,7 +15,6 @@ import { Location } from '../../../../trip/domain/model/location.entity';
 import { LocationsApiEndpoint } from '../../../../trip/infrastructure/locations-api-endpoint';
 import { BookingConfirmationModal } from '../../../../booking/presentation/views/booking-confirmation-modal/booking-confirmation-modal';
 import { FavoriteStore } from '../../../application/favorite.store';
-import { AuthStore } from '../../../../auth/application/auth.store';
 
 @Component({
   selector: 'app-vehicle-card',
@@ -41,7 +40,6 @@ import { AuthStore } from '../../../../auth/application/auth.store';
 })
 export class VehicleCard {
   @Input() vehicle!: Vehicle;
-  @Output() toggleFavorite = new EventEmitter<string>();
   @Output() viewDetails = new EventEmitter<Vehicle>();
   @Output() reserve = new EventEmitter<Vehicle>();
   private translate = inject(TranslateService);
@@ -51,34 +49,18 @@ export class VehicleCard {
   private dialog = inject(MatDialog);
   private snackBar = inject(MatSnackBar);
   private favoriteStore = inject(FavoriteStore);
-  private authStore = inject(AuthStore);
 
   isTogglingFavorite = false;
 
   onToggleFavorite() {
     if (this.isTogglingFavorite) return;
-    
+
     this.isTogglingFavorite = true;
     const previousState = this.vehicle.favorite;
-    
+
     // Optimistic UI update
     this.vehicle.favorite = !this.vehicle.favorite;
-    
-    // Emit to parent
-    this.toggleFavorite.emit(this.vehicle.id);
-    
-    // Show toast notification
-    const message = this.vehicle.favorite 
-      ? this.translate.instant('garage.favorites.addedToFavorites')
-      : this.translate.instant('garage.favorites.removedFromFavorites');
-    
-    this.snackBar.open(message, '', {
-      duration: 2000,
-      horizontalPosition: 'end',
-      verticalPosition: 'top',
-      panelClass: this.vehicle.favorite ? ['success-snackbar'] : ['info-snackbar']
-    });
-    
+
     // Check for errors after a delay
     setTimeout(() => {
       const error = this.favoriteStore.error();
@@ -134,7 +116,7 @@ export class VehicleCard {
     this.locationsApi.getAll().subscribe({
       next: (locations: Location[]) => {
         const vehicleLocation = locations.find(loc => loc.id === this.vehicle.location);
-        
+
         if (vehicleLocation) {
           // Convert garage vehicle to trip vehicle format
           const tripVehicle: TripVehicle = {
@@ -161,23 +143,23 @@ export class VehicleCard {
             totalKilometers: this.vehicle.totalKilometers,
             rating: this.vehicle.rating
           };
-          
+
           // Set vehicle and location in trip store
           this.tripStore.setCurrentVehicle(tripVehicle);
           this.tripStore.setCurrentLocation(vehicleLocation);
           this.tripStore.setLocations(locations);
-          
+
           // Set random destination
           const destinationLocation = this.getRandomDestination(vehicleLocation, locations);
           if (destinationLocation) {
             this.tripStore.setDestinationLocation(destinationLocation);
           }
-          
+
           // Start trip with estimated time
           const startTime = new Date();
           const estimatedEndTime = new Date(startTime.getTime() + 30 * 60000); // 30 minutes
           this.tripStore.startTrip(startTime, estimatedEndTime, tripVehicle);
-          
+
           // Navigate to trip map
           this.router.navigate(['/trip/map']);
         }
