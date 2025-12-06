@@ -13,7 +13,6 @@ import {ReportProblemModal} from '../report-problem-modal/report-problem-modal';
 import {RateTripModal} from '../rate-trip-modal/rate-trip-modal';
 import {ProblemReportsApiEndpoint} from '../../../infrastructure/problem-reports-api-endpoint';
 import {RatingsApiEndpoint} from '../../../infrastructure/ratings-api-endpoint';
-import {OfflineSyncService} from '../../../application/offline-sync.service';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {TranslateService} from '@ngx-translate/core';
 import { ActiveBookingService } from '../../../../booking/application/active-booking.service';
@@ -32,7 +31,6 @@ export class TripMap implements OnInit, OnDestroy {
   private dialog = inject(MatDialog);
   private problemReportsApi = inject(ProblemReportsApiEndpoint);
   private ratingsApi = inject(RatingsApiEndpoint);
-  private offlineSyncService = inject(OfflineSyncService);
   private snackBar = inject(MatSnackBar);
   private translate = inject(TranslateService);
   private activeBookingService = inject(ActiveBookingService);
@@ -77,17 +75,16 @@ export class TripMap implements OnInit, OnDestroy {
     this.startLocationTracking();
     this.startTripUpdates();
 
-    // Verificar si hay un viaje activo, si no, intentar inicializar desde booking
+    localStorage.removeItem('weride_problem_reports_queue');
+    localStorage.removeItem('weride_ratings_queue');
+
     if (!this.isActiveTrip()) {
-      // Esperar un momento para que las ubicaciones y vehículos se carguen
       setTimeout(async () => {
         const activeBooking = this.activeBookingService.getActiveBooking();
 
         if (activeBooking && this.tripInitializer.canInitializeTripFromBooking(activeBooking)) {
-          // Intentar inicializar el viaje desde el booking
           await this.tripInitializer.initializeTripFromBooking(activeBooking);
 
-          // Si se inicializó correctamente, actualizar la batería y distancia
           if (this.isActiveTrip() && this.currentVehicle()) {
             this.currentBattery.set(this.currentVehicle()!.battery);
             if (this.currentLocation() && this.destinationLocation()) {
@@ -101,13 +98,6 @@ export class TripMap implements OnInit, OnDestroy {
         }
       }, 500);
     }
-
-    // Try to sync offline data on component init if there's connection
-    setTimeout(() => {
-      if (!this.connectionError()) {
-        this.syncOfflineData();
-      }
-    }, 2000);
   }
 
   loadLocations() {
@@ -210,27 +200,6 @@ export class TripMap implements OnInit, OnDestroy {
     this.tripStore.setConnectionError(false);
     this.loadLocations();
     this.loadVehicles();
-
-    // Attempt to sync offline data when connection is restored
-    this.syncOfflineData();
-  }
-
-  private syncOfflineData() {
-    const pendingCount = this.offlineSyncService.getPendingCount();
-
-    if (pendingCount.total > 0) {
-      this.offlineSyncService.syncAll().then(() => {
-        const remainingCount = this.offlineSyncService.getPendingCount();
-        if (remainingCount.total === 0) {
-          this.showMessage(
-            this.translate.instant('common.success') + ': Datos sincronizados',
-            'success'
-          );
-        }
-      }).catch((error) => {
-        console.error('Error syncing offline data:', error);
-      });
-    }
   }
 
   clearSelection() {
@@ -305,7 +274,6 @@ export class TripMap implements OnInit, OnDestroy {
           this.userLocation.set([longitude, latitude]);
         },
         (error) => {
-          // Error obteniendo la ubicación
         },
         {
           enableHighAccuracy: true,
@@ -359,10 +327,8 @@ export class TripMap implements OnInit, OnDestroy {
   endTrip() {
     const currentTrip = this.tripStore.currentTrip();
 
-    // Open rate trip modal after ending trip
     this.openRateTripModal();
 
-    // End the trip in store
     this.tripStore.endTrip();
     this.elapsedTime.set('00:00:00');
     this.remainingTime.set('00:00:00');
@@ -395,54 +361,40 @@ export class TripMap implements OnInit, OnDestroy {
     const isOffline = this.connectionError();
 
     if (isOffline) {
-      // Save to local storage for later sync
-      this.offlineSyncService.queueProblemReport({
-        vehicleId: reportData.vehicleId,
-        categories: reportData.categories,
-        description: reportData.description,
-        tripId: this.tripStore.currentTrip()?.id
-      });
-
       this.showMessage(
-        this.translate.instant('trip.reportProblem.savedOffline'),
-        'info'
+        this.translate.instant('trip.reportProblem.offlineError') || 
+        'No hay conexión. Por favor, intenta más tarde.',
+        'error'
       );
-    } else {
-      // Submit directly to API
-      this.problemReportsApi.create({
-        vehicleId: reportData.vehicleId,
-        categories: reportData.categories,
-        description: reportData.description,
-        tripId: this.tripStore.currentTrip()?.id
-      }).subscribe({
-        next: () => {
-          this.showMessage(
-            this.translate.instant('trip.reportProblem.success'),
-            'success'
-          );
-        },
-        error: (error) => {
-          console.error('Error submitting problem report:', error);
-          // Fallback to offline queue if submission fails
-          this.offlineSyncService.queueProblemReport({
-            vehicleId: reportData.vehicleId,
-            categories: reportData.categories,
-            description: reportData.description,
-            tripId: this.tripStore.currentTrip()?.id
-          });
-          this.showMessage(
-            this.translate.instant('trip.reportProblem.savedOffline'),
-            'info'
-          );
-        }
-      });
+      return;
     }
+
+    this.problemReportsApi.create({
+      vehicleId: reportData.vehicleId,
+      categories: reportData.categories,
+      description: reportData.description,
+      tripId: this.tripStore.currentTrip()?.id
+    }).subscribe({
+      next: () => {
+        this.showMessage(
+          this.translate.instant('trip.reportProblem.success'),
+          'success'
+        );
+      },
+      error: (error) => {
+        console.error('Error submitting problem report:', error);
+        this.showMessage(
+          this.translate.instant('trip.reportProblem.error') || 
+          'Error al enviar el reporte. Intenta nuevamente.',
+          'error'
+        );
+      }
+    });
   }
 
   openRateTripModal() {
     const trip = this.tripStore.currentTrip();
     if (!trip) {
-      // Create a mock trip object for now
       const mockTrip = {
         id: `trip_${Date.now()}`,
         vehicleId: this.currentVehicle()?.id || '',
@@ -486,45 +438,34 @@ export class TripMap implements OnInit, OnDestroy {
     const isOffline = this.connectionError();
 
     if (isOffline) {
-      // Save to local storage for later sync
-      this.offlineSyncService.queueRating({
-        tripId: ratingData.tripId,
-        rating: ratingData.rating,
-        comment: ratingData.comment
-      });
-
       this.showMessage(
-        this.translate.instant('trip.rateTrip.savedOffline'),
-        'info'
+        this.translate.instant('trip.rateTrip.offlineError') || 
+        'No hay conexión. Por favor, intenta más tarde.',
+        'error'
       );
-    } else {
-      // Submit directly to API
-      this.ratingsApi.create({
-        tripId: ratingData.tripId,
-        rating: ratingData.rating,
-        comment: ratingData.comment
-      }).subscribe({
-        next: () => {
-          this.showMessage(
-            this.translate.instant('trip.rateTrip.thankYou'),
-            'success'
-          );
-        },
-        error: (error) => {
-          console.error('Error submitting rating:', error);
-          // Fallback to offline queue if submission fails
-          this.offlineSyncService.queueRating({
-            tripId: ratingData.tripId,
-            rating: ratingData.rating,
-            comment: ratingData.comment
-          });
-          this.showMessage(
-            this.translate.instant('trip.rateTrip.savedOffline'),
-            'info'
-          );
-        }
-      });
+      return;
     }
+
+    this.ratingsApi.create({
+      tripId: ratingData.tripId,
+      rating: ratingData.rating,
+      comment: ratingData.comment
+    }).subscribe({
+      next: () => {
+        this.showMessage(
+          this.translate.instant('trip.rateTrip.thankYou'),
+          'success'
+        );
+      },
+      error: (error) => {
+        console.error('Error submitting rating:', error);
+        this.showMessage(
+          this.translate.instant('trip.rateTrip.error') || 
+          'Error al enviar la calificación. Intenta nuevamente.',
+          'error'
+        );
+      }
+    });
   }
 
   private showMessage(message: string, type: 'success' | 'error' | 'info') {
