@@ -6,7 +6,7 @@ export const environment = {
   apiUrl: 'https://weride.duckdns.org/api/v1',
   endpoints: {
     users: '/users',
-    vehicles: '/garage/vehicles',
+    vehicles: '/vehicles',
     plans: '/plans',
     locations: '/locations',
     bookings: '/bookings',
