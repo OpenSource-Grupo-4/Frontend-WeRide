@@ -185,10 +185,6 @@ export class ApiService {
     return this.http.get<Plan[]>(`${this.baseUrl}${this.endpoints.plans}`);
   }
 
-  getCompanies(): Observable<Company[]> {
-    return this.http.get<Company[]>(`${this.baseUrl}${this.endpoints.companies}`);
-  }
-
   getLocations(): Observable<Location[]> {
     return this.http.get<Location[]>(`${this.baseUrl}${this.endpoints.locations}`);
   }

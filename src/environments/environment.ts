@@ -1,12 +1,11 @@
 export const environment = {
   production: false,
-  apiUrl: 'https://db-weride-4.onrender.com',  // Local development server
+  apiUrl: 'http://20.81.154.140:8080/api/v1',  
   endpoints: {
     users: '/users',
     vehicles: '/vehicles',
     plans: '/plans',
-    companies: '/companies',
-    locations: '/locations',
+    locations: '/location',
     bookings: '/bookings',
     notifications: '/notifications',
     favorites: '/favorites',

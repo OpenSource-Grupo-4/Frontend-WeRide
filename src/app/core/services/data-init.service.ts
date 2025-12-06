@@ -26,8 +26,7 @@ export class DataInitService {
         users: this.userService.loadUsers(),
         vehicles: this.vehicleService.loadVehicles(),
         plans: this.planService.loadPlans(),
-        locations: this.locationService.loadLocations(),
-        companies: this.apiService.getCompanies()
+        locations: this.locationService.loadLocations()
       });
 
       const results = await loadRequests.toPromise();

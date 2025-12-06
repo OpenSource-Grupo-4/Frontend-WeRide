@@ -22,9 +22,7 @@ export class OfflineSyncService {
   private readonly PROBLEM_REPORTS_QUEUE_KEY = 'weride_problem_reports_queue';
   private readonly RATINGS_QUEUE_KEY = 'weride_ratings_queue';
 
-  /**
-   * Queue a problem report for later submission when offline
-   */
+
   queueProblemReport(report: Partial<ProblemReport>): void {
     const queue = this.getProblemReportsQueue();
     const queuedReport: QueuedProblemReport = {
@@ -39,9 +37,6 @@ export class OfflineSyncService {
     this.saveProblemReportsQueue(queue);
   }
 
-  /**
-   * Queue a rating for later submission when offline
-   */
   queueRating(rating: Partial<TripRating>): void {
     const queue = this.getRatingsQueue();
     const queuedRating: QueuedRating = {
@@ -55,9 +50,6 @@ export class OfflineSyncService {
     this.saveRatingsQueue(queue);
   }
 
-  /**
-   * Sync all queued problem reports to the backend
-   */
   async syncProblemReports(): Promise<{ success: number; failed: number }> {
     const queue = this.getProblemReportsQueue();
     if (queue.length === 0) {
@@ -89,9 +81,6 @@ export class OfflineSyncService {
     return { success, failed };
   }
 
-  /**
-   * Sync all queued ratings to the backend
-   */
   async syncRatings(): Promise<{ success: number; failed: number }> {
     const queue = this.getRatingsQueue();
     if (queue.length === 0) {
@@ -122,9 +111,7 @@ export class OfflineSyncService {
     return { success, failed };
   }
 
-  /**
-   * Sync all queued items (problem reports and ratings)
-   */
+
   async syncAll(): Promise<void> {
     const [reportsResult, ratingsResult] = await Promise.all([
       this.syncProblemReports(),
@@ -139,9 +126,6 @@ export class OfflineSyncService {
     }
   }
 
-  /**
-   * Get count of pending items in queue
-   */
   getPendingCount(): { problemReports: number; ratings: number; total: number } {
     const problemReports = this.getProblemReportsQueue().length;
     const ratings = this.getRatingsQueue().length;
@@ -152,9 +136,6 @@ export class OfflineSyncService {
     };
   }
 
-  /**
-   * Clear all queues (use with caution)
-   */
   clearAllQueues(): void {
     localStorage.removeItem(this.PROBLEM_REPORTS_QUEUE_KEY);
     localStorage.removeItem(this.RATINGS_QUEUE_KEY);
