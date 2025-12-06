@@ -1,0 +1,57 @@
+<div class="phone-login-container">
+  <div class="card">
+    <button class="back-button" (click)="goBack()">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+        <path d="M19 12H5M5 12L12 19M5 12L12 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+
+    <h1 class="title">{{ 'auth.phoneLogin.title' | translate }}</h1>
+    <p class="subtitle">{{ 'auth.phoneLogin.subtitle' | translate }}</p>
+
+    <div class="input-group">
+      <div class="prefix">
+        <label>{{ 'auth.phoneLogin.prefix' | translate }}</label>
+        <input type="text" [(ngModel)]="prefix" readonly class="input-prefix">
+      </div>
+      <div class="phone-input">
+        <label>{{ 'auth.phoneLogin.phone' | translate }}</label>
+        <input
+          type="tel"
+          [(ngModel)]="phone"
+          [placeholder]="'auth.phoneLogin.phonePlaceholder' | translate"
+          maxlength="9"
+          class="input-phone"
+        />
+      </div>
+    </div>
+
+    <div class="terms">
+      <p>{{ 'auth.login.terms' | translate }} <a href="#" class="link">{{ 'auth.login.privacyPolicy' | translate }}</a> {{ 'common.and' | translate }} <a href="#" class="link">{{ 'auth.login.termsOfUse' | translate }}</a> {{ 'auth.login.ofWeRide' | translate }}</p>
+    </div>
+
+    <button class="btn-primary" (click)="continue()">{{ 'common.next' | translate }}</button>
+  </div>
+
+  @if (showModal()) {
+    <div class="modal-overlay">
+      <div class="modal-content">
+        <button class="close-btn" (click)="closeModal()">×</button>
+
+        <h2>{{ 'auth.phoneLogin.verificationCode' | translate }}</h2>
+        <p>{{ 'auth.phoneLogin.codeSent' | translate }} {{ prefix() }}{{ phone() }}</p>
+
+        <div class="code-display">
+          <span class="code">{{ verificationCode() }}</span>
+          <button class="copy-btn" (click)="copyCode()">
+            {{ copySuccess() ? ('auth.phoneLogin.copied' | translate) : ('auth.phoneLogin.copy' | translate) }}
+          </button>
+        </div>
+
+        <button class="continue-btn" (click)="proceedToVerification()">
+          {{ 'common.continue' | translate }}
+        </button>
+      </div>
+    </div>
+  }
+</div>

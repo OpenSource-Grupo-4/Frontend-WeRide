@@ -5,6 +5,8 @@ import { TRIP_ROUTES } from './trip/presentation/views/trip.routes';
 import { PLAN_ROUTES } from './plans/presentation/views/plan.routes';
 import { GARAGE_ROUTES } from './garage/garage.routes';
 import { USER_ROUTES } from './user/user.routes';
+import { AUTH_ROUTES } from './auth/auth.routes';
+import { authGuard } from './auth/infrastructure/auth.guard';
 
 export const routes: Routes = [
   {
@@ -13,8 +15,13 @@ export const routes: Routes = [
     pathMatch: 'full'
   },
   {
+    path: 'auth',
+    children: AUTH_ROUTES
+  },
+  {
     path: '',
     component: LayoutComponent,
+    canActivate: [authGuard],
     children: [
       {
         path: 'home',
