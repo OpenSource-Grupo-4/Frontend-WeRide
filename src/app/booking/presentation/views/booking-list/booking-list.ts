@@ -20,7 +20,8 @@ import { BookingConfirmationModal } from '../booking-confirmation-modal/booking-
 import { UnlockMethodSelectionModal } from '../unlock-method-selection-modal/unlock-method-selection-modal';
 import { BookingFilterService } from '../../../application/booking-filter.service';
 import { BookingFilter } from '../../../domain/model/booking-filter.model';
-import { forkJoin } from 'rxjs';
+import { forkJoin, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
 interface BookingView {
   id: string;
@@ -74,13 +75,32 @@ export class BookingListComponent implements OnInit {
     // Load from localStorage first
     const localBookings = this.bookingStorage.getBookings();
     
-    // Also try to load from API
+    // Also try to load from API with better error handling
     forkJoin({
-      bookings: this.bookingsApi.getAll(),
-      vehicles: this.vehiclesApi.getAll(),
-      locations: this.locationsApi.getAll()
+      bookings: this.bookingsApi.getAll().pipe(
+        catchError(error => {
+          console.error('Error loading bookings:', error);
+          return of([]); // Return empty array on error
+        })
+      ),
+      vehicles: this.vehiclesApi.getAll().pipe(
+        catchError(error => {
+          console.error('Error loading vehicles:', error);
+          return of([]); // Return empty array on error
+        })
+      ),
+      locations: this.locationsApi.getAll().pipe(
+        catchError(error => {
+          console.error('Error loading locations:', error);
+          return of([]); // Return empty array on error
+        })
+      )
     }).subscribe({
       next: ({ bookings, vehicles, locations }) => {
+        console.log('API Response - Bookings:', bookings);
+        console.log('API Response - Vehicles:', vehicles);
+        console.log('API Response - Locations:', locations);
+        
         // Merge API bookings with local bookings
         const allBookings = [...localBookings, ...bookings];
         

@@ -3,7 +3,7 @@
 //deploy actual = https://weride.duckdns.org/api/v1
 export const environment = {
   production: false,
-  apiUrl: 'https://weride.duckdns.org/api/v1',
+  apiUrl: '/api/v1',
   endpoints: {
     users: '/users',
     vehicles: '/vehicles',
