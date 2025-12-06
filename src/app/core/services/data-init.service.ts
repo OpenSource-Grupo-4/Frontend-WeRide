@@ -19,25 +19,6 @@ export class DataInitService {
     private apiService: ApiService
   ) {}
 
-  async initializeData(): Promise<void> {
-    try {
-
-      const loadRequests = forkJoin({
-        users: this.userService.loadUsers(),
-        vehicles: this.vehicleService.loadVehicles(),
-        plans: this.planService.loadPlans(),
-        locations: this.locationService.loadLocations()
-      });
-
-      const results = await loadRequests.toPromise();
-
-      this.dataLoadedSubject.next(true);
-    } catch (error) {
-      console.error('Error cargando datos iniciales:', error);
-      this.dataLoadedSubject.next(false);
-    }
-  }
-
   getUsers() {
     return this.userService.getCachedUsers();
   }
@@ -73,4 +54,5 @@ export class DataInitService {
   getPlanById(id: string) {
     return this.planService.findPlanById(id);
   }
+
 }

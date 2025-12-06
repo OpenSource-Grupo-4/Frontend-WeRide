@@ -4,7 +4,8 @@ export const environment = {
   endpoints: {
     users: '/users',
     vehicles: '/vehicles',
-    plans: '/plans',    locations: '/locations',
+    plans: '/plans',
+    locations: '/locations',
     bookings: '/bookings',
     notifications: '/notifications',
     favorites: '/favorites',

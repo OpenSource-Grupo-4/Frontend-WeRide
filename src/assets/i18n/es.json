@@ -54,7 +54,14 @@
       "privacyPolicy": "Política de privacidad",
       "termsOfUse": "Términos de uso",
       "ofWeRide": "de WeRide",
-      "loadingMessage": "Cargando datos de WeRide..."
+      "loadingMessage": "Cargando datos de WeRide...",
+      "username": "Usuario",
+      "usernamePlaceholder": "string",
+      "password": "Contraseña",
+      "passwordPlaceholder": "string",
+      "signIn": "Iniciar Sesión",
+      "register": "Registrarse",
+      "login": "Iniciar Sesión"
     },
     "phoneLogin": {
       "title": "Introduce Número de Celular",

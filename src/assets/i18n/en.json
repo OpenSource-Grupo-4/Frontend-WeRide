@@ -54,7 +54,14 @@
       "privacyPolicy": "Privacy Policy",
       "termsOfUse": "Terms of Use",
       "ofWeRide": "of WeRide",
-      "loadingMessage": "Loading WeRide data..."
+      "loadingMessage": "Loading WeRide data...",
+      "username": "Username",
+      "usernamePlaceholder": "string",
+      "password": "Password",
+      "passwordPlaceholder": "string",
+      "signIn": "Sign In",
+      "register": "Register",
+      "login": "Login"
     },
     "phoneLogin": {
       "title": "Enter Phone Number",
