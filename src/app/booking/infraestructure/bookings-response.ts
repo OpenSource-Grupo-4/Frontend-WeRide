@@ -27,18 +27,3 @@ export interface BookingResponse {
 export interface BookingsListResponse {
   bookings: BookingResponse[];
 }
-
-// Respuesta paginada de la API
-export interface PaginatedResponse<T> {
-  content: T[];
-  pageable?: {
-    pageNumber: number;
-    pageSize: number;
-  };
-  totalElements?: number;
-  totalPages?: number;
-  last?: boolean;
-  first?: boolean;
-  size?: number;
-  number?: number;
-}
