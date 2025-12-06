@@ -55,7 +55,7 @@
 
       <div class="features">
         <mat-chip-set>
-          @for (feature of vehicle.features.slice(0, 3); track feature) {
+          @for (feature of vehicle.features?.slice(0, 3); track feature) {
           <mat-chip>{{ feature }}</mat-chip>
           }
         </mat-chip-set>

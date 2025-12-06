@@ -15,7 +15,7 @@ export interface Vehicle {
   companyId: string;
   pricePerMinute: number;
   image: string;
-  features: string[];
+  features?: string[];
   maintenanceStatus: string;
   lastMaintenance: string;
   nextMaintenance: string;

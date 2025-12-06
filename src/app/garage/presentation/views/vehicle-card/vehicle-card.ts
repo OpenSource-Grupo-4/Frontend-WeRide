@@ -136,7 +136,7 @@ export class VehicleCard {
             companyId: this.vehicle.companyId,
             pricePerMinute: this.vehicle.pricePerMinute,
             image: this.vehicle.image,
-            features: this.vehicle.features,
+            features: this.vehicle.features || [],
             maintenanceStatus: this.vehicle.maintenanceStatus,
             lastMaintenance: this.vehicle.lastMaintenance,
             nextMaintenance: this.vehicle.nextMaintenance,

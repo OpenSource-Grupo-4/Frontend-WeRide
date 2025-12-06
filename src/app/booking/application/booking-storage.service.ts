@@ -7,7 +7,7 @@ const STORAGE_KEY = 'weride_bookings';
   providedIn: 'root'
 })
 export class BookingStorageService {
-  
+
   /**
    * Save a new booking to localStorage
    */
@@ -31,7 +31,7 @@ export class BookingStorageService {
       if (!data) {
         return [];
       }
-      
+
       const parsed = JSON.parse(data);
       // Convert date strings back to Date objects
       return parsed.map((b: any) => this.deserializeBooking(b));
@@ -56,7 +56,7 @@ export class BookingStorageService {
     try {
       const bookings = this.getBookings();
       const index = bookings.findIndex(b => b.id === id);
-      
+
       if (index === -1) {
         console.error('Booking not found:', id);
         return false;
@@ -79,9 +79,8 @@ export class BookingStorageService {
     try {
       const bookings = this.getBookings();
       const filtered = bookings.filter(b => b.id !== id);
-      
+
       if (filtered.length === bookings.length) {
-        console.error('Booking not found:', id);
         return false;
       }
 
@@ -135,15 +134,18 @@ export class BookingStorageService {
 
   /**
    * Serialize booking to plain object for storage
+   * CORREGIDO: Ahora valida que la fecha exista antes de convertirla
    */
   private serializeBooking(booking: Booking): any {
     return {
       ...booking,
-      reservedAt: booking.reservedAt?.toISOString(),
-      startDate: booking.startDate?.toISOString(),
-      endDate: booking.endDate?.toISOString(),
-      actualStartDate: booking.actualStartDate?.toISOString(),
-      actualEndDate: booking.actualEndDate?.toISOString()
+      // Usamos 'new Date(fecha)' para asegurar que es un objeto Date válido
+      // Usamos el ternario (? :) para asignar null si la fecha no existe
+      reservedAt: booking.reservedAt ? new Date(booking.reservedAt).toISOString() : null,
+      startDate: booking.startDate ? new Date(booking.startDate).toISOString() : null,
+      endDate: booking.endDate ? new Date(booking.endDate).toISOString() : null,
+      actualStartDate: booking.actualStartDate ? new Date(booking.actualStartDate).toISOString() : null,
+      actualEndDate: booking.actualEndDate ? new Date(booking.actualEndDate).toISOString() : null
     };
   }
 

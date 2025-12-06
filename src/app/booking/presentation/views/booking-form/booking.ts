@@ -4,14 +4,27 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { MatInputModule } from '@angular/material/input';
+
 import { BookingStorageService } from '../../../application/booking-storage.service';
 import { BookingStore } from '../../../application/booking.store';
-import { Booking } from '../../../domain/model/booking.entity';
+import { BookingsApiEndpoint } from '../../../infraestructure/bookings-api-endpoint';
+import { VehiclesApiEndpoint } from '../../../infraestructure/vehicles-api-endpoint';
 
 @Component({
   selector: 'app-booking-form',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatSnackBarModule, TranslateModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    MatSnackBarModule,
+    TranslateModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatInputModule
+  ],
   templateUrl: './booking.html',
   styleUrls: ['./booking.css']
 })
@@ -20,23 +33,17 @@ export class BookingFormComponent implements OnInit {
   private router = inject(Router);
   private bookingStorage = inject(BookingStorageService);
   private bookingStore = inject(BookingStore);
+  private bookingsApi = inject(BookingsApiEndpoint);
+  private vehiclesApi = inject(VehiclesApiEndpoint);
   private snackBar = inject(MatSnackBar);
   private translate = inject(TranslateService);
 
-  // Edit mode properties
   isEditMode = false;
   editingBookingId: string | null = null;
 
-  vehicles = [
-    { id: '1', brand: 'Lime', model: 'S-300 Electric Scooter', location: 'Downtown Station A', rate: 0.15, type: 'E-Scooter', battery: '85%', range: '25 km' },
-    { id: '2', brand: 'Bird', model: 'One Electric Scooter', location: 'Mall Parking B', rate: 0.20, type: 'E-Scooter', battery: '92%', range: '30 km' },
-    { id: '3', brand: 'Spin', model: 'Scoot Pro', location: 'Airport Zone C', rate: 0.18, type: 'E-Scooter', battery: '78%', range: '22 km' },
-    { id: '4', brand: 'Jump', model: 'E-Bike City', location: 'University Campus', rate: 0.25, type: 'E-Bike', battery: '88%', range: '45 km' },
-    { id: '5', brand: 'Lime', model: 'E-Bike Gen 4', location: 'Central Park', rate: 0.22, type: 'E-Bike', battery: '95%', range: '50 km' },
-    { id: '6', brand: 'Veo', model: 'Cosmo E-Scooter', location: 'Business District', rate: 0.16, type: 'E-Scooter', battery: '82%', range: '28 km' },
-    { id: '7', brand: 'Tier', model: 'Electric Scooter', location: 'Shopping Center', rate: 0.19, type: 'E-Scooter', battery: '90%', range: '32 km' },
-    { id: '8', brand: 'Dott', model: 'E-Scooter Pro', location: 'Train Station', rate: 0.17, type: 'E-Scooter', battery: '86%', range: '26 km' }
-  ];
+  // Array dinámico que se llena desde la API de Garage
+  vehicles: any[] = [];
+
   selectedVehicle: string = '';
   selectedDate: string = '';
   unlockTime: string = '';
@@ -48,55 +55,158 @@ export class BookingFormComponent implements OnInit {
   pushNotification: boolean = false;
 
   ngOnInit(): void {
-    // Check if we're in edit mode
+    // 1. Inicializar valores de fecha/hora por defecto
+    const now = new Date();
+    this.selectedDate = this.formatDateForInput(now);
+    this.unlockTime = this.formatTimeForInput(now);
+
+    // 2. Cargar lista de vehículos
+    this.loadVehicles();
+
+    // 3. Verificar si es modo edición
     this.route.paramMap.subscribe(params => {
       const bookingId = params.get('id');
       if (bookingId) {
         this.isEditMode = true;
         this.editingBookingId = bookingId;
-        this.loadBookingForEdit(bookingId);
+        setTimeout(() => this.loadBookingForEdit(bookingId), 500);
       }
     });
   }
 
-  /**
-   * Load booking data for editing
-   */
+  // --- MÉTODOS DE CARGA ---
+
+  private loadVehicles(): void {
+    this.vehiclesApi.getAll().subscribe({
+      next: (data) => {
+        this.vehicles = data;
+        this.updateRate();
+      },
+      error: (err) => {
+        console.error('Error cargando vehículos', err);
+        this.showErrorMessage('Error cargando la lista de vehículos');
+      }
+    });
+  }
+
   private loadBookingForEdit(bookingId: string): void {
     const booking = this.bookingStorage.getBookingById(bookingId);
-    
+
     if (booking) {
-      // Populate form fields with booking data
       this.selectedVehicle = booking.vehicleId;
       this.selectedDate = this.formatDateForInput(booking.startDate);
       this.unlockTime = this.formatTimeForInput(booking.startDate);
       this.duration = booking.duration || 1;
-      
-      // Find vehicle to get rate
-      const vehicle = this.vehicles.find(v => v.id === booking.vehicleId);
-      this.rate = vehicle ? vehicle.rate : 0;
+      this.updateRate();
     } else {
-      // Booking not found, show error and navigate back
-      this.showErrorMessage('booking.notFound');
-      this.router.navigate(['/booking/list']);
+      this.bookingsApi.getAll().subscribe(bookings => {
+        const found = bookings.find((b: any) => b.id === bookingId);
+        if(found) {
+          this.selectedVehicle = found.vehicleId;
+          this.duration = found.duration || 1;
+          this.updateRate();
+        }
+      });
     }
   }
 
-  /**
-   * Format date for HTML date input (YYYY-MM-DD)
-   */
-  private formatDateForInput(date: Date): string {
-    const d = new Date(date);
-    return d.toISOString().split('T')[0];
+  // --- LÓGICA DE FORMULARIO Y API ---
+
+  submitBooking() {
+    this.updateRate();
+
+    if (this.isEditMode && this.editingBookingId) {
+      this.updateBooking();
+    } else {
+      this.createNewBooking();
+    }
   }
 
-  /**
-   * Format time for HTML time input (HH:MM)
-   */
-  private formatTimeForInput(date: Date): string {
-    const d = new Date(date);
-    return d.toTimeString().slice(0, 5);
+  private createNewBooking(): void {
+    const startDateTime = this.combineDateTime(this.selectedDate, this.unlockTime);
+    const calculatedCost = this.calculateCost();
+
+    // PAYLOAD COMPLETO (NECESARIO PARA PASAR LA VALIDACIÓN TS DEL FRONTEND)
+    const payload: any = {
+      userId: '1',
+      vehicleId: this.selectedVehicle,
+      startLocationId: 'loc-A',
+      endLocationId: 'loc-B',
+      reservedAt: new Date().toISOString(),
+      startDate: startDateTime.toISOString(),
+      endDate: new Date(startDateTime.getTime() + (this.duration * 60000)).toISOString(),
+      status: 'pending',
+      totalCost: calculatedCost,
+      discount: 0,
+      finalCost: calculatedCost,
+      paymentMethod: 'card',
+      paymentStatus: 'pending',
+      distance: 0,
+      duration: this.duration,
+      averageSpeed: 0,
+      actualStartDate: null,
+      actualEndDate: null,
+      rating: null
+    };
+
+    this.bookingsApi.create(payload).subscribe({
+      next: (response) => {
+
+        const newBookingEntity = this.mapApiResponseToBookingEntity(response);
+        this.bookingStorage.saveBooking(newBookingEntity);
+        this.bookingStore.addBooking(newBookingEntity);
+
+        this.showSuccessMessage('booking.createSuccess');
+        this.showSummary = true;
+
+        setTimeout(async () =>{ // <--- HACEMOS EL CALLBACK ASÍNCRONO
+          await this.router.navigate(['/booking/list']); // <--- USAMOS AWAIT
+        }, 2000);
+      },
+      error: (err) => {
+        console.error('Error creando reserva:', err);
+        this.showErrorMessage('booking.createError');
+      }
+    });
   }
+
+  private updateBooking(): void {
+    if (!this.editingBookingId) return;
+
+    const startDateTime = this.combineDateTime(this.selectedDate, this.unlockTime);
+    const calculatedCost = this.calculateCost();
+
+    const payload: any = {
+      vehicleId: this.selectedVehicle,
+      duration: this.duration,
+      startDate: startDateTime.toISOString(),
+      totalCost: calculatedCost,
+      finalCost: calculatedCost
+    };
+
+    this.bookingsApi.update(this.editingBookingId, payload).subscribe({
+      next: (response) => {
+        const updatedEntity = this.mapApiResponseToBookingEntity(response);
+        this.bookingStorage.updateBooking(this.editingBookingId!, updatedEntity);
+        this.bookingStore.loadFromLocalStorage();
+
+        this.showSuccessMessage('booking.updateSuccess');
+        this.showSummary = true;
+        setTimeout(() => this.router.navigate(['/booking/list']), 2000);
+      },
+      error: (err) => {
+        console.error('Error actualizando:', err);
+        this.showErrorMessage('booking.updateError');
+      }
+    });
+  }
+
+  saveDraft() {
+    this.showSummary = true;
+    this.showSuccessMessage('Borrador guardado localmente (simulado)');
+  }
+
+  // --- MÉTODOS AUXILIARES Y GETTERS ---
 
   getVehicleName(id: string): string {
     const v = this.vehicles.find(vehicle => vehicle.id === id);
@@ -105,136 +215,63 @@ export class BookingFormComponent implements OnInit {
 
   getVehicleType(id: string): string {
     const v = this.vehicles.find(vehicle => vehicle.id === id);
-    return v ? v.type : '';
+    return v ? (v.type || 'Unknown') : '';
   }
 
   getVehicleBattery(id: string): string {
     const v = this.vehicles.find(vehicle => vehicle.id === id);
-    return v ? v.battery : '';
+    return v ? (v.battery + '%' || 'N/A') : '';
   }
 
   getVehicleRange(id: string): string {
     const v = this.vehicles.find(vehicle => vehicle.id === id);
-    return v ? v.range : '';
+    return v ? (v.range + ' km' || 'N/A') : '';
   }
 
-  submitBooking() {
-    const vehicle = this.vehicles.find(v => v.id === this.selectedVehicle);
-    this.rate = vehicle ? vehicle.rate : 0;
-    
-    if (this.isEditMode && this.editingBookingId) {
-      // Update existing booking
-      this.updateBooking();
-    } else {
-      // Create new booking
-      this.createNewBooking();
+  updateRate(): void {
+    if (this.selectedVehicle && this.vehicles.length > 0) {
+      const vehicle = this.vehicles.find(v => v.id === this.selectedVehicle);
+      this.rate = vehicle ? (vehicle.pricePerMinute || vehicle.rate || 0) : 0;
     }
   }
 
-  /**
-   * Create a new booking and save to localStorage
-   */
-  private createNewBooking(): void {
-    const startDateTime = this.combineDateTime(this.selectedDate, this.unlockTime);
-    const finalCost = this.calculateCost();
-    
-    const newBooking = new Booking(
-      this.generateBookingId(),
-      'current-user-id', // Replace with actual user ID
-      this.selectedVehicle,
-      'start-location-id', // Replace with actual location
-      'end-location-id', // Replace with actual location
-      new Date(),
-      startDateTime,
-      null,
-      null,
-      null,
-      'pending',
-      finalCost,
-      0,
-      finalCost,
-      'card',
-      'pending',
-      null,
-      this.duration,
-      null,
-      null,
-      []
-    );
+  // --- UTILIDADES ---
 
-    // Save to localStorage and store
-    this.bookingStorage.saveBooking(newBooking);
-    this.bookingStore.addBooking(newBooking);
-    
-    this.showSuccessMessage('booking.createSuccess');
-    this.showSummary = true;
-    
-    // Navigate to list after a delay
-    setTimeout(() => {
-      this.router.navigate(['/booking/list']);
-    }, 2000);
-  }
-
-  /**
-   * Update existing booking
-   */
-  private updateBooking(): void {
-    if (!this.editingBookingId) return;
-
-    const startDateTime = this.combineDateTime(this.selectedDate, this.unlockTime);
-    const finalCost = this.calculateCost();
-    
-    const updatedData: Partial<Booking> = {
-      vehicleId: this.selectedVehicle,
-      startDate: startDateTime,
-      duration: this.duration,
-      finalCost: finalCost,
-      totalCost: finalCost
+  // La función de mapeo (conversión de string a Date) AHORA ESTÁ DENTRO DE LA CLASE
+  private mapApiResponseToBookingEntity(response: any): any {
+    // Corrige el error TS2345
+    return {
+      ...response,
+      reservedAt: response.reservedAt ? new Date(response.reservedAt) : null,
+      startDate: response.startDate ? new Date(response.startDate) : null,
+      endDate: response.endDate ? new Date(response.endDate) : null,
+      actualStartDate: response.actualStartDate ? new Date(response.actualStartDate) : null,
+      actualEndDate: response.actualEndDate ? new Date(response.actualEndDate) : null,
     };
-
-    const success = this.bookingStorage.updateBooking(this.editingBookingId, updatedData);
-    
-    if (success) {
-      // Update store
-      this.bookingStore.loadFromLocalStorage();
-      
-      this.showSuccessMessage('booking.updateSuccess');
-      this.showSummary = true;
-      
-      // Navigate to list after a delay
-      setTimeout(() => {
-        this.router.navigate(['/booking/list']);
-      }, 2000);
-    } else {
-      this.showErrorMessage('booking.updateError');
-    }
   }
 
-  /**
-   * Combine date and time strings into a Date object
-   */
   private combineDateTime(dateStr: string, timeStr: string): Date {
+    // Arregla la construcción de la fecha
     return new Date(`${dateStr}T${timeStr}`);
   }
 
-  /**
-   * Calculate booking cost
-   */
   private calculateCost(): number {
     return this.rate * this.duration;
   }
 
-  /**
-   * Generate unique booking ID
-   */
-  private generateBookingId(): string {
-    return `booking-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  private formatDateForInput(date: Date): string {
+    const d = new Date(date);
+    return d.toISOString().split('T')[0];
   }
 
-  saveDraft() {
-    this.showSummary = true;
-    // Here you could save the draft locally or to the backend
+  private formatTimeForInput(date: Date): string {
+    const d = new Date(date);
+    const hours = d.getHours().toString().padStart(2, '0');
+    const minutes = d.getMinutes().toString().padStart(2, '0');
+    return `${hours}:${minutes}`;
   }
+
+  // --- Mensajes ---
 
   private showSuccessMessage(key: string): void {
     const message = this.translate.instant(key);

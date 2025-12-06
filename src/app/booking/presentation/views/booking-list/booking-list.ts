@@ -57,11 +57,11 @@ export class BookingListComponent implements OnInit {
   filteredBookings: BookingView[] = [];
   isLoading = true;
   isActivating = false;
-  
+
   searchTerm = '';
   sortBy: 'date' | 'vehicle' | 'status' = 'date';
   sortOrder: 'asc' | 'desc' = 'desc';
-  
+
   currentFilter: BookingFilter = this.filterService.getDefaultFilter();
 
   ngOnInit(): void {
@@ -70,10 +70,10 @@ export class BookingListComponent implements OnInit {
 
   loadBookings(): void {
     this.isLoading = true;
-    
+
     // Load from localStorage first
     const localBookings = this.bookingStorage.getBookings();
-    
+
     // Also try to load from API
     forkJoin({
       bookings: this.bookingsApi.getAll(),
@@ -83,12 +83,12 @@ export class BookingListComponent implements OnInit {
       next: ({ bookings, vehicles, locations }) => {
         // Merge API bookings with local bookings
         const allBookings = [...localBookings, ...bookings];
-        
+
         // Remove duplicates (prefer local version)
         const uniqueBookings = Array.from(
           new Map(allBookings.map(b => [b.id, b])).values()
         );
-        
+
         this.bookings = uniqueBookings.map(booking => {
           const vehicle = vehicles.find(v => v.id === booking.vehicleId);
           const startLocation = locations.find(l => l.id === booking.startLocationId);
@@ -141,7 +141,7 @@ export class BookingListComponent implements OnInit {
       vehicleName: this.searchTerm,
       status: ''
     };
-    
+
     this.filteredBookings = this.filterService.filterAndSortBookings(
       this.bookings,
       this.currentFilter
@@ -177,18 +177,18 @@ export class BookingListComponent implements OnInit {
     // Show confirmation dialog
     const message = this.translate.instant('booking.confirmCancelMessage');
     const confirmText = this.translate.instant('common.confirm');
-    
+
     if (confirm(message)) {
       // Update in localStorage
       const success = this.bookingStorage.cancelBooking(id);
-      
+
       if (success) {
         // Update local view
         booking.status = 'cancelled';
-        
+
         // Update in store
         this.bookingStore.loadFromLocalStorage();
-        
+
         // Try to update in API as well (optional)
         this.bookingsApi.update(id, { status: 'cancelled' }).subscribe({
           next: () => {
@@ -209,33 +209,31 @@ export class BookingListComponent implements OnInit {
   deleteBooking(id: string): void {
     // Show confirmation dialog
     const message = this.translate.instant('booking.confirmDeleteMessage');
-    const confirmText = this.translate.instant('common.confirm');
-    
+
     if (confirm(message)) {
-      // Delete from localStorage
-      const success = this.bookingStorage.deleteBooking(id);
-      
-      if (success) {
-        // Remove from local view
-        this.bookings = this.bookings.filter(b => b.id !== id);
-        
-        // Update store
-        this.bookingStore.deleteBooking(id);
-        
-        // Try to delete from API as well (optional)
-        this.bookingsApi.delete(id).subscribe({
-          next: () => {
-            this.showSuccessMessage('booking.deleteSuccess');
-          },
-          error: (error) => {
-            console.error('Error deleting booking from API:', error);
-            // Still show success since localStorage was updated
-            this.showSuccessMessage('booking.deleteSuccess');
-          }
-        });
-      } else {
-        this.showErrorMessage('booking.deleteError');
-      }
+
+      // 1. Intentamos limpiar del LocalStorage (solo por si acaso, ignoramos el resultado)
+      this.bookingStorage.deleteBooking(id);
+
+      // 2. Llamamos a la API (Esta es la acción importante)
+      this.bookingsApi.delete(id).subscribe({
+        next: () => {
+          console.log('Eliminado correctamente del servidor');
+
+          // 3. ACTUALIZACIÓN VISUAL (Esto es lo que te faltaba/fallaba)
+          // Filtramos la lista en memoria para quitar el elemento borrado
+          this.bookings = this.bookings.filter(b => b.id !== id);
+
+          // Importante: Re-aplicar filtros para actualizar la lista visible (filteredBookings)
+          this.applyFilters();
+
+          this.showSuccessMessage('booking.deleteSuccess');
+        },
+        error: (error) => {
+          console.error('Error deleting booking from API:', error);
+          this.showErrorMessage('booking.deleteError');
+        }
+      });
     }
   }
 
@@ -267,7 +265,7 @@ export class BookingListComponent implements OnInit {
       this.vehiclesApi.getAll().subscribe({
         next: (vehicles) => {
           const vehicle = vehicles.find(v => v.id === bookingView.vehicleId);
-          
+
           if (!vehicle) {
             this.showErrorMessage('booking.vehicleNotAvailable');
             this.isActivating = false;
@@ -283,7 +281,7 @@ export class BookingListComponent implements OnInit {
 
           dialogRef.afterClosed().subscribe(result => {
             this.isActivating = false;
-            
+
             if (result === 'now') {
               // Activate booking immediately
               this.activateBookingNow(booking, vehicle);
@@ -313,7 +311,7 @@ export class BookingListComponent implements OnInit {
     // Update booking status to active
     booking.status = 'active';
     booking.actualStartDate = new Date();
-    
+
     this.bookingStorage.updateBooking(booking.id, booking);
     this.bookingStore.loadFromLocalStorage();
     this.activeBookingService.setActiveBooking(booking);
@@ -335,19 +333,19 @@ export class BookingListComponent implements OnInit {
       if (result === 'manual') {
         // Navigate to manual unlock
         this.router.navigate(['/garage'], {
-          queryParams: { 
+          queryParams: {
             action: 'unlock-manual',
             vehicleId: vehicle.id,
-            bookingId: booking.id 
+            bookingId: booking.id
           }
         });
       } else if (result === 'qr_code') {
         // Navigate to QR scanner
         this.router.navigate(['/garage'], {
-          queryParams: { 
+          queryParams: {
             action: 'unlock-qr',
             vehicleId: vehicle.id,
-            bookingId: booking.id 
+            bookingId: booking.id
           }
         });
       }
