@@ -8,7 +8,6 @@ import { TripStore } from '../../../../trip/application/trip.store';
 import { ActiveBookingService } from '../../../application/active-booking.service';
 import { UnlockRequestsApiEndpoint } from '../../../infraestructure/unlockRequests-api-endpoint';
 import { VehiclesApiEndpoint } from '../../../infraestructure/vehicles-api-endpoint';
-import { AuthStore } from '../../../../auth/application/auth.store';
 import { toDomainUnlockRequest } from '../../../infraestructure/unlockRequest-assembler';
 import { toDomainVehicle } from '../../../infraestructure/vehicle-assembler';
 import { firstValueFrom, catchError, of } from 'rxjs';
@@ -46,7 +45,6 @@ export class VehicleUnlockStatusComponent implements OnInit, OnDestroy {
   private activeBookingService = inject(ActiveBookingService);
   private unlockRequestsApi = inject(UnlockRequestsApiEndpoint);
   private vehiclesApi = inject(VehiclesApiEndpoint);
-  private authStore = inject(AuthStore);
 
   isActiveTrip = computed(() => this.tripStore.isActiveTrip());
   currentVehicle = computed(() => this.tripStore.currentVehicle());
@@ -146,13 +144,7 @@ export class VehicleUnlockStatusComponent implements OnInit, OnDestroy {
     this.errorMessage.set('');
 
     try {
-      const currentUser = this.authStore.currentUser();
-
       let booking = this.activeBookingService.getActiveBooking();
-      if (!booking && currentUser) {
-        booking = await this.activeBookingService.checkAndStoreActiveBooking(currentUser.id);
-      }
-
       if (booking) {
         this.activeBooking.set(booking);
       } else {
@@ -365,7 +357,7 @@ export class VehicleUnlockStatusComponent implements OnInit, OnDestroy {
       );
 
       this.vehicleInfo.update(info => ({ ...info, status: 'Locked' }));
-      
+
       this.recentActivity.update(activities => [{
         type: 'info',
         message: 'Vehículo bloqueado',
@@ -391,7 +383,7 @@ export class VehicleUnlockStatusComponent implements OnInit, OnDestroy {
       );
 
       this.vehicleInfo.update(info => ({ ...info, status: 'Unlocked' }));
-      
+
       this.recentActivity.update(activities => [{
         type: 'success',
         message: 'Vehículo desbloqueado',

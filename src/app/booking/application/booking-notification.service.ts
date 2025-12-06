@@ -4,7 +4,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
 import { ActiveBookingService } from './active-booking.service';
 import { NotificationsApiEndpoint } from '../infraestructure/notifications-api-endpoint';
-import { AuthStore } from '../../auth/application/auth.store';
 import { Booking } from '../domain/model/booking.entity';
 import { BookingEndingModal } from '../presentation/views/booking-ending-modal/booking-ending-modal';
 import { firstValueFrom } from 'rxjs';
@@ -24,13 +23,12 @@ export class BookingNotificationService implements OnDestroy {
   private translate = inject(TranslateService);
   private activeBookingService = inject(ActiveBookingService);
   private notificationsApi = inject(NotificationsApiEndpoint);
-  private authStore = inject(AuthStore);
 
   private checkInterval?: number;
   private isMonitoring = false;
   private readonly CHECK_INTERVAL_MS = 60000; // 60 seconds
   private readonly EXPIRATION_WARNING_MINUTES = 5;
-  
+
   // Track which bookings have already been notified to avoid duplicates
   private state: NotificationState = {
     notifiedStartIds: new Set(),
@@ -50,13 +48,6 @@ export class BookingNotificationService implements OnDestroy {
     console.log('Starting booking notification monitoring');
     this.isMonitoring = true;
 
-    // Initial check
-    this.checkBookingTimes();
-
-    // Set up periodic checks
-    this.checkInterval = window.setInterval(() => {
-      this.checkBookingTimes();
-    }, this.CHECK_INTERVAL_MS);
   }
 
   /**
@@ -72,38 +63,6 @@ export class BookingNotificationService implements OnDestroy {
     console.log('Stopped booking notification monitoring');
   }
 
-  /**
-   * Check all active bookings and trigger notifications as needed
-   */
-  private async checkBookingTimes(): Promise<void> {
-    const currentUser = this.authStore.currentUser();
-    if (!currentUser) {
-      return;
-    }
-
-    try {
-      // Get active booking from localStorage or API
-      const activeBooking = await this.activeBookingService.checkAndStoreActiveBooking(currentUser.id);
-      
-      if (!activeBooking) {
-        return;
-      }
-
-      const now = new Date();
-      
-      // Check for booking start (within 1 minute window)
-      this.checkBookingStart(activeBooking, now);
-
-      // Check for expiring booking (5 minutes before end)
-      this.checkBookingExpiring(activeBooking, now);
-
-      // Check for expired booking
-      this.checkBookingExpired(activeBooking, now);
-
-    } catch (error) {
-      console.error('Error checking booking times:', error);
-    }
-  }
 
   /**
    * Scenario 1: Notify when booking starts
@@ -135,8 +94,8 @@ export class BookingNotificationService implements OnDestroy {
     const timeUntilEndMinutes = (endTime.getTime() - now.getTime()) / (1000 * 60);
 
     // Trigger if less than 5 minutes remaining
-    if (timeUntilEndMinutes <= this.EXPIRATION_WARNING_MINUTES && 
-        timeUntilEndMinutes > 0 && 
+    if (timeUntilEndMinutes <= this.EXPIRATION_WARNING_MINUTES &&
+        timeUntilEndMinutes > 0 &&
         !booking.actualStartDate &&
         (booking.status === 'confirmed' || booking.status === 'pending')) {
       this.notifyBookingExpiring(booking, Math.ceil(timeUntilEndMinutes));
@@ -156,9 +115,9 @@ export class BookingNotificationService implements OnDestroy {
     const hasExpired = now.getTime() > endTime.getTime();
 
     // Trigger if expired and trip was never started
-    if (hasExpired && 
-        !booking.actualStartDate && 
-        booking.status !== 'cancelled' && 
+    if (hasExpired &&
+        !booking.actualStartDate &&
+        booking.status !== 'cancelled' &&
         booking.status !== 'completed') {
       this.notifyBookingExpired(booking);
       this.state.notifiedExpiredIds.add(booking.id);
@@ -170,8 +129,8 @@ export class BookingNotificationService implements OnDestroy {
    */
   private notifyBookingStart(booking: Booking): void {
     const title = this.translate.instant('booking.notifications.started.title');
-    const message = this.translate.instant('booking.notifications.started.message', { 
-      bookingId: booking.id.substring(0, 8) 
+    const message = this.translate.instant('booking.notifications.started.message', {
+      bookingId: booking.id.substring(0, 8)
     });
 
     // Show toast notification
@@ -194,8 +153,8 @@ export class BookingNotificationService implements OnDestroy {
    */
   private notifyBookingExpiring(booking: Booking, minutesRemaining: number): void {
     const title = this.translate.instant('booking.notifications.expiring.title');
-    const message = this.translate.instant('booking.notifications.expiring.message', { 
-      minutes: minutesRemaining 
+    const message = this.translate.instant('booking.notifications.expiring.message', {
+      minutes: minutesRemaining
     });
 
     // Show toast notification
@@ -203,7 +162,7 @@ export class BookingNotificationService implements OnDestroy {
 
     // Show modal dialog for critical warning
     this.dialog.open(BookingEndingModal, {
-      data: { 
+      data: {
         minutes: minutesRemaining,
         extendCost: 5.00 // Default extension cost, should come from business logic
       },

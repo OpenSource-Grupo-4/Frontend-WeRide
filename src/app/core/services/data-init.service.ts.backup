@@ -20,12 +20,6 @@ export class DataInitService {
   ) {}
 
   async initializeData(): Promise<void> {
-    // TEMPORALMENTE DESHABILITADO: Carga de datos desde API
-    // Retornar inmediatamente sin hacer peticiones HTTP
-    this.dataLoadedSubject.next(true);
-    return;
-
-    /* CÓDIGO ORIGINAL COMENTADO PARA RESTAURACIÓN FUTURA
     try {
 
       const loadRequests = forkJoin({
@@ -42,7 +36,6 @@ export class DataInitService {
       console.error('Error cargando datos iniciales:', error);
       this.dataLoadedSubject.next(false);
     }
-    */
   }
 
   getUsers() {
@@ -81,3 +74,4 @@ export class DataInitService {
     return this.planService.findPlanById(id);
   }
 }
+

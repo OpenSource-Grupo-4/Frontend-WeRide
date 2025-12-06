@@ -8,7 +8,6 @@ import { MatDividerModule } from '@angular/material/divider';
 import { TranslateModule } from '@ngx-translate/core';
 import { Router } from '@angular/router';
 import { LanguageSwitcher } from '../language-switcher/language-switcher';
-import { AuthStore } from '../../../auth/application/auth.store';
 import { NotificationsApiEndpoint } from '../../../booking/infraestructure/notifications-api-endpoint';
 import { Notification } from '../../../booking/domain/model/notification';
 import { toDomainNotification } from '../../../booking/infraestructure/notification-assembler';
@@ -32,11 +31,9 @@ import { NotificationResponse } from '../../../booking/infraestructure/notificat
 export class HeaderComponent implements OnInit {
   @Output() sidebarToggle = new EventEmitter<void>();
 
-  private authStore = inject(AuthStore);
   private notificationsApi = inject(NotificationsApiEndpoint);
   private router = inject(Router);
 
-  currentUser = this.authStore.currentUser;
   notifications = signal<Notification[]>([]);
   unreadCount = computed(() => this.notifications().filter(n => !n.isRead).length);
 
@@ -49,22 +46,15 @@ export class HeaderComponent implements OnInit {
   }
 
   loadNotifications() {
-    const user = this.currentUser();
-    if (user?.id) {
-      this.notificationsApi.getByUserId(user.id).subscribe({
-        next: (responses: NotificationResponse[]) => {
-          const notificationList = responses.map(r => toDomainNotification(r));
-          const sortedNotifications = notificationList
-            .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
-            .slice(0, 10);
-          this.notifications.set(sortedNotifications);
-        },
-        error: (error) => {
-          console.error('Error loading notifications:', error);
-          this.notifications.set([]);
-        }
-      });
-    }
+    this.notificationsApi.getAll().subscribe({
+      next: (responses: NotificationResponse[]) => {
+        const notificationList = responses.map(r => toDomainNotification(r));
+        const sortedNotifications = notificationList
+          .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+          .slice(0, 10);
+        this.notifications.set(sortedNotifications);
+      }
+    });
   }
 
   onNotificationMenuOpened() {
@@ -101,17 +91,10 @@ export class HeaderComponent implements OnInit {
   }
 
   logout() {
-    this.authStore.logout();
     this.router.navigate(['/auth/login']);
   }
 
   getUserInitials(): string {
-    const user = this.currentUser();
-    if (!user?.name) return 'U';
-    const names = user.name.split(' ');
-    if (names.length >= 2) {
-      return (names[0][0] + names[1][0]).toUpperCase();
-    }
-    return user.name.substring(0, 2).toUpperCase();
+    return 'U';
   }
 }

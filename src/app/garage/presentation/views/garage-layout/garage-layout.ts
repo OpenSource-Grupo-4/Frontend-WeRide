@@ -20,7 +20,6 @@ import { GetVehiclesUseCase } from '../../../application/use-cases/get-vehicles.
 import { FilterVehiclesUseCase } from '../../../application/use-cases/filter-vehicles.usecase';
 import { ToggleFavoriteUseCase } from '../../../application/use-cases/toggle-favorite.usecase';
 import { FavoriteStore } from '../../../application/favorite.store';
-import { AuthStore } from '../../../../auth/application/auth.store';
 
 @Component({
   selector: 'app-garage-layout',
@@ -47,7 +46,6 @@ export class GarageLayout implements OnInit {
   private snackBar = inject(MatSnackBar);
   private activeBookingService = inject(ActiveBookingService);
   private favoriteStore = inject(FavoriteStore);
-  private authStore = inject(AuthStore);
 
   constructor(
     private dialog: MatDialog,
@@ -58,12 +56,6 @@ export class GarageLayout implements OnInit {
   ) {}
 
   async ngOnInit() {
-    // Load user's favorites
-    const currentUser = this.authStore.currentUser();
-    if (currentUser) {
-      this.favoriteStore.loadUserFavorites(currentUser.id);
-    }
-
     await this.loadVehicles();
   }
 
@@ -118,22 +110,6 @@ export class GarageLayout implements OnInit {
     this.updateFavoriteStatus();
     // Then reapply current filters with new view
     this.applyFilter({});
-  }
-
-  async toggleFavorite(vehicleId: string) {
-    const currentUser = this.authStore.currentUser();
-    if (currentUser) {
-      this.toggleFavoriteUseCase.execute(currentUser.id, vehicleId);
-      // Update immediately - the store will handle the backend sync
-      // Use a small delay to allow the rxMethod to process
-      setTimeout(() => {
-        this.updateFavoriteStatus();
-        // If we're in favorites view, reapply filter to update the list
-        if (this.currentView === 'favorites') {
-          this.applyFilter({});
-        }
-      }, 200);
-    }
   }
 
   get favoritesCount(): number {

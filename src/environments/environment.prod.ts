@@ -1,11 +1,11 @@
-//db.json deploy = https://db-weride-4.onrender.com
 export const environment = {
   production: true,
-  apiUrl: 'http://20.81.154.140:8080/api/v1',
+  apiUrl: 'https://weride.duckdns.org/api/v1',
   endpoints: {
     users: '/users',
     vehicles: '/vehicles',
-    plans: '/plans',    locations: '/locations',
+    plans: '/plans',
+    locations: '/locations',
     bookings: '/bookings',
     notifications: '/notifications',
     favorites: '/favorites',

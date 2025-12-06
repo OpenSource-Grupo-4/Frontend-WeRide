@@ -7,7 +7,6 @@ import {Vehicle} from '../../../domain/model/vehicle.model';
 import {GetVehiclesUseCase} from '../../../application/use-cases/get-vehicles.usecase';
 import {ToggleFavoriteUseCase} from '../../../application/use-cases/toggle-favorite.usecase';
 import {FavoriteStore} from '../../../application/favorite.store';
-import {AuthStore} from '../../../../auth/application/auth.store';
 
 @Component({
   selector: 'app-favorites',
@@ -20,7 +19,6 @@ export class Favorites implements OnInit {
   private getVehiclesUseCase = inject(GetVehiclesUseCase);
   private toggleFavoriteUseCase = inject(ToggleFavoriteUseCase);
   private favoriteStore = inject(FavoriteStore);
-  private authStore = inject(AuthStore);
 
   // Use signal for reactivity
   allVehicles = signal<Vehicle[]>([]);
@@ -44,12 +42,6 @@ export class Favorites implements OnInit {
   });
 
   async ngOnInit() {
-    // Load user's favorites from backend
-    const currentUser = this.authStore.currentUser();
-    if (currentUser) {
-      this.favoriteStore.loadUserFavorites(currentUser.id);
-    }
-
     // Load all vehicles once
     await this.loadVehicles();
   }
@@ -60,14 +52,6 @@ export class Favorites implements OnInit {
       this.allVehicles.set(vehicles);
     } catch (error) {
       console.error('Error loading vehicles:', error);
-    }
-  }
-
-  async toggleFavorite(vehicleId: string) {
-    const currentUser = this.authStore.currentUser();
-    if (currentUser) {
-      this.toggleFavoriteUseCase.execute(currentUser.id, vehicleId);
-      // No need to reload - the computed signal will update automatically
     }
   }
 
