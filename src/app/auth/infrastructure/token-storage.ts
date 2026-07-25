@@ -2,6 +2,7 @@ export const AUTH_SESSION_KEY = 'auth_session';
 
 interface StoredAuthSession {
   token: string;
+  profileId?: number | null;
 }
 
 export function getStoredToken(): string | null {
@@ -32,4 +33,33 @@ export function decodeJwtExpiry(token: string): Date {
   const fallback = new Date();
   fallback.setHours(fallback.getHours() + 24);
   return fallback;
+}
+
+export function getStoredProfileId(): number | null {
+  if (typeof window === 'undefined') return null;
+
+  const raw = localStorage.getItem(AUTH_SESSION_KEY);
+  if (!raw) return null;
+
+  try {
+    const data: StoredAuthSession = JSON.parse(raw);
+    return data.profileId ?? null;
+  } catch {
+    return null;
+  }
+}
+
+export function setStoredProfileId(profileId: number): void {
+  if (typeof window === 'undefined') return;
+
+  const raw = localStorage.getItem(AUTH_SESSION_KEY);
+  if (!raw) return;
+
+  try {
+    const data = JSON.parse(raw);
+    data.profileId = profileId;
+    localStorage.setItem(AUTH_SESSION_KEY, JSON.stringify(data));
+  } catch {
+    // ponytail: sesión corrupta — no hay nada válido donde adjuntar el profileId.
+  }
 }

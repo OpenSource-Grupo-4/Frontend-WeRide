@@ -3,7 +3,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { MatIcon } from '@angular/material/icon';
-import { UserStore } from '../../../application/user.store';
+import { CurrentUserViewService } from '../../../../profile/application/current-user-view.service';
 import { TripsApiEndpoint } from '../../../../trip/infrastructure/trips-api-endpoint';
 import { BookingsApiEndpoint } from '../../../../booking/infraestructure/bookings-api-endpoint';
 import { UserSettingsStateService } from '../../../application/user-settings-state.service';
@@ -16,12 +16,12 @@ import { UserSettingsStateService } from '../../../application/user-settings-sta
   styleUrl: './user-history-card.css'
 })
 export class UserHistoryCard implements OnInit {
-  private readonly userStore = inject(UserStore);
+  private readonly currentUserView = inject(CurrentUserViewService);
   private readonly tripsApi = inject(TripsApiEndpoint);
   private readonly bookingsApi = inject(BookingsApiEndpoint);
   private readonly stateService = inject(UserSettingsStateService);
 
-  user$ = this.userStore.getGuestUser$();
+  user$ = this.currentUserView.getCurrentUser$();
   trips$: Observable<any[]> = new Observable(observer => observer.next([]));
   bookings$: Observable<any[]> = new Observable(observer => observer.next([]));
 

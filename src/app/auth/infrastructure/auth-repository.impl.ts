@@ -252,11 +252,22 @@ export class AuthRepositoryImpl extends AuthRepository {
   }
 
   private saveSession(session: AuthSession): void {
+    const existing = localStorage.getItem(AUTH_SESSION_KEY);
+    let profileId: number | undefined;
+    if (existing) {
+      try {
+        profileId = JSON.parse(existing).profileId;
+      } catch {
+        // ponytail: sesión previa corrupta — no hay profileId válido que preservar.
+      }
+    }
+
     localStorage.setItem(AUTH_SESSION_KEY, JSON.stringify({
       user: session.user,
       token: session.token,
       expiresAt: session.expiresAt.toISOString(),
-      isGuest: session.isGuest
+      isGuest: session.isGuest,
+      ...(profileId !== undefined ? { profileId } : {})
     }));
   }
 

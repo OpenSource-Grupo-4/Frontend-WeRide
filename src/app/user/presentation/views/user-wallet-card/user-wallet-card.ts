@@ -3,7 +3,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { MatIcon } from '@angular/material/icon';
 import { TranslateModule } from '@ngx-translate/core';
-import { UserStore } from '../../../application/user.store';
+import { CurrentUserViewService } from '../../../../profile/application/current-user-view.service';
 import { UserPaymentsService } from '../../../infrastructure/user-payments.service';
 import { Payment } from '../../../infrastructure/payments-api-endpoint';
 import { UserSettingsStateService } from '../../../application/user-settings-state.service';
@@ -16,11 +16,11 @@ import { UserSettingsStateService } from '../../../application/user-settings-sta
   styleUrl: './user-wallet-card.css'
 })
 export class UserWalletCard implements OnInit {
-  private readonly userStore = inject(UserStore);
+  private readonly currentUserView = inject(CurrentUserViewService);
   private readonly paymentsService = inject(UserPaymentsService);
   private readonly stateService = inject(UserSettingsStateService);
 
-  user$ = this.userStore.getGuestUser$();
+  user$ = this.currentUserView.getCurrentUser$();
   payments$: Observable<Payment[]> = new Observable();
   totalSpent$: Observable<number> = new Observable();
 

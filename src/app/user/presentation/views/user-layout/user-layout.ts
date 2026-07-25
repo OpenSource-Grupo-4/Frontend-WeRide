@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
-import { UserStore } from '../../../application/user.store';
 import { UserStats } from '../user-stats/user-stats';
 import { UserSettings } from '../user-settings/user-settings';
 import { UserWalletCard } from '../user-wallet-card/user-wallet-card';
@@ -10,6 +9,8 @@ import { UserHelpCard } from '../user-help-card/user-help-card';
 import { UserSettingsCard } from '../user-settings-card/user-settings-card';
 import { UserPersonalInfoCard } from '../user-personal-info-card/user-personal-info-card';
 import { UserSettingsStateService, UserSettingsSection } from '../../../application/user-settings-state.service';
+import { ProfileStore } from '../../../../profile/application/profile.store';
+import { getStoredProfileId } from '../../../../auth/infrastructure/token-storage';
 
 @Component({
   selector: 'app-user-layout',
@@ -29,13 +30,16 @@ import { UserSettingsStateService, UserSettingsSection } from '../../../applicat
   styleUrl: './user-layout.css'
 })
 export class UserLayout implements OnInit {
-  private readonly userStore = inject(UserStore);
   private readonly stateService = inject(UserSettingsStateService);
+  private readonly profileStore = inject(ProfileStore);
 
   activeSection: UserSettingsSection = null;
 
   ngOnInit(): void {
-    this.userStore.loadUsers();
+    const profileId = getStoredProfileId();
+    if (profileId && !this.profileStore.profile()) {
+      this.profileStore.getProfile(profileId);
+    }
     this.stateService.activeSection$.subscribe(section => {
       this.activeSection = section;
     });

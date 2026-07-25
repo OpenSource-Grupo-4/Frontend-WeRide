@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { AuthStore } from '../../../application/auth.store';
+import { ProfileStore } from '../../../../profile/application/profile.store';
 import { AuthCredentials } from '../../../domain/model/auth-credentials.entity';
 import { RegistrationData } from '../../../domain/model/registration-data.entity';
 
@@ -17,6 +18,7 @@ import { RegistrationData } from '../../../domain/model/registration-data.entity
 export class EmailLoginComponent {
   private router = inject(Router);
   protected authStore = inject(AuthStore);
+  private profileStore = inject(ProfileStore);
 
   email = signal('');
   password = signal('');
@@ -37,6 +39,13 @@ export class EmailLoginComponent {
       if (!this.actionAttempted() || isLoading) return;
 
       if (session && session.isValid && !error) {
+        if (this.justRegistered()) {
+          this.profileStore.createProfile({
+            firstName: this.firstName(),
+            lastName: this.lastName(),
+            email: this.email()
+          });
+        }
         this.router.navigate(['/home']);
         this.actionAttempted.set(false);
         this.justRegistered.set(false);

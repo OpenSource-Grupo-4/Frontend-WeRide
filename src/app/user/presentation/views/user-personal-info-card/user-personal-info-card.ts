@@ -3,7 +3,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatIcon } from '@angular/material/icon';
 import { TranslateModule } from '@ngx-translate/core';
-import { UserStore } from '../../../application/user.store';
+import { CurrentUserViewService } from '../../../../profile/application/current-user-view.service';
 import { UserSettingsStateService } from '../../../application/user-settings-state.service';
 import { User } from '../../../domain/model/user.entity';
 
@@ -15,11 +15,11 @@ import { User } from '../../../domain/model/user.entity';
   styleUrl: './user-personal-info-card.css'
 })
 export class UserPersonalInfoCard implements OnInit {
-  private readonly userStore = inject(UserStore);
+  private readonly currentUserView = inject(CurrentUserViewService);
   private readonly stateService = inject(UserSettingsStateService);
   private readonly fb = inject(FormBuilder);
 
-  user$ = this.userStore.getGuestUser$();
+  user$ = this.currentUserView.getCurrentUser$();
   currentUser: User | null = null;
   
   personalInfoForm!: FormGroup;
@@ -32,10 +32,8 @@ export class UserPersonalInfoCard implements OnInit {
     this.user$.subscribe(user => {
       this.currentUser = user;
       if (user) {
-        const storedProfile = localStorage.getItem('userProfile');
-        const profileData = storedProfile ? JSON.parse(storedProfile) : user;
-        this.initializeForm(profileData);
-        this.profilePicturePreview = profileData.profilePicture || '';
+        this.initializeForm(user);
+        this.profilePicturePreview = user.profilePicture || '';
       }
     });
   }
@@ -69,6 +67,8 @@ export class UserPersonalInfoCard implements OnInit {
     }
   }
 
+  // TODO backend: falta PUT /profiles/{id} — este guardado sigue siendo
+  // mock/local hasta que el backend soporte editar el perfil real.
   savePersonalInfo(): void {
     this.errorMessage = '';
     this.successMessage = '';
@@ -97,31 +97,11 @@ export class UserPersonalInfoCard implements OnInit {
 
     try {
       localStorage.setItem('userProfile', JSON.stringify(updatedUser));
-
-      this.userStore.updateUser(this.currentUser.id, updatedUser).subscribe({
-        next: () => {
-          this.isLoading = false;
-          this.successMessage = 'Información actualizada correctamente';
-          setTimeout(() => {
-            this.closeCard();
-          }, 1500);
-        },
-        error: (error) => {
-          console.error('Error al actualizar usuario:', error);
-          
-          const storedUser = localStorage.getItem('userProfile');
-          if (storedUser) {
-            this.isLoading = false;
-            this.errorMessage = 'Error de conexión. Los datos se guardaron localmente y se sincronizarán cuando haya conexión';
-            setTimeout(() => {
-              this.closeCard();
-            }, 2000);
-          } else {
-            this.isLoading = false;
-            this.errorMessage = 'Error al guardar la información. Por favor, intente nuevamente';
-          }
-        }
-      });
+      this.isLoading = false;
+      this.successMessage = 'Información actualizada correctamente';
+      setTimeout(() => {
+        this.closeCard();
+      }, 1500);
     } catch (error) {
       this.isLoading = false;
       this.errorMessage = 'Error al procesar los datos';

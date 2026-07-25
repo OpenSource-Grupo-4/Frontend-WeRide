@@ -3,7 +3,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { MatIcon } from '@angular/material/icon';
-import { UserStore } from '../../../application/user.store';
+import { CurrentUserViewService } from '../../../../profile/application/current-user-view.service';
 import { UserSettingsStateService } from '../../../application/user-settings-state.service';
 
 @Component({
@@ -14,10 +14,10 @@ import { UserSettingsStateService } from '../../../application/user-settings-sta
   styleUrl: './user-security-card.css'
 })
 export class UserSecurityCard implements OnInit {
-  private readonly userStore = inject(UserStore);
+  private readonly currentUserView = inject(CurrentUserViewService);
   private readonly stateService = inject(UserSettingsStateService);
 
-  user$ = this.userStore.getGuestUser$();
+  user$ = this.currentUserView.getCurrentUser$();
 
   ngOnInit(): void {
   }

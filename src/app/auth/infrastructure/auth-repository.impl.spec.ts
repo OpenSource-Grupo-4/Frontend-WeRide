@@ -58,6 +58,22 @@ describe('AuthRepositoryImpl - login real', () => {
     expect(stored.token).toBe(fakeToken);
   });
 
+  it('preserva el profileId ya guardado en un segundo login (no lo borra)', () => {
+    localStorage.setItem(AUTH_SESSION_KEY, JSON.stringify({ profileId: 42 }));
+
+    const exp = Math.floor(Date.now() / 1000) + 3600;
+    const fakeToken = `h.${btoa(JSON.stringify({ sub: 'nico', exp }))}.s`;
+
+    repository.loginWithEmail(new AuthCredentials('nico', 'secret123')).subscribe();
+
+    const req = httpMock.expectOne(`${environment.apiUrl}${environment.endpoints.authentication}/sign-in`);
+    req.flush({ id: 7, token: fakeToken });
+
+    const stored = JSON.parse(localStorage.getItem(AUTH_SESSION_KEY)!);
+    expect(stored.profileId).toBe(42);
+    expect(stored.token).toBe(fakeToken);
+  });
+
   it('traduce un 401 del backend a un mensaje de credenciales inválidas', () => {
     let receivedError: Error | undefined;
 
