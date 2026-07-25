@@ -15,6 +15,11 @@ export class LocationsApiEndpoint {
     return this.http.get<Location[]>(this.baseUrl);
   }
 
+  // PENDIENTE backend: GET /location/{id} no existe en el backend real (el
+  // backend real de /api/v1/location solo implementa POST y GET list).
+  // Este método SÍ tiene caller en producción (TripInitializerService),
+  // por lo que ese flujo fallará (404) contra el backend real hasta que
+  // el backend agregue este endpoint.
   getById(id: string): Observable<Location> {
     return this.http.get<Location>(`${this.baseUrl}/${id}`);
   }

@@ -33,6 +33,8 @@ export class PlansApiEndpoint {
     );
   }
 
+  // PENDIENTE backend: no existe PUT /plans/{id} en el backend real —
+  // esta llamada siempre fallará hasta que el backend lo implemente.
   update(id: string, plan: Plan): Observable<Plan> {
     return this.http.put<PlanResponse>(`${this.baseUrl}/${id}`, plan).pipe(
       map(response => PlanAssembler.toDomain(response))

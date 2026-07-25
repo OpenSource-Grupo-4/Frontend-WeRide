@@ -44,6 +44,10 @@ export class TripInitializerService {
       }
 
       // Obtener la ubicación de inicio
+      // PENDIENTE backend: locationsApi.getById llama a GET /location/{id},
+      // que no existe en el backend real (solo POST y GET list están
+      // implementados). Esta llamada devolverá 404 hoy contra el backend
+      // real — si el init de viaje falla acá, es la causa más probable.
       let startLocation: Location;
       try {
         startLocation = await firstValueFrom(this.locationsApi.getById(booking.startLocationId));
@@ -53,6 +57,8 @@ export class TripInitializerService {
       }
 
       // Obtener la ubicación de destino si existe
+      // PENDIENTE backend: mismo problema que arriba — GET /location/{id}
+      // no existe en el backend real, esta llamada fallará (404).
       let destinationLocation: Location | null = null;
       if (booking.endLocationId) {
         try {

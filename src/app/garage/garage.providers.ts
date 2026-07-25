@@ -5,6 +5,9 @@ import { VehicleRepositoryImpl } from './infrastructure/repositories/vehicle.rep
 import { FavoriteRepository } from './application/repositories/favorite.repository';
 import { FavoriteRepositoryImpl } from './infrastructure/repositories/favorite.repository.impl';
 import { GetVehiclesUseCase } from './application/use-cases/get-vehicles.usecase';
+import { CreateVehicleUseCase } from './application/use-cases/create-vehicle.usecase';
+import { UpdateVehicleUseCase } from './application/use-cases/update-vehicle.usecase';
+import { DeleteVehicleUseCase } from './application/use-cases/delete-vehicle.usecase';
 import { FilterVehiclesUseCase } from './application/use-cases/filter-vehicles.usecase';
 import { ToggleFavoriteUseCase } from './application/use-cases/toggle-favorite.usecase';
 import { GetUserFavoritesUseCase } from './application/use-cases/get-user-favorites.usecase';
@@ -17,6 +20,9 @@ export const GARAGE_PROVIDERS: Provider[] = [
   VehicleApiService,
   FavoriteApiService,
   GetVehiclesUseCase,
+  CreateVehicleUseCase,
+  UpdateVehicleUseCase,
+  DeleteVehicleUseCase,
   FilterVehiclesUseCase,
   ToggleFavoriteUseCase,
   GetUserFavoritesUseCase,

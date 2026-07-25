@@ -28,6 +28,30 @@ export interface VehicleApiResponse {
   rating: number;
 }
 
+export interface CreateVehicleRequest {
+  brand: string;
+  model: string;
+  year: number;
+  battery: number;
+  maxSpeed: number;
+  range: number;
+  weight: number;
+  color: string;
+  licensePlate: string;
+  location: string;
+  status: string;
+  type: string;
+  companyId: string;
+  pricePerMinute: number;
+  image: string;
+  features: string[];
+  maintenanceStatus: string;
+  lastMaintenance: string;
+  nextMaintenance: string;
+  totalKilometers: number;
+  rating: number;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -50,6 +74,18 @@ export class VehicleApiService {
 
   async getVehicleByIdAsync(id: string): Promise<VehicleApiResponse> {
     return firstValueFrom(this.http.get<VehicleApiResponse>(`${this.apiUrl}/${id}`));
+  }
+
+  async createVehicle(body: CreateVehicleRequest): Promise<VehicleApiResponse> {
+    return firstValueFrom(this.http.post<VehicleApiResponse>(this.apiUrl, body));
+  }
+
+  async updateVehicle(id: string, body: CreateVehicleRequest): Promise<VehicleApiResponse> {
+    return firstValueFrom(this.http.put<VehicleApiResponse>(`${this.apiUrl}/${id}`, body));
+  }
+
+  async deleteVehicle(id: string): Promise<void> {
+    return firstValueFrom(this.http.delete<void>(`${this.apiUrl}/${id}`));
   }
 }
 
