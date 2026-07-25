@@ -5,6 +5,7 @@ import { pipe, switchMap, tap, catchError, of } from 'rxjs';
 import { User } from '../domain/model/user.entity';
 import { AuthSession } from '../domain/model/auth-session.entity';
 import { LoginWithEmailUseCase } from './login-with-email.use-case';
+import { LoginWithGoogleUseCase } from './login-with-google.use-case';
 import { LoginWithPhoneUseCase } from './login-with-phone.use-case';
 import { LoginAsGuestUseCase } from './login-as-guest.use-case';
 import { RegisterUserUseCase } from './register-user.use-case';
@@ -37,6 +38,7 @@ export const AuthStore = signalStore(
   withState(initialState),
   withMethods((store) => {
     const loginWithEmailUseCase = inject(LoginWithEmailUseCase);
+    const loginWithGoogleUseCase = inject(LoginWithGoogleUseCase);
     const loginWithPhoneUseCase = inject(LoginWithPhoneUseCase);
     const loginAsGuestUseCase = inject(LoginAsGuestUseCase);
     const registerUserUseCase = inject(RegisterUserUseCase);
@@ -73,10 +75,7 @@ export const AuthStore = signalStore(
         pipe(
           tap(() => patchState(store, { isLoading: true, error: null })),
           switchMap((googleAccount) =>
-            loginWithEmailUseCase.execute({
-              email: googleAccount.email,
-              password: '1234'
-            }).pipe(
+            loginWithGoogleUseCase.execute(googleAccount).pipe(
               tap((session) => {
                 patchState(store, {
                   session,

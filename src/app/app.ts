@@ -5,6 +5,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { BookingNotificationService } from './booking/application/booking-notification.service';
 import { AuthStore } from './auth/application/auth.store';
 import { AuthSession } from './auth/domain/model/auth-session.entity';
+import { AUTH_SESSION_KEY } from './auth/infrastructure/token-storage';
 
 @Component({
   selector: 'app-root',
@@ -40,7 +41,7 @@ export class App implements OnInit, OnDestroy {
   private initializeAuth(): void {
     if (typeof window === 'undefined') return;
 
-    const storedSession = localStorage.getItem('auth_session');
+    const storedSession = localStorage.getItem(AUTH_SESSION_KEY);
     if (storedSession) {
       try {
         const sessionData = JSON.parse(storedSession);
@@ -60,11 +61,11 @@ export class App implements OnInit, OnDestroy {
           this.authStore.setSession(session);
         } else {
           // Session expired, clear it
-          localStorage.removeItem('auth_session');
+          localStorage.removeItem(AUTH_SESSION_KEY);
         }
       } catch (error) {
         console.error('Error restoring session:', error);
-        localStorage.removeItem('auth_session');
+        localStorage.removeItem(AUTH_SESSION_KEY);
       }
     }
   }

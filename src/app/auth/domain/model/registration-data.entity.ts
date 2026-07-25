@@ -3,7 +3,8 @@ export class RegistrationData {
     public firstName: string,
     public lastName: string,
     public phone: string,
-    public email?: string
+    public email?: string,
+    public password?: string
   ) {}
 
   get fullName(): string {

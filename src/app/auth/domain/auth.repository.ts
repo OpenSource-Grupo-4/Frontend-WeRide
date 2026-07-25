@@ -8,7 +8,7 @@ import { RegistrationData } from './model/registration-data.entity';
 export abstract class AuthRepository {
   abstract loginWithEmail(credentials: AuthCredentials): Observable<AuthSession>;
   abstract loginWithPhone(credentials: PhoneCredentials): Observable<AuthSession>;
-  abstract loginWithGoogle(): Observable<AuthSession>;
+  abstract loginWithGoogle(account: { email: string }): Observable<AuthSession>;
   abstract loginAsGuest(): Observable<AuthSession>;
   abstract register(data: RegistrationData): Observable<User>;
   abstract sendVerificationCode(phone: string): Observable<boolean>;
