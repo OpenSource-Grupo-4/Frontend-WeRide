@@ -7,6 +7,7 @@ import { NotificationsApiEndpoint } from '../../../booking/infraestructure/notif
 import { Notification } from '../../../booking/domain/model/notification';
 import { toDomainNotification } from '../../../booking/infraestructure/notification-assembler';
 import { NotificationResponse } from '../../../booking/infraestructure/notifications-response';
+import { AuthStore } from '../../../auth/application/auth.store';
 
 @Component({
   selector: 'app-navbar',
@@ -23,6 +24,7 @@ export class Navbar implements OnInit {
 
   private notificationsApi = inject(NotificationsApiEndpoint);
   private router = inject(Router);
+  private authStore = inject(AuthStore);
 
   notifications = signal<Notification[]>([]);
   unreadCount = computed(() => this.notifications().filter(n => !n.isRead).length);
@@ -68,7 +70,10 @@ export class Navbar implements OnInit {
   }
 
   loadNotifications() {
-    this.notificationsApi.getAll().subscribe({
+    const userId = this.authStore.currentUser()?.id;
+    if (!userId) return;
+
+    this.notificationsApi.getAll(userId).subscribe({
       next: (responses: NotificationResponse[]) => {
         const notificationList = responses.map(r => toDomainNotification(r));
         const sortedNotifications = notificationList

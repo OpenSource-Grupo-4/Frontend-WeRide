@@ -1,6 +1,7 @@
 // Respuesta de la API para una reserva
 export interface BookingResponse {
   id: string;
+  bookingId?: string;
   userId: string;
   vehicleId: string;
   startLocationId: string;

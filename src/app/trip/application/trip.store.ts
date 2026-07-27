@@ -19,6 +19,7 @@ interface TripState {
   isActiveTrip: boolean;
   tripStartTime: Date | null;
   estimatedEndTime: Date | null;
+  activeBookingId: string | null;
 }
 
 @Injectable({
@@ -40,7 +41,8 @@ export class TripStore {
     connectionError: false,
     isActiveTrip: false,
     tripStartTime: null,
-    estimatedEndTime: null
+    estimatedEndTime: null,
+    activeBookingId: null
   });
 
   trips = computed(() => this.state().trips);
@@ -58,6 +60,7 @@ export class TripStore {
   isActiveTrip = computed(() => this.state().isActiveTrip);
   tripStartTime = computed(() => this.state().tripStartTime);
   estimatedEndTime = computed(() => this.state().estimatedEndTime);
+  activeBookingId = computed(() => this.state().activeBookingId);
 
   setTrips(trips: Trip[]) {
     this.state.update(state => ({ ...state, trips }));
@@ -65,6 +68,10 @@ export class TripStore {
 
   setCurrentTrip(trip: Trip | null) {
     this.state.update(state => ({ ...state, currentTrip: trip }));
+  }
+
+  setActiveBookingId(id: string | null) {
+    this.state.update(state => ({ ...state, activeBookingId: id }));
   }
 
   setCurrentVehicle(vehicle: Vehicle | null) {
@@ -125,7 +132,9 @@ export class TripStore {
       estimatedEndTime: null,
       currentVehicle: null,
       currentLocation: null,
-      destinationLocation: null
+      destinationLocation: null,
+      activeBookingId: null,
+      currentTrip: null
     }));
   }
 }

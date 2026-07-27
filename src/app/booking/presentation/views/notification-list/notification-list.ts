@@ -8,6 +8,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { RouterModule } from '@angular/router';
 import { NotificationsApiEndpoint } from '../../../infraestructure/notifications-api-endpoint';
 import { NotificationResponse } from '../../../infraestructure/notifications-response';
+import { AuthStore } from '../../../../auth/application/auth.store';
 
 @Component({
   selector: 'app-notification-list',
@@ -18,6 +19,7 @@ import { NotificationResponse } from '../../../infraestructure/notifications-res
 })
 export class NotificationList implements OnInit {
   private notificationsApi = inject(NotificationsApiEndpoint);
+  private authStore = inject(AuthStore);
 
   notifications: NotificationResponse[] = [];
   isLoading = true;
@@ -28,7 +30,13 @@ export class NotificationList implements OnInit {
   }
 
   loadNotifications(): void {
-    this.notificationsApi.getAll().subscribe({
+    const userId = this.authStore.currentUser()?.id;
+    if (!userId) {
+      this.isLoading = false;
+      return;
+    }
+
+    this.notificationsApi.getAll(userId).subscribe({
       next: (notifications) => {
         this.notifications = notifications.sort((a, b) =>
           new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()

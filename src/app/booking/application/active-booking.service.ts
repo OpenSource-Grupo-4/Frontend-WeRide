@@ -17,7 +17,7 @@ export class ActiveBookingService {
    */
   async checkAndStoreActiveBooking(userId: string): Promise<Booking | null> {
     try {
-      const bookings = await firstValueFrom(this.bookingsApi.getByUserId(userId));
+      const bookings = await firstValueFrom(this.bookingsApi.getPendingByUser(userId));
       
       // Filter for active bookings (pending or confirmed status)
       const activeBookings = bookings
@@ -48,7 +48,7 @@ export class ActiveBookingService {
 
     try {
       const data = JSON.parse(stored);
-      return new Booking(
+      const booking = new Booking(
         data.id,
         data.userId,
         data.vehicleId,
@@ -71,6 +71,8 @@ export class ActiveBookingService {
         data.rating,
         data.issues
       );
+      booking.bookingId = data.bookingId;
+      return booking;
     } catch (error) {
       console.error('Error parsing active booking:', error);
       this.clearActiveBooking();

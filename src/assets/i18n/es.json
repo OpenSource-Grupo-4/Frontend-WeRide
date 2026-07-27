@@ -289,7 +289,9 @@
       "completed": "Completado",
       "pending": "Pendiente",
       "noBookings": "No hay reservas registradas",
-      "bookingId": "Reserva #"
+      "bookingId": "Reserva #",
+      "travelHistory": "Historial de Viajes",
+      "noTravelHistory": "No hay historial de viajes registrado"
     },
     "help": {
       "title": "Ayuda",

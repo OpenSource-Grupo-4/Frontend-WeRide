@@ -12,4 +12,7 @@ export class BookingDraft {
     public savedAt: Date,
     public expiresAt: Date
   ) {}
+
+  startLocationId?: string;
+  endLocationId?: string;
 }

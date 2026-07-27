@@ -21,6 +21,8 @@ import { QrScannerModal } from '../../../../garage/presentation/views/qr-scanner
 import { BookingSuccessModal } from '../../../../public/components/booking-success-modal/booking-success-modal';
 import { DraftBookingService } from '../../../application/draft-booking.service';
 import { BookingDraft } from '../../../domain/model/booking-draft.entity';
+import { LocationsApiEndpoint } from '../../../infraestructure/locations-api-endpoint';
+import { LocationResponse } from '../../../infraestructure/locations-response';
 
 @Component({
   selector: 'app-schedule-unlock',
@@ -37,6 +39,7 @@ export class ScheduleUnlockComponent implements OnInit {
   private dialog = inject(MatDialog);
   private unlockRequestsApi = inject(UnlockRequestsApiEndpoint);
   private draftService = inject(DraftBookingService);
+  private locationsApi = inject(LocationsApiEndpoint);
 
   availabilityError: string = '';
   vehicleAvailable: boolean = false;
@@ -47,6 +50,8 @@ export class ScheduleUnlockComponent implements OnInit {
   selectedVehicle: Vehicle | null = null;
   selectedDate: string = '';
   unlockTime: string = '';
+  startLocationId = '';
+  endLocationId = '';
   duration: number = 1;
   smsReminder: boolean = false;
   emailConfirmation: boolean = false;
@@ -54,6 +59,7 @@ export class ScheduleUnlockComponent implements OnInit {
   isImmediate: boolean = false;
 
   vehicles: Vehicle[] = [];
+  locations: LocationResponse[] = [];
   filteredVehicles: Vehicle[] = [];
   drafts$ = this.draftService.drafts$;
 
@@ -66,6 +72,15 @@ export class ScheduleUnlockComponent implements OnInit {
       this.selectedVehicle = state.vehicle;
       this.searchTerm = `${state.vehicle.brand} ${state.vehicle.model}`;
     }
+
+    this.locationsApi.getAll().subscribe({
+      next: locations => {
+        this.locations = locations.filter(location => location.isActive);
+        this.startLocationId = this.locations[0]?.id || '';
+        this.endLocationId = this.locations[1]?.id || this.locations[0]?.id || '';
+      },
+      error: () => this.availabilityError = 'No se pudieron cargar las ubicaciones'
+    });
 
     // Check if immediate booking
     if (state?.immediate) {
@@ -122,7 +137,7 @@ export class ScheduleUnlockComponent implements OnInit {
   }
 
   get isFormValid(): boolean {
-    return !!(this.selectedVehicle && this.selectedDate && this.unlockTime);
+    return !!(this.selectedVehicle && this.selectedDate && this.unlockTime && this.startLocationId && this.endLocationId);
   }
 
   get dateError(): string | null {
@@ -281,12 +296,10 @@ export class ScheduleUnlockComponent implements OnInit {
    */
   private async createUnlockRequest(bookingId: string, scheduledUnlockTime: Date, method: 'manual' | 'qr_code'): Promise<UnlockRequest | null> {
     try {
-      const userId = '1'; // TODO: Get from AuthService
       const location = await this.getCurrentLocation();
       const unlockCode = this.generateUnlockCode();
 
       const unlockRequestData = {
-        userId: userId,
         vehicleId: this.selectedVehicle!.id,
         bookingId: bookingId,
         requestedAt: new Date().toISOString(),
@@ -344,7 +357,7 @@ export class ScheduleUnlockComponent implements OnInit {
         try {
           // Crear unlock request
           const unlockRequest = await this.createUnlockRequest(
-            booking.id,
+            booking.bookingId || booking.id,
             booking.startDate,
             result.method
           );
@@ -526,16 +539,13 @@ export class ScheduleUnlockComponent implements OnInit {
     }
 
     // Get current user ID (replace with actual user service)
-    const userId = '1'; // TODO: Get from AuthService
-
     // Create booking data with explicit status type
     const status: 'pending' | 'confirmed' | 'completed' | 'cancelled' = this.isImmediate ? 'confirmed' : 'pending';
 
     const bookingData = {
-      userId: userId,
       vehicleId: this.selectedVehicle.id,
-      startLocationId: '1', // TODO: Get current location
-      endLocationId: '1', // TODO: Will be updated on trip end
+      startLocationId: Number(this.startLocationId),
+      endLocationId: Number(this.endLocationId),
       reservedAt: new Date().toISOString(),
       startDate: startDate.toISOString(),
       endDate: endDate.toISOString(),
@@ -610,15 +620,17 @@ export class ScheduleUnlockComponent implements OnInit {
 
     this.isSavingDraft = true;
 
-    const draftData: Partial<BookingDraft> = {
-      userId: '1',
+    const draftData: Partial<BookingDraft> & { startLocationId: string; endLocationId: string; durationMinutes: number } = {
       vehicleId: this.selectedVehicle.id,
       selectedDate: this.selectedDate,
       unlockTime: this.unlockTime,
       duration: this.duration,
       smsReminder: this.smsReminder,
       emailConfirmation: this.emailConfirmation,
-      pushNotification: this.pushNotification
+      pushNotification: this.pushNotification,
+      startLocationId: this.startLocationId,
+      endLocationId: this.endLocationId,
+      durationMinutes: this.duration * 60
     };
 
     this.draftService.saveDraft(draftData).subscribe({

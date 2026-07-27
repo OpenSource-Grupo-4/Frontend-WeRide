@@ -1,14 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { LocationResponse } from './locations-response';
 import { environment } from '../../../environments/environment';
 
-// PENDIENTE backend: el backend real de /api/v1/location solo implementa
-// POST (create) y GET (list). getById/update/delete de esta clase llaman
-// a endpoints que no existen todavía — quedan aquí sin usar hasta que el
-// backend los agregue. El POST real tampoco devuelve el objeto creado
-// (responde 201 con body vacío), a diferencia de lo que create() asume.
 @Injectable({ providedIn: 'root' })
 export class LocationsApiEndpoint {
   private baseUrl = `${environment.apiUrl}${environment.endpoints.locations}`;
@@ -16,25 +11,30 @@ export class LocationsApiEndpoint {
   constructor(private http: HttpClient) {}
 
   getAll(): Observable<LocationResponse[]> {
-    return this.http.get<LocationResponse[]>(this.baseUrl);
+    return this.http.get<LocationResponse[]>(this.baseUrl)
+      .pipe(map(items => items.map(item => this.normalize(item))));
   }
 
   create(location: Omit<LocationResponse, 'id'>): Observable<LocationResponse> {
-    return this.http.post<LocationResponse>(this.baseUrl, location);
+    return this.http.post<LocationResponse>(this.baseUrl, location)
+      .pipe(map(item => this.normalize(item)));
   }
 
-  // PENDIENTE backend: GET /location/{id} no existe en el backend real.
   getById(id: string): Observable<LocationResponse> {
-    return this.http.get<LocationResponse>(`${this.baseUrl}/${id}`);
+    return this.http.get<LocationResponse>(`${this.baseUrl}/${id}`)
+      .pipe(map(item => this.normalize(item)));
   }
 
-  // PENDIENTE backend: PUT /location/{id} no existe en el backend real.
   update(id: string, location: Partial<LocationResponse>): Observable<LocationResponse> {
-    return this.http.patch<LocationResponse>(`${this.baseUrl}/${id}`, location);
+    return this.http.patch<LocationResponse>(`${this.baseUrl}/${id}`, location)
+      .pipe(map(item => this.normalize(item)));
   }
 
-  // PENDIENTE backend: DELETE /location/{id} no existe en el backend real.
   delete(id: string): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/${id}`);
+  }
+
+  private normalize(item: LocationResponse): LocationResponse {
+    return { ...item, id: String((item as any).id) };
   }
 }

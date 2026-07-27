@@ -61,6 +61,28 @@
           </div>
         </div>
       </div>
+
+      <div class="travel-history-section">
+        <h3>{{ 'user.history.travelHistory' | translate }}</h3>
+        <div class="travel-history-list" *ngIf="travelHistory$ | async as entries">
+          <div *ngIf="entries.length === 0" class="empty-state">
+            <p>{{ 'user.history.noTravelHistory' | translate }}</p>
+          </div>
+          <div *ngFor="let entry of entries" class="travel-history-item">
+            <div class="trip-icon">
+              <mat-icon>history</mat-icon>
+            </div>
+            <div class="trip-info">
+              <div class="trip-route">{{ entry.vehicle }} — {{ entry.location }}</div>
+              <div class="trip-details">
+                <span>{{ formatDate(entry.createdAt) }}</span>
+                <span>{{ entry.tripDuration }}</span>
+                <span>{{ entry.travelDistance }} km</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </ng-container>
   </div>
 </div>

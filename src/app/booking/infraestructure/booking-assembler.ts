@@ -3,7 +3,7 @@ import { BookingResponse } from './bookings-response';
 
 // Convierte BookingResponse (infraestructura) a Booking (dominio)
 export function toDomainBooking(response: BookingResponse): Booking {
-  return new Booking(
+  const booking = new Booking(
     response.id,
     response.userId,
     response.vehicleId,
@@ -26,6 +26,8 @@ export function toDomainBooking(response: BookingResponse): Booking {
     response.rating,
     response.issues
   );
+  booking.bookingId = response.bookingId;
+  return booking;
 }
 
 // Convierte Booking (dominio) a BookingResponse (infraestructura)

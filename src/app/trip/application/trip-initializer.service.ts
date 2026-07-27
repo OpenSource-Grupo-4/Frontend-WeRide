@@ -48,6 +48,7 @@ export class TripInitializerService {
       // que no existe en el backend real (solo POST y GET list están
       // implementados). Esta llamada devolverá 404 hoy contra el backend
       // real — si el init de viaje falla acá, es la causa más probable.
+      this.tripStore.setActiveBookingId(booking.bookingId || booking.id);
       let startLocation: Location;
       try {
         startLocation = await firstValueFrom(this.locationsApi.getById(booking.startLocationId));

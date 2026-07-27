@@ -94,6 +94,22 @@
       </div>
 
       <div class="form-group">
+        <label for="start-location">Ubicación de inicio</label>
+        <select id="start-location" [(ngModel)]="startLocationId" name="startLocation" required>
+          <option value="" disabled>Selecciona una ubicación</option>
+          <option *ngFor="let location of locations" [value]="location.id">{{ location.name }} — {{ location.address }}</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="end-location">Ubicación de destino</label>
+        <select id="end-location" [(ngModel)]="endLocationId" name="endLocation" required>
+          <option value="" disabled>Selecciona una ubicación</option>
+          <option *ngFor="let location of locations" [value]="location.id">{{ location.name }} — {{ location.address }}</option>
+        </select>
+      </div>
+
+      <div class="form-group">
         <label for="duration-select"
           >{{ 'booking.durationHours' | translate }}</label
         >

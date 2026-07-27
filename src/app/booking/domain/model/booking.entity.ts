@@ -5,6 +5,8 @@ export type BookingActivationStatus =
   | 'cancelled';
 
 export class Booking {
+  public bookingId?: string;
+
   constructor(
     public id: string,
     public userId: string,

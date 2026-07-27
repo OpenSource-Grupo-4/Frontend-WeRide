@@ -18,6 +18,7 @@ export const environment = {
     payments: '/payments',
     unlockRequests: '/unlockRequests',
     problemReports: '/problemReports',
-    ratings: '/ratings'
+    ratings: '/ratings',
+    travelHistory: '/travel-history'
   }
 };
