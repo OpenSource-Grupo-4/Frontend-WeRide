@@ -136,11 +136,6 @@
   }
 }
 
-.buttons-container.disabled {
-  opacity: 0.5;
-  pointer-events: none;
-}
-
 .terms {
   margin-top: 2rem;
   text-align: center;

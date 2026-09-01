@@ -37,6 +37,10 @@ export class LoginComponent implements OnInit {
         } else if (error) {
           this.guestError.set(error);
           this.guestLoginAttempted.set(false);
+        } else if (!session) {
+          // Sin sesión ni error: el login no produjo resultado, no quedarse colgado.
+          this.translate.get('auth.login.guestError').subscribe(msg => this.guestError.set(msg));
+          this.guestLoginAttempted.set(false);
         }
       }
     });

@@ -81,7 +81,6 @@ describe('LoginComponent (flujo guest)', () => {
 
     fixture = TestBed.createComponent(LoginComponent);
     component = fixture.componentInstance;
-    component.dataLoaded = true;
     fixture.detectChanges();
   });
 
@@ -92,6 +91,20 @@ describe('LoginComponent (flujo guest)', () => {
     expect(authStore.loginAsGuest).toHaveBeenCalled();
     expect(routerSpy.navigate).toHaveBeenCalledWith(['/home']);
     expect(component.guestError()).toBe('');
+  });
+
+  it('permite iniciar sesión como invitado aunque la carga inicial no haya terminado', () => {
+    component.dataLoaded = false;
+    fixture.detectChanges();
+
+    const guestButton = fixture.nativeElement.querySelector('.btn-guest');
+    expect(guestButton.disabled).toBeFalse();
+
+    component.loginAsGuest();
+    fixture.detectChanges();
+
+    expect(authStore.loginAsGuest).toHaveBeenCalled();
+    expect(routerSpy.navigate).toHaveBeenCalledWith(['/home']);
   });
 
   it('muestra un mensaje de error cuando el login guest falla', () => {

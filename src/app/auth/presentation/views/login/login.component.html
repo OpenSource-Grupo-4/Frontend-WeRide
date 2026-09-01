@@ -8,7 +8,7 @@
       <p>{{ loadingMessage }}</p>
     </div>
 
-    <div class="buttons-container" [class.disabled]="!dataLoaded">
+    <div class="buttons-container">
       <button
         class="btn btn-primary"
         (click)="navigateToPhoneLogin()"
@@ -28,7 +28,6 @@
       <button
         class="btn btn-guest"
         (click)="loginAsGuest()"
-        [disabled]="!dataLoaded"
       >
         {{ 'auth.login.continueAsGuest' | translate }}
       </button>
