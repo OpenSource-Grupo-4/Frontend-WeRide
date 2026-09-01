@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://db-weride-4.onrender.com/api/v1',
+  apiUrl: 'https://backend-weride-2uvw.onrender.com/api/v1',
   endpoints: {
     authentication: '/authentication',
     profiles: '/profiles',
