@@ -6,7 +6,7 @@
     <h2>{{ 'trip.tripHistory' | translate }}</h2>
   </div>
   <div *ngFor="let trip of trips" class="trip-card">
-    <img [src]="trip.image" [alt]="'trip.electricScooter' | translate" class="vehicle-img" />
+    <img loading="lazy" decoding="async" [src]="trip.image" [alt]="'trip.electricScooter' | translate" class="vehicle-img" />
     <div class="trip-info">
       <h3>{{ 'trip.trip' | translate }} ({{ trip.route }})</h3>
       <p>{{ 'trip.dateAndTime' | translate }}: {{ trip.date }}</p>
