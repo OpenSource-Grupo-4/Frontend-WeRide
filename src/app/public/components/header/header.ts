@@ -48,6 +48,9 @@ export class HeaderComponent implements OnInit {
   }
 
   loadNotifications() {
+    const session = this.authStore.session();
+    if (!session?.isAuthenticated) return;
+
     const userId = this.authStore.currentUser()?.id;
     if (!userId) return;
 
