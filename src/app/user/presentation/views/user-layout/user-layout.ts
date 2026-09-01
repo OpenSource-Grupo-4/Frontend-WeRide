@@ -7,7 +7,6 @@ import { UserHistoryCard } from '../user-history-card/user-history-card';
 import { UserSecurityCard } from '../user-security-card/user-security-card';
 import { UserHelpCard } from '../user-help-card/user-help-card';
 import { UserSettingsCard } from '../user-settings-card/user-settings-card';
-import { UserPersonalInfoCard } from '../user-personal-info-card/user-personal-info-card';
 import { UserSettingsStateService, UserSettingsSection } from '../../../application/user-settings-state.service';
 import { ProfileStore } from '../../../../profile/application/profile.store';
 import { getStoredProfileId } from '../../../../auth/infrastructure/token-storage';
@@ -23,8 +22,7 @@ import { getStoredProfileId } from '../../../../auth/infrastructure/token-storag
     UserHistoryCard,
     UserSecurityCard,
     UserHelpCard,
-    UserSettingsCard,
-    UserPersonalInfoCard
+    UserSettingsCard
   ],
   templateUrl: './user-layout.html',
   styleUrl: './user-layout.css'
