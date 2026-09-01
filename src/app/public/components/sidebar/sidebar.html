@@ -1,36 +1,46 @@
 <div class="sidebar" [class.collapsed]="collapsed">
   <div class="profile-section" *ngIf="!collapsed">
-    <button mat-icon-button>
-      <mat-icon>account_circle</mat-icon>
-    </button>
+    <mat-icon aria-hidden="true">account_circle</mat-icon>
     <h3>{{ 'navigation.user' | translate }}</h3>
   </div>
 
   <nav>
     <ul>
-      <li routerLink="/home" routerLinkActive="active">
-        <mat-icon>dashboard</mat-icon>
-        <span *ngIf="!collapsed">{{ 'navigation.home' | translate }}</span>
+      <li routerLinkActive="active">
+        <a routerLink="/home">
+          <mat-icon>dashboard</mat-icon>
+          <span *ngIf="!collapsed">{{ 'navigation.home' | translate }}</span>
+        </a>
       </li>
-      <li routerLink="/garage" routerLinkActive="active">
-        <mat-icon>garage</mat-icon>
-        <span *ngIf="!collapsed">{{ 'navigation.garage' | translate }}</span>
+      <li routerLinkActive="active">
+        <a routerLink="/garage">
+          <mat-icon>garage</mat-icon>
+          <span *ngIf="!collapsed">{{ 'navigation.garage' | translate }}</span>
+        </a>
       </li>
-      <li routerLink="/plan" routerLinkActive="active">
-        <mat-icon>card_membership</mat-icon>
-        <span *ngIf="!collapsed">{{ 'navigation.plans' | translate }}</span>
+      <li routerLinkActive="active">
+        <a routerLink="/plan">
+          <mat-icon>card_membership</mat-icon>
+          <span *ngIf="!collapsed">{{ 'navigation.plans' | translate }}</span>
+        </a>
       </li>
-      <li routerLink="/trip" routerLinkActive="active">
-        <mat-icon>luggage</mat-icon>
-        <span *ngIf="!collapsed">{{ 'navigation.trip' | translate }}</span>
+      <li routerLinkActive="active">
+        <a routerLink="/trip">
+          <mat-icon>luggage</mat-icon>
+          <span *ngIf="!collapsed">{{ 'navigation.trip' | translate }}</span>
+        </a>
       </li>
-      <li routerLink="/booking" routerLinkActive="active">
-        <mat-icon>book_online</mat-icon>
-        <span *ngIf="!collapsed">{{ 'navigation.bookings' | translate }}</span>
+      <li routerLinkActive="active">
+        <a routerLink="/booking">
+          <mat-icon>book_online</mat-icon>
+          <span *ngIf="!collapsed">{{ 'navigation.bookings' | translate }}</span>
+        </a>
       </li>
-      <li routerLink="/user" routerLinkActive="active">
-        <mat-icon>person</mat-icon>
-        <span *ngIf="!collapsed">{{ 'navigation.profile' | translate }}</span>
+      <li routerLinkActive="active">
+        <a routerLink="/user">
+          <mat-icon>person</mat-icon>
+          <span *ngIf="!collapsed">{{ 'navigation.profile' | translate }}</span>
+        </a>
       </li>
     </ul>
   </nav>

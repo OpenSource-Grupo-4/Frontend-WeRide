@@ -24,14 +24,14 @@
   </section>
   } @else {
   <section class="cta-section">
-    <div class="cta-card" (click)="navigateToGarage()">
+    <button class="cta-card" type="button" (click)="navigateToGarage()">
       <mat-icon>electric_scooter</mat-icon>
       <div class="cta-content">
         <h3>{{ 'home.cta.title' | translate }}</h3>
         <p>{{ 'home.cta.description' | translate }}</p>
       </div>
       <mat-icon class="cta-arrow">arrow_forward</mat-icon>
-    </div>
+    </button>
   </section>
   }
 
@@ -56,11 +56,11 @@
     <h2 class="section-title">{{ 'home.features.title' | translate }}</h2>
     <div class="features-grid">
       @for (feature of features(); track feature.id) {
-      <div class="feature-card" [routerLink]="feature.route">
+      <button class="feature-card" type="button" [routerLink]="feature.route">
         <mat-icon>{{ feature.icon }}</mat-icon>
         <h3>{{ feature.titleKey | translate }}</h3>
         <p>{{ feature.descriptionKey | translate }}</p>
-      </div>
+      </button>
       }
     </div>
   </section>

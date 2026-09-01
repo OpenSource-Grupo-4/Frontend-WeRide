@@ -1,6 +1,6 @@
 <header class="header">
   <div class="left-section">
-    <button mat-icon-button (click)="toggleSidebar()" class="menu-btn">
+    <button mat-icon-button (click)="toggleSidebar()" class="menu-btn" [attr.aria-label]="'navigation.openMenu' | translate">
       <mat-icon>menu</mat-icon>
     </button>
     <div class="logo-container">
@@ -20,6 +20,7 @@
       [matBadgeHidden]="unreadCount() === 0"
       matBadgeColor="warn"
       matBadgeSize="small"
+      [attr.aria-label]="'navbar.notifications.title' | translate"
     >
       <mat-icon>notifications</mat-icon>
     </button>
@@ -28,7 +29,7 @@
       <span class="user-name-nav"
         >{{ ('navigation.user' | translate) }}</span
       >
-      <button mat-icon-button [matMenuTriggerFor]="userMenu">
+      <button mat-icon-button [matMenuTriggerFor]="userMenu" [attr.aria-label]="'navigation.profile' | translate">
         <mat-icon>account_circle</mat-icon>
       </button>
     </div>

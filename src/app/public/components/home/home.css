@@ -85,6 +85,10 @@
 }
 
 .cta-card {
+  width: 100%;
+  color: inherit;
+  font: inherit;
+  text-align: left;
   display: flex;
   align-items: center;
   gap: 16px;
@@ -148,6 +152,9 @@
 }
 
 .feature-card {
+  width: 100%;
+  color: inherit;
+  font: inherit;
   background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: 12px;

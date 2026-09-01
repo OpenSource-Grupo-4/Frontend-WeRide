@@ -1,0 +1,57 @@
+.not-found-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #7145d8 0%, #5a36b3 100%);
+  padding: 2rem;
+}
+
+.not-found-card {
+  text-align: center;
+  background: white;
+  padding: 3rem 4rem;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  max-width: 480px;
+}
+
+.code {
+  font-size: 5rem;
+  font-weight: bold;
+  color: #7145d8;
+  margin: 0;
+}
+
+.title {
+  font-size: 1.5rem;
+  color: #000000;
+  margin: 0.5rem 0;
+}
+
+.message {
+  font-size: 1rem;
+  color: #303746;
+  margin-bottom: 2rem;
+}
+
+.btn-primary {
+  padding: 0.875rem 2rem;
+  background: #7145d8;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.btn-primary:hover {
+  background: #5a36b3;
+}
+
+.btn-primary:focus-visible {
+  outline: 2px solid #5a36b3;
+  outline-offset: 2px;
+}

@@ -30,6 +30,9 @@ export class LanguageSwitcher implements OnInit {
   useLanguage(language: string) {
     this.translate.use(language).subscribe(() => {
       this.currentLang = language;
+      if (typeof document !== 'undefined') {
+        document.documentElement.lang = language;
+      }
     });
   }
 }

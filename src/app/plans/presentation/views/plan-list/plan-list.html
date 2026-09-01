@@ -2,6 +2,11 @@
   <div class="plan-list-section">
     <h2>{{ 'plans.title' | translate }}</h2>
     <div *ngIf="loading$ | async" class="loading">{{ 'plans.loading' | translate }}</div>
+    <app-error-state
+      *ngIf="error$ | async"
+      message="errors.network"
+      (retry)="retry()"
+    />
     <button
       class="plan-card-btn"
       *ngFor="let plan of (plans$ | async)"

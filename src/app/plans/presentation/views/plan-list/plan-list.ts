@@ -8,6 +8,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Plan } from '../../../domain/model/plan.entity';
 import { PlanStore } from '../../../application/plan.store';
 import { Observable } from 'rxjs';
+import { ErrorStateComponent } from '../../../../public/components/error-state/error-state';
 
 @Component({
   selector: 'app-plan-list',
@@ -22,7 +23,8 @@ import { Observable } from 'rxjs';
     MatCardContent,
     MatCardActions,
     MatButtonModule,
-    TranslateModule
+    TranslateModule,
+    ErrorStateComponent
   ],
   templateUrl: './plan-list.html',
   styleUrl: './plan-list.css'
@@ -35,6 +37,7 @@ export class PlanList implements OnInit {
   plans$: Observable<Plan[]> = this.store.plans$;
   selectedPlan$: Observable<Plan | null> = this.store.selectedPlan$;
   loading$: Observable<boolean> = this.store.loading$;
+  error$: Observable<boolean> = this.store.error$;
 
   ngOnInit(): void {
     this.store.loadPlans();
@@ -42,6 +45,10 @@ export class PlanList implements OnInit {
 
   selectPlan(plan: Plan): void {
     this.store.selectPlan(plan);
+  }
+
+  retry(): void {
+    this.store.loadPlans();
   }
 
   getFormattedDuration(plan: Plan): string {

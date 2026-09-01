@@ -16,7 +16,7 @@ import { CommonModule } from '@angular/common';
   styleUrl: './layout.css'
 })
 export class LayoutComponent {
-  sidebarCollapsed = false;
+  sidebarCollapsed = window.matchMedia('(max-width: 768px)').matches;
 
   toggleSidebar() {
     this.sidebarCollapsed = !this.sidebarCollapsed;

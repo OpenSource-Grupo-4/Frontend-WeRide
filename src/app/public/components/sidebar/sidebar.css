@@ -1,4 +1,5 @@
 .sidebar {
+  box-sizing: border-box;
   width: 260px;
   background-color: #fff;
   border-right: 1px solid #e5e7eb;
@@ -30,15 +31,20 @@ nav ul {
 }
 
 nav ul li {
-  padding: 12px 16px;
   margin: 4px 0;
   border-radius: 8px;
+  color: #374151;
+  transition: all 0.2s;
+}
+
+nav ul li a {
+  padding: 12px 16px;
   cursor: pointer;
   display: flex;
   align-items: center;
   gap: 12px;
-  color: #374151;
-  transition: all 0.2s;
+  color: inherit;
+  text-decoration: none;
 }
 
 nav ul li:hover {
@@ -92,7 +98,7 @@ nav ul li span {
 @media (max-width: 768px) {
   .sidebar {
     width: 100%;
-    transform: translateX(-5%);
+    transform: none;
   }
   nav {
     padding: 0 0.5rem;

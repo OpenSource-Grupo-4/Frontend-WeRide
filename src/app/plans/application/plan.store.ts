@@ -17,10 +17,14 @@ export class PlanStore {
   private loadingSubject = new BehaviorSubject<boolean>(false);
   public loading$ = this.loadingSubject.asObservable();
 
+  private errorSubject = new BehaviorSubject<boolean>(false);
+  public error$ = this.errorSubject.asObservable();
+
   constructor(private plansApiEndpoint: PlansApiEndpoint) {}
 
   loadPlans(): void {
     this.loadingSubject.next(true);
+    this.errorSubject.next(false);
     this.plansApiEndpoint.getAll().pipe(
       tap(plans => {
         this.plansSubject.next(plans);
@@ -29,6 +33,7 @@ export class PlanStore {
       catchError(error => {
         console.error('Error al cargar planes:', error);
         this.loadingSubject.next(false);
+        this.errorSubject.next(true);
         this.plansSubject.next([]);
         return of([]);
       })
