@@ -20,7 +20,9 @@
     "viewDetails": "View Details",
     "book": "Book",
     "notAvailable": "Not Available",
-    "and": "and"
+    "and": "and",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password"
   },
   "navigation": {
     "home": "Home",
@@ -29,7 +31,8 @@
     "plans": "Plans",
     "trip": "Trip",
     "bookings": "Bookings",
-    "user": "User"
+    "user": "User",
+    "openMenu": "Open menu"
   },
   "navbar": {
     "notifications": {
@@ -45,15 +48,12 @@
   "auth": {
     "login": {
       "title": "Sign In",
-      "subtitle": "Enter and drive your health",
-      "continueWithGoogle": "Continue with Google",
+      "subtitle": "Your urban mobility, on demand",
       "loginWithPhone": "Sign in with phone number",
       "loginWithEmail": "Sign in with company email",
       "continueAsGuest": "Continue as guest",
-      "terms": "By continuing, you accept the",
-      "privacyPolicy": "Privacy Policy",
-      "termsOfUse": "Terms of Use",
-      "ofWeRide": "of WeRide",
+      "guestError": "We couldn't sign you in as a guest. Please try again.",
+      "termsLine": "By continuing, you accept the Privacy Policy and Terms of Use of WeRide.",
       "loadingMessage": "Loading WeRide data..."
     },
     "phoneLogin": {
@@ -599,6 +599,11 @@
     "pattern": "The format is not valid",
     "min": "Minimum value is {{min}}",
     "max": "Maximum value is {{max}}"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "message": "The page you are looking for doesn't exist or was moved.",
+    "goHome": "Back to home"
   }
 }
 

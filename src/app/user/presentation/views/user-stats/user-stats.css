@@ -5,6 +5,7 @@
 }
 
 .user-stats {
+  box-sizing: border-box;
   background: #ffffff;
   border-radius: 20px;
   padding: 1.5rem 2rem;
@@ -103,8 +104,14 @@
   }
 
   .stats-container {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
     width: 100%;
-    justify-content: space-around;
+  }
+
+  .stat-item {
+    min-width: 0;
   }
 
   .stat-value {

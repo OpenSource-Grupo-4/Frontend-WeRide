@@ -7,6 +7,7 @@ import { GARAGE_ROUTES } from './garage/garage.routes';
 import { USER_ROUTES } from './user/user.routes';
 import { AUTH_ROUTES } from './auth/auth.routes';
 import { authGuard } from './auth/infrastructure/auth.guard';
+import { NotFoundComponent } from './public/pages/not-found/not-found';
 
 export const routes: Routes = [
   {
@@ -56,5 +57,9 @@ export const routes: Routes = [
         children: USER_ROUTES
       }
     ]
+  },
+  {
+    path: '**',
+    component: NotFoundComponent
   }
 ];

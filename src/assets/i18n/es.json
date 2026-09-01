@@ -20,7 +20,9 @@
     "viewDetails": "Ver Detalles",
     "book": "Reservar",
     "notAvailable": "No Disponible",
-    "and": "y"
+    "and": "y",
+    "showPassword": "Mostrar contraseña",
+    "hidePassword": "Ocultar contraseña"
   },
   "navigation": {
     "home": "Inicio",
@@ -29,7 +31,8 @@
     "plans": "Planes",
     "trip": "Viaje",
     "bookings": "Reservas",
-    "user": "User"
+    "user": "Usuario",
+    "openMenu": "Abrir menú"
   },
   "navbar": {
     "notifications": {
@@ -45,20 +48,17 @@
   "auth": {
     "login": {
       "title": "Iniciar Sesión",
-      "subtitle": "Entra y conduce tu salud",
-      "continueWithGoogle": "Continuar con Google",
+      "subtitle": "Tu movilidad urbana, cuando la necesites",
       "loginWithPhone": "Entrar con número de celular",
       "loginWithEmail": "Entrar con mi email de empresa",
       "continueAsGuest": "Continuar como invitado",
-      "terms": "Al continuar, aceptas la",
-      "privacyPolicy": "Política de privacidad",
-      "termsOfUse": "Términos de uso",
-      "ofWeRide": "de WeRide",
+      "guestError": "No pudimos iniciar sesión como invitado. Inténtalo de nuevo.",
+      "termsLine": "Al continuar, aceptas la Política de privacidad y los Términos de uso de WeRide.",
       "loadingMessage": "Cargando datos de WeRide..."
     },
     "phoneLogin": {
       "title": "Introduce Número de Celular",
-      "subtitle": "En necesario que ingrese su numero de celular para continuar",
+      "subtitle": "Ingresa tu número de celular para continuar",
       "prefix": "Prefijo",
       "phone": "Celular",
       "phonePlaceholder": "912345678",
@@ -75,7 +75,7 @@
       "forgotPassword": "¿Olvidaste tu contraseña?",
       "rememberMe": "Recordarme",
       "signIn": "Iniciar Sesión",
-      "errorTitle": "Ocurrio un Error"
+      "errorTitle": "Ocurrió un error"
     },
     "register": {
       "title": "Introduce tus datos",
@@ -90,7 +90,7 @@
       "createAccount": "Crear Cuenta",
       "alreadyHaveAccount": "¿Ya tienes una cuenta?",
       "login": "Iniciar Sesión",
-      "errorTitle": "Ocurrio un Error",
+      "errorTitle": "Ocurrió un error",
       "successTitle": "Verificado Correctamente",
       "successMessage": "Otp ingresado Correctamente"
     },
@@ -101,7 +101,7 @@
       "codeSentTo": "Código enviado a",
       "resendCode": "Reenviar código",
       "verify": "Verificar",
-      "errorTitle": "Ocurrio un Error"
+      "errorTitle": "Ocurrió un error"
     }
   },
   "garage": {
@@ -601,6 +601,11 @@
     "pattern": "El formato no es válido",
     "min": "El valor mínimo es {{min}}",
     "max": "El valor máximo es {{max}}"
+  },
+  "notFound": {
+    "title": "Página no encontrada",
+    "message": "La página que buscas no existe o fue movida.",
+    "goHome": "Volver al inicio"
   }
 }
 
