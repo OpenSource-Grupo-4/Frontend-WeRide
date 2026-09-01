@@ -32,10 +32,17 @@ export class App implements OnInit, OnDestroy {
     this.translate.setDefaultLang(defaultLang);
 
     this.translate.use(lang).subscribe(() => {
+      this.syncDocumentLang(lang);
     });
 
     // Initialize auth session from localStorage
     this.initializeAuth();
+  }
+
+  private syncDocumentLang(lang: string): void {
+    if (typeof document !== 'undefined') {
+      document.documentElement.lang = lang;
+    }
   }
 
   private initializeAuth(): void {

@@ -13,7 +13,7 @@
       </div>
     }
 
-    <button class="back-button" (click)="goBack()">
+    <button class="back-button" (click)="goBack()" [attr.aria-label]="'common.back' | translate">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
         <path d="M19 12H5M5 12L12 19M5 12L12 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
@@ -21,74 +21,105 @@
 
     <h1 class="title">
       @if (isRegisterMode()) {
-        Registro
+        {{ 'auth.register.title' | translate }}
       } @else {
-        Inicio de Sesión
+        {{ 'auth.emailLogin.title' | translate }}
       }
     </h1>
     <p class="subtitle">
       @if (isRegisterMode()) {
-        Crea una cuenta con tu correo corporativo
+        {{ 'auth.register.subtitle' | translate }}
       } @else {
-        Inicia sesión con tu correo corporativo
+        {{ 'auth.emailLogin.subtitle' | translate }}
       }
     </p>
 
     <!-- Toggle entre registro e inicio de sesión -->
     <div class="mode-toggle">
-      <button 
-        class="mode-button" 
+      <button
+        class="mode-button"
         [class.active]="!isRegisterMode()"
         (click)="toggleMode()">
-        Inicio de Sesión
+        {{ 'auth.emailLogin.signIn' | translate }}
       </button>
-      <button 
-        class="mode-button" 
+      <button
+        class="mode-button"
         [class.active]="isRegisterMode()"
         (click)="toggleMode()">
-        Registro
+        {{ 'auth.register.createAccount' | translate }}
       </button>
     </div>
 
     @if (isRegisterMode()) {
       <!-- Campos de registro -->
       <div class="form-group">
-        <label>Nombre</label>
+        <label for="register-first-name">{{ 'auth.register.firstName' | translate }}</label>
         <input
+          id="register-first-name"
           type="text"
           [(ngModel)]="firstName"
-          placeholder="Nombre"
-          class="form-input">
+          [placeholder]="'auth.register.firstName' | translate"
+          class="form-input"
+          [class.invalid]="isRequiredInvalid(firstName())"
+          [attr.aria-invalid]="isRequiredInvalid(firstName())"
+          [attr.aria-describedby]="isRequiredInvalid(firstName()) ? 'first-name-error' : null">
+        @if (isRequiredInvalid(firstName())) {
+          <span id="first-name-error" class="field-error">{{ 'validation.required' | translate }}</span>
+        }
       </div>
 
       <div class="form-group">
-        <label>Apellido</label>
+        <label for="register-last-name">{{ 'auth.register.lastName' | translate }}</label>
         <input
+          id="register-last-name"
           type="text"
           [(ngModel)]="lastName"
-          placeholder="Apellido"
-          class="form-input">
+          [placeholder]="'auth.register.lastName' | translate"
+          class="form-input"
+          [class.invalid]="isRequiredInvalid(lastName())"
+          [attr.aria-invalid]="isRequiredInvalid(lastName())"
+          [attr.aria-describedby]="isRequiredInvalid(lastName()) ? 'last-name-error' : null">
+        @if (isRequiredInvalid(lastName())) {
+          <span id="last-name-error" class="field-error">{{ 'validation.required' | translate }}</span>
+        }
       </div>
     }
 
     <div class="form-group">
-      <label>{{ 'auth.emailLogin.email' | translate }}</label>
+      <label for="email-input">{{ 'auth.emailLogin.email' | translate }}</label>
       <input
+        id="email-input"
         type="email"
         [(ngModel)]="email"
         placeholder="correo@empresa.com"
-        class="form-input">
+        class="form-input"
+        [class.invalid]="isEmailInvalid() || isRequiredInvalid(email())"
+        [attr.aria-invalid]="isEmailInvalid() || isRequiredInvalid(email())"
+        [attr.aria-describedby]="(isEmailInvalid() || isRequiredInvalid(email())) ? 'email-error' : null">
+      @if (isRequiredInvalid(email())) {
+        <span id="email-error" class="field-error">{{ 'validation.required' | translate }}</span>
+      } @else if (isEmailInvalid()) {
+        <span id="email-error" class="field-error">{{ 'validation.email' | translate }}</span>
+      }
     </div>
 
     <div class="form-group">
-      <label>{{ 'auth.emailLogin.password' | translate }}</label>
+      <label for="password-input">{{ 'auth.emailLogin.password' | translate }}</label>
       <div class="password-container">
         <input
+          id="password-input"
           [type]="showPassword() ? 'text' : 'password'"
           [(ngModel)]="password"
           placeholder="••••••••"
-          class="form-input">
-        <button type="button" class="toggle-password" (click)="togglePassword()">
+          class="form-input"
+          [class.invalid]="isRequiredInvalid(password())"
+          [attr.aria-invalid]="isRequiredInvalid(password())"
+          [attr.aria-describedby]="isRequiredInvalid(password()) ? 'password-error' : null">
+        <button
+          type="button"
+          class="toggle-password"
+          (click)="togglePassword()"
+          [attr.aria-label]="(showPassword() ? 'common.hidePassword' : 'common.showPassword') | translate">
           @if (showPassword()) {
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
               <path d="M3 3L21 21M10.584 10.587A2 2 0 0012 13.415M9.363 5.365A9.466 9.466 0 0112 5c4.97 0 9 3.582 10.5 8.5a11.43 11.43 0 01-2.676 3.677m-4.224 1.896C14.5 19.59 13.31 20 12 20c-4.97 0-9-3.582-10.5-8.5a11.426 11.426 0 013.677-4.677" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -101,25 +132,21 @@
           }
         </button>
       </div>
+      @if (isRequiredInvalid(password())) {
+        <span id="password-error" class="field-error">{{ 'validation.required' | translate }}</span>
+      }
     </div>
-
-    @if (!isRegisterMode()) {
-      <div class="forgot-password">
-        <a href="#" class="link">{{ 'auth.emailLogin.forgotPassword' | translate }}</a>
-      </div>
-    }
 
     <div class="terms">
-      <p>{{ 'auth.login.terms' | translate }} <a href="#" class="link">{{ 'auth.login.privacyPolicy' | translate }}</a> {{ 'common.and' | translate }} <a href="#" class="link">{{ 'auth.login.termsOfUse' | translate }}</a> {{ 'auth.login.ofWeRide' | translate }}</p>
+      <p>{{ 'auth.login.termsLine' | translate }}</p>
     </div>
 
-    <button class="btn-primary" (click)="continue()">
+    <button class="btn-primary" (click)="continue()" [disabled]="authStore.isLoading()">
       @if (isRegisterMode()) {
-        Registrarse
+        {{ 'auth.register.createAccount' | translate }}
       } @else {
-        Iniciar Sesión
+        {{ 'auth.emailLogin.signIn' | translate }}
       }
     </button>
   </div>
 </div>
-

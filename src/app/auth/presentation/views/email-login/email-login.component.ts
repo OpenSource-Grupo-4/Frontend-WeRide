@@ -8,6 +8,8 @@ import { ProfileStore } from '../../../../profile/application/profile.store';
 import { AuthCredentials } from '../../../domain/model/auth-credentials.entity';
 import { RegistrationData } from '../../../domain/model/registration-data.entity';
 
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 @Component({
   selector: 'app-email-login',
   standalone: true,
@@ -28,6 +30,7 @@ export class EmailLoginComponent {
   isRegisterMode = signal(false);
   private actionAttempted = signal(false);
   private justRegistered = signal(false);
+  private submitted = signal(false);
 
   constructor() {
     effect(() => {
@@ -75,27 +78,45 @@ export class EmailLoginComponent {
     this.password.set('');
     this.firstName.set('');
     this.lastName.set('');
+    this.submitted.set(false);
     this.authStore.clearError();
   }
 
-  continue() {
+  isEmailInvalid(): boolean {
+    if (!this.submitted() || !this.email()) return false;
+    return !EMAIL_REGEX.test(this.email());
+  }
+
+  isRequiredInvalid(value: string): boolean {
+    return this.submitted() && !value;
+  }
+
+  isValid(): boolean {
     if (this.isRegisterMode()) {
-      if (this.email() && this.password() && this.firstName() && this.lastName()) {
-        const registrationData = new RegistrationData(
-          this.firstName(),
-          this.lastName(),
-          '',
-          this.email(),
-          this.password()
-        );
-        this.actionAttempted.set(true);
-        this.authStore.registerUser(registrationData);
-      }
+      return !!this.firstName() && !!this.lastName() && !!this.email() && !!this.password();
+    }
+    return !!this.email() && !!this.password();
+  }
+
+  continue() {
+    if (!this.isValid()) {
+      this.submitted.set(true);
+      return;
+    }
+
+    if (this.isRegisterMode()) {
+      const registrationData = new RegistrationData(
+        this.firstName(),
+        this.lastName(),
+        '',
+        this.email(),
+        this.password()
+      );
+      this.actionAttempted.set(true);
+      this.authStore.registerUser(registrationData);
     } else {
-      if (this.email() && this.password()) {
-        this.actionAttempted.set(true);
-        this.authStore.loginWithEmail(new AuthCredentials(this.email(), this.password()));
-      }
+      this.actionAttempted.set(true);
+      this.authStore.loginWithEmail(new AuthCredentials(this.email(), this.password()));
     }
   }
 }

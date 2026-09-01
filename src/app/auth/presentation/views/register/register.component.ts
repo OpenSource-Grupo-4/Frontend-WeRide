@@ -21,6 +21,7 @@ export class RegisterComponent implements OnInit {
   phone = signal('');
   firstName = signal('');
   lastName = signal('');
+  private submitted = signal(false);
 
   ngOnInit() {
     this.route.queryParams.subscribe(params => {
@@ -34,21 +35,32 @@ export class RegisterComponent implements OnInit {
     });
   }
 
+  isInvalid(value: string): boolean {
+    return this.submitted() && !value;
+  }
+
+  isValid(): boolean {
+    return !!this.firstName() && !!this.lastName() && !!this.phone();
+  }
+
   continue() {
-    if (this.firstName() && this.lastName() && this.phone()) {
-      const registrationData = new RegistrationData(
-        this.firstName(),
-        this.lastName(),
-        this.phone()
-      );
-
-      this.authStore.registerUser(registrationData);
-
-      setTimeout(() => {
-        if (!this.authStore.error()) {
-          this.router.navigate(['/home']);
-        }
-      }, 500);
+    if (!this.isValid()) {
+      this.submitted.set(true);
+      return;
     }
+
+    const registrationData = new RegistrationData(
+      this.firstName(),
+      this.lastName(),
+      this.phone()
+    );
+
+    this.authStore.registerUser(registrationData);
+
+    setTimeout(() => {
+      if (!this.authStore.error()) {
+        this.router.navigate(['/home']);
+      }
+    }, 500);
   }
 }

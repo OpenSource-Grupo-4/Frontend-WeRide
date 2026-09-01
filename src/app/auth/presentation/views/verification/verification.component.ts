@@ -1,5 +1,5 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -15,7 +15,6 @@ import { PhoneCredentials } from '../../../domain/model/phone-credentials.entity
   styleUrl: './verification.component.css'
 })
 export class VerificationComponent implements OnInit {
-  private route = inject(ActivatedRoute);
   private router = inject(Router);
   protected authStore = inject(AuthStore);
   private loginUseCase = inject(LoginWithPhoneUseCase);
@@ -27,10 +26,19 @@ export class VerificationComponent implements OnInit {
   errorMessage = signal('');
 
   ngOnInit() {
-    this.route.queryParams.subscribe(params => {
-      this.phone.set(params['phone'] || '');
-      this.expectedCode.set(params['code'] || '');
-    });
+    const navigation = this.router.getCurrentNavigation();
+    const state = navigation?.extras.state as { phone?: string; code?: string } | null;
+
+    const phone = state?.phone || '';
+    const code = state?.code || '';
+
+    if (!phone || !code) {
+      this.router.navigate(['/auth/phone-login']);
+      return;
+    }
+
+    this.phone.set(phone);
+    this.expectedCode.set(code);
   }
 
   onCodeInput(index: number, event: any) {

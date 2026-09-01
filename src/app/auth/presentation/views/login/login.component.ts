@@ -4,7 +4,6 @@ import { CommonModule } from '@angular/common';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AuthStore } from '../../../application/auth.store';
 import { DataInitService } from '../../../../core/services/data-init.service';
-import { ApiService } from '../../../../core/services/api.service';
 
 @Component({
   selector: 'app-login',
@@ -17,11 +16,11 @@ export class LoginComponent implements OnInit {
   private router = inject(Router);
   private authStore = inject(AuthStore);
   private dataInitService = inject(DataInitService);
-  private apiService = inject(ApiService);
   private translate = inject(TranslateService);
 
   dataLoaded = false;
   loadingMessage = '';
+  guestError = signal('');
   private guestLoginAttempted = signal(false);
 
   constructor() {
@@ -34,6 +33,9 @@ export class LoginComponent implements OnInit {
       if (this.guestLoginAttempted() && !isLoading) {
         if (session && session.isValid && !error) {
           this.router.navigate(['/home']);
+          this.guestLoginAttempted.set(false);
+        } else if (error) {
+          this.guestError.set(error);
           this.guestLoginAttempted.set(false);
         }
       }
@@ -48,18 +50,7 @@ export class LoginComponent implements OnInit {
 
     this.dataInitService.dataLoaded$.subscribe(loaded => {
       this.dataLoaded = loaded;
-      if (loaded) {
-        this.showSampleData();
-      }
     });
-  }
-
-  private showSampleData(): void {
-    const users = this.dataInitService.getUsers();
-    const vehicles = this.dataInitService.getVehicles();
-    const plans = this.dataInitService.getPlans();
-
-    const availableVehicles = vehicles.filter(v => v.status === 'available');
   }
 
   navigateToPhoneLogin() {
@@ -70,11 +61,8 @@ export class LoginComponent implements OnInit {
     this.router.navigate(['/auth/email-login']);
   }
 
-  loginWithGoogle() {
-    this.router.navigate(['/auth/google-login']);
-  }
-
   loginAsGuest() {
+    this.guestError.set('');
     this.guestLoginAttempted.set(true);
     this.authStore.loginAsGuest();
   }
