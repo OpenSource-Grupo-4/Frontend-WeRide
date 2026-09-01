@@ -1,7 +1,10 @@
+import { isJwtToken } from '../domain/model/auth-session.entity';
+
 export const AUTH_SESSION_KEY = 'auth_session';
 
 interface StoredAuthSession {
   token: string;
+  isGuest?: boolean;
   profileId?: number | null;
 }
 
@@ -13,7 +16,7 @@ export function getStoredToken(): string | null {
 
   try {
     const data: StoredAuthSession = JSON.parse(raw);
-    return data.token ?? null;
+    return !data.isGuest && isJwtToken(data.token) ? data.token : null;
   } catch {
     return null;
   }

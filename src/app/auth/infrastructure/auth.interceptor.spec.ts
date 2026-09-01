@@ -27,12 +27,12 @@ describe('authInterceptor', () => {
   });
 
   it('adjunta el header Authorization cuando hay un token guardado y la URL es de la API', () => {
-    localStorage.setItem(AUTH_SESSION_KEY, JSON.stringify({ token: 'my-jwt' }));
+    localStorage.setItem(AUTH_SESSION_KEY, JSON.stringify({ token: 'header.payload.signature' }));
 
     httpClient.get(`${environment.apiUrl}/vehicles`).subscribe();
 
     const req = httpMock.expectOne(`${environment.apiUrl}/vehicles`);
-    expect(req.request.headers.get('Authorization')).toBe('Bearer my-jwt');
+    expect(req.request.headers.get('Authorization')).toBe('Bearer header.payload.signature');
     req.flush({});
   });
 
@@ -45,7 +45,7 @@ describe('authInterceptor', () => {
   });
 
   it('no adjunta el header a una URL fuera de environment.apiUrl aunque haya token guardado', () => {
-    localStorage.setItem(AUTH_SESSION_KEY, JSON.stringify({ token: 'my-jwt' }));
+    localStorage.setItem(AUTH_SESSION_KEY, JSON.stringify({ token: 'header.payload.signature' }));
 
     httpClient.get('./assets/i18n/es.json').subscribe();
 

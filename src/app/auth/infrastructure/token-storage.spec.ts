@@ -8,8 +8,18 @@ describe('token-storage', () => {
   });
 
   it('getStoredToken devuelve el token de la sesión guardada', () => {
-    localStorage.setItem(AUTH_SESSION_KEY, JSON.stringify({ token: 'abc123' }));
-    expect(getStoredToken()).toBe('abc123');
+    localStorage.setItem(AUTH_SESSION_KEY, JSON.stringify({ token: 'header.payload.signature' }));
+    expect(getStoredToken()).toBe('header.payload.signature');
+  });
+
+  it('getStoredToken no devuelve el token simulado de una sesión invitada', () => {
+    localStorage.setItem(AUTH_SESSION_KEY, JSON.stringify({ token: 'token_guest', isGuest: true }));
+    expect(getStoredToken()).toBeNull();
+  });
+
+  it('getStoredToken no devuelve tokens locales que no son JWT', () => {
+    localStorage.setItem(AUTH_SESSION_KEY, JSON.stringify({ token: 'token_local', isGuest: false }));
+    expect(getStoredToken()).toBeNull();
   });
 
   it('getStoredToken devuelve null si el JSON guardado está corrupto', () => {
