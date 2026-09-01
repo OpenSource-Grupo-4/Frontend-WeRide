@@ -1,8 +1,8 @@
 <div class="main-layout">
   <div class="content expanded full-width">
     @if (isActiveTrip()) {
-    <h2>Vehicle Unlock Status</h2>
-    <p>Monitor your vehicle's unlock status in real-time</p>
+    <h2>Estado de desbloqueo</h2>
+    <p>Consulta en tiempo real si tu vehículo está listo para usar.</p>
 
     @if (connectionError()) {
     <div class="error-card">
@@ -22,14 +22,14 @@
     } @if (!connectionError() && vehicleInfo().id) {
     <div class="status-card">
       <div class="status-header">
-        <h3>Current Status</h3>
+        <h3>Estado actual</h3>
         <button
           class="refresh-btn"
           (click)="refreshStatus()"
           [disabled]="isLoading()"
         >
           <mat-icon>refresh</mat-icon>
-          Refresh
+          Actualizar
         </button>
       </div>
       <div class="status-section">
@@ -133,7 +133,7 @@
             [disabled]="unlockStatus === 'Locked' || unlockStatus === 'Pending'"
           >
             <mat-icon>lock</mat-icon>
-            Lock Vehicle
+            Bloquear vehículo
           </button>
           <button
             class="btn-unlock"
@@ -141,13 +141,13 @@
             [disabled]="unlockStatus === 'Unlocked' || unlockStatus === 'Pending'"
           >
             <mat-icon>lock_open</mat-icon>
-            Unlock Vehicle
+            Desbloquear vehículo
           </button>
         </div>
       </div>
     </div>
     <div class="recent-activity">
-      <h3>Recent Activity</h3>
+      <h3>Actividad reciente</h3>
       @if (recentActivity().length === 0) {
       <ul>
         <li><span>No hay actividad reciente</span></li>
@@ -209,13 +209,5 @@
     </mat-card>
     }
 
-    <div class="footer">
-      <p>© 2025 Vehicle Control System. All rights reserved.</p>
-      <div class="footer-links">
-        <a href="#">Privacy</a>
-        <a href="#">Terms</a>
-        <a href="#">Support</a>
-      </div>
-    </div>
   </div>
 </div>

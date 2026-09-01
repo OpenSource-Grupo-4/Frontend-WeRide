@@ -208,34 +208,6 @@
   font-size: 14px;
 }
 
-.footer {
-  text-align: center;
-  padding: 2rem 0;
-  border-top: 1px solid #e5e7eb;
-}
-
-.footer p {
-  margin: 0 0 1rem 0;
-  color: #6b7280;
-  font-size: 14px;
-}
-
-.footer-links {
-  display: flex;
-  justify-content: center;
-  gap: 2rem;
-}
-
-.footer-links a {
-  color: #6b7280;
-  text-decoration: none;
-  font-size: 14px;
-}
-
-.footer-links a:hover {
-  color: #7c3aed;
-}
-
 .main-layout {
   display: block;
   min-height: 100vh;

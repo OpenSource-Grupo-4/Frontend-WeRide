@@ -399,7 +399,7 @@ export class VehicleUnlockStatusComponent implements OnInit, OnDestroy {
   }
 
   goToScheduleBooking() {
-    this.router.navigate(['/garage']);
+    this.router.navigate(['/schedule-unlock']);
   }
 
   goToHistory() {
