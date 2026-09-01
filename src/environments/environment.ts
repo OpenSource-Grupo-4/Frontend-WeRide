@@ -1,6 +1,4 @@
-//db.json deploy = https://db-weride-4.onrender.com
-//deploy previo = http://20.81.154.140:8080/
-//deploy actual = https://weride.duckdns.org/api/v1
+//deploy actual (Render) = https://db-weride-4.onrender.com/api/v1
 export const environment = {
   production: false,
   apiUrl: 'http://localhost:8080/api/v1',
