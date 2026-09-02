@@ -1,5 +1,5 @@
 import { TestBed, fakeAsync, tick } from '@angular/core/testing';
-import { of, throwError } from 'rxjs';
+import { Subject, of, throwError } from 'rxjs';
 
 import { FavoriteStore } from './favorite.store';
 import { FavoriteRepository } from './repositories/favorite.repository';
@@ -112,6 +112,38 @@ describe('FavoriteStore', () => {
     expect(store.error()).toBeNull();
     expect(store.favoriteVehicleIds()).toContain('v1');
     expect(store.favorites().length).toBe(1);
+  }));
+
+  it('clears a previous toggle error at the start of a new toggle', fakeAsync(() => {
+    // First toggle fails; the second stays in flight (deferred) so we can assert
+    // the leading tap cleared the stale error before any result arrives.
+    const pending = new Subject<Favorite>();
+    const addFavorite = jasmine.createSpy('addFavorite');
+    addFavorite.and.callFake(() => {
+      if (!addFavorite.calls.any() || addFavorite.calls.count() === 1) {
+        // First call fails.
+        return throwError(() => new Error('API down'));
+      }
+      // Second call stays pending.
+      return pending;
+    });
+    const store = setup({ addFavorite });
+
+    store.toggleFavorite({ userId: 'user-1', vehicleId: 'v1' });
+    tick();
+    expect(store.error()).toContain('API down');
+
+    // A new toggle must clear the previous toggle's error immediately, so
+    // vehicle-card's delayed error check cannot read a stale error and roll
+    // back a toggle that belongs to a different card/attempt.
+    store.toggleFavorite({ userId: 'user-1', vehicleId: 'v1' });
+    expect(store.error()).toBeNull();
+
+    pending.next(createFavorite('v1'));
+    pending.complete();
+    tick();
+    expect(store.error()).toBeNull();
+    expect(store.favoriteVehicleIds()).toContain('v1');
   }));
 
   it('removing a favorite not in the in-memory favorites list still removes it from favoriteVehicleIds and localStorage', fakeAsync(() => {

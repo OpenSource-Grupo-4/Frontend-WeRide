@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
+import { Component, Input, Output, EventEmitter, inject, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MatCard, MatCardActions, MatCardContent, MatCardImage, MatCardHeader, MatCardTitle, MatCardSubtitle } from '@angular/material/card';
@@ -34,7 +34,7 @@ import { AuthStore } from '../../../../auth/application/auth.store';
   templateUrl: './vehicle-card.html',
   styleUrl: './vehicle-card.css'
 })
-export class VehicleCard {
+export class VehicleCard implements OnDestroy {
   @Input() vehicle!: Vehicle;
   @Output() viewDetails = new EventEmitter<Vehicle>();
   @Output() reserve = new EventEmitter<Vehicle>();
@@ -45,6 +45,20 @@ export class VehicleCard {
   private authStore = inject(AuthStore);
 
   isTogglingFavorite = false;
+  /**
+   * Pending rollback check for the in-flight toggle. Tracked so a rapid
+   * re-toggle on the same card cancels the previous check (its 500ms window
+   * belongs to a stale toggle and must not read the store's shared error slot),
+   * and so a destroyed card never fires a rollback/snackbar after teardown.
+   */
+  private rollbackTimer?: ReturnType<typeof setTimeout>;
+
+  ngOnDestroy() {
+    if (this.rollbackTimer) {
+      clearTimeout(this.rollbackTimer);
+      this.rollbackTimer = undefined;
+    }
+  }
 
   onToggleFavorite() {
     if (this.isTogglingFavorite) return;
@@ -83,8 +97,18 @@ export class VehicleCard {
     // Persist through the store (repository → API + localStorage).
     this.favoriteStore.toggleFavorite({ userId, vehicleId: this.vehicle.id });
 
+    // Cancel any pending check from a previous toggle on this card: with the
+    // store now clearing the error at toggle start, the shared error slot only
+    // holds errors from the CURRENT toggle window, so a stale check firing after
+    // a rapid re-toggle would roll back the wrong attempt.
+    if (this.rollbackTimer) {
+      clearTimeout(this.rollbackTimer);
+      this.rollbackTimer = undefined;
+    }
+
     // Check for errors after a delay
-    setTimeout(() => {
+    this.rollbackTimer = setTimeout(() => {
+      this.rollbackTimer = undefined;
       const error = this.favoriteStore.error();
       if (error) {
         // Rollback on error

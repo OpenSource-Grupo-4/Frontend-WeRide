@@ -20,6 +20,7 @@ import { GetVehiclesUseCase } from '../../../application/use-cases/get-vehicles.
 import { FilterVehiclesUseCase } from '../../../application/use-cases/filter-vehicles.usecase';
 import { ToggleFavoriteUseCase } from '../../../application/use-cases/toggle-favorite.usecase';
 import { FavoriteStore } from '../../../application/favorite.store';
+import { AuthStore } from '../../../../auth/application/auth.store';
 
 @Component({
   selector: 'app-garage-layout',
@@ -46,6 +47,7 @@ export class GarageLayout implements OnInit {
   private snackBar = inject(MatSnackBar);
   private activeBookingService = inject(ActiveBookingService);
   private favoriteStore = inject(FavoriteStore);
+  private authStore = inject(AuthStore);
 
   constructor(
     private dialog: MatDialog,
@@ -57,6 +59,24 @@ export class GarageLayout implements OnInit {
 
   async ngOnInit() {
     await this.loadVehicles();
+    await this.hydrateFavorites();
+  }
+
+  /**
+   * Hydrates `favoriteStore.favorites` from the server (with Favorite ids) so
+   * un-favoriting a vehicle favorited in a previous session resolves a Favorite
+   * and issues DELETE /favorites/{id} instead of taking the degraded
+   * local-cleanup branch. Guests skip the call: they have no persisted
+   * favorites and no server row, and their ids are meaningless to the API.
+   */
+  private async hydrateFavorites(): Promise<void> {
+    if (!this.authStore.session()?.isAuthenticated) return;
+    const userId = this.authStore.currentUser()?.id;
+    if (!userId) return;
+    // rxMethod<void> does not surface completion; awaiting a microtask keeps
+    // the ordering readable without coupling to store internals.
+    this.favoriteStore.loadUserFavorites(userId);
+    await Promise.resolve();
   }
 
   async loadVehicles() {

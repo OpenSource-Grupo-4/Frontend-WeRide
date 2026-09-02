@@ -151,6 +151,11 @@ export const FavoriteStore = signalStore(
 
       toggleFavorite: rxMethod<{ userId: string; vehicleId: string }>(
         pipe(
+          // Clear any previous toggle's error up-front so vehicle-card's delayed
+          // error check only ever sees errors raised within THIS toggle window —
+          // without it, a failing toggle on card X could roll back a successful
+          // toggle on card Y that shares the store's single error slot.
+          tap(() => patchState(store, { isLoading: true, error: null })),
           switchMap(({ userId, vehicleId }) => {
             const isFavorite = store.favoriteVehicleIds().includes(vehicleId);
 
