@@ -8,7 +8,7 @@
   >
     <h3 class="drafts-title">
       <mat-icon>drafts</mat-icon>
-      <span>Borradores Guardados</span>
+      <span>{{ 'scheduleUnlock.savedDrafts' | translate }}</span>
     </h3>
     <div class="drafts-list">
       <div
@@ -76,7 +76,7 @@
           name="date"
           required
           [class.error]="dateError"
-          title="Seleccionar fecha"
+          title="{{ 'scheduleUnlock.selectDate' | translate }}"
         />
         <span class="error-text" *ngIf="dateError">{{ dateError }}</span>
       </div>
@@ -89,22 +89,22 @@
           [(ngModel)]="unlockTime"
           name="time"
           required
-          title="Seleccionar hora"
+          title="{{ 'scheduleUnlock.selectTime' | translate }}"
         />
       </div>
 
       <div class="form-group">
-        <label for="start-location">Ubicación de inicio</label>
+        <label for="start-location">{{ 'booking.form.startLocation' | translate }}</label>
         <select id="start-location" [(ngModel)]="startLocationId" name="startLocation" required>
-          <option value="" disabled>Selecciona una ubicación</option>
+          <option value="" disabled>{{ 'booking.form.selectLocation' | translate }}</option>
           <option *ngFor="let location of locations" [value]="location.id">{{ location.name }} — {{ location.address }}</option>
         </select>
       </div>
 
       <div class="form-group">
-        <label for="end-location">Ubicación de destino</label>
+        <label for="end-location">{{ 'booking.form.endLocation' | translate }}</label>
         <select id="end-location" [(ngModel)]="endLocationId" name="endLocation" required>
-          <option value="" disabled>Selecciona una ubicación</option>
+          <option value="" disabled>{{ 'booking.form.selectLocation' | translate }}</option>
           <option *ngFor="let location of locations" [value]="location.id">{{ location.name }} — {{ location.address }}</option>
         </select>
       </div>
@@ -118,7 +118,7 @@
           [(ngModel)]="duration"
           name="duration"
           required
-          title="Seleccionar duración"
+          [title]="'scheduleUnlock.selectDuration' | translate"
         >
           <option *ngFor="let d of [1,2,3,4,5,6]" [value]="d">
             {{ d }} {{ d > 1 ? ('booking.hours' | translate) : ('booking.hour' |
@@ -131,7 +131,7 @@
     <div *ngIf="availabilityError" class="availability-alert error">
       <mat-icon>error_outline</mat-icon>
       <div class="alert-content">
-        <p class="alert-title">Vehículo no disponible</p>
+        <p class="alert-title">{{ 'scheduleUnlock.vehicleUnavailable' | translate }}</p>
         <p class="alert-message">{{ availabilityError }}</p>
       </div>
     </div>
@@ -141,7 +141,7 @@
       class="availability-alert success"
     >
       <mat-icon>check_circle</mat-icon>
-      <p>Vehículo disponible para la fecha seleccionada</p>
+      <p>{{ 'scheduleUnlock.vehicleAvailable' | translate }}</p>
     </div>
 
     <div class="booking-summary-card" *ngIf="selectedVehicle">
@@ -180,7 +180,7 @@
         <div class="summary-item">
           <span class="label">{{ 'booking.summary.rate' | translate }}:</span>
           <span class="value"
-            >${{ selectedVehicle.pricePerMinute }}/minuto</span
+            >${{ selectedVehicle.pricePerMinute }}{{ 'scheduleUnlock.perMinute' | translate }}</span
           >
         </div>
 
@@ -210,7 +210,7 @@
         [disabled]="isSavingDraft"
       >
         <mat-icon>save</mat-icon>
-        {{ isSavingDraft ? 'Guardando...' : ('booking.saveDraft' | translate) }}
+        {{ isSavingDraft ? ('scheduleUnlock.saving' | translate) : ('booking.saveDraft' | translate) }}
       </button>
     </div>
   </div>
