@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Router } from '@angular/router';
 import { TripStore } from '../../../../trip/application/trip.store';
 import { ActiveBookingService } from '../../../application/active-booking.service';
@@ -35,7 +36,7 @@ interface Activity {
 
 @Component({
   selector: 'app-vehicle-unlock-status',
-  imports: [CommonModule, MatIconModule, MatButtonModule, MatCardModule],
+  imports: [CommonModule, MatIconModule, MatButtonModule, MatCardModule, TranslateModule],
   templateUrl: './vehicle-unlock-status.html',
   styleUrl: './vehicle-unlock-status.css'
 })
@@ -45,6 +46,7 @@ export class VehicleUnlockStatusComponent implements OnInit, OnDestroy {
   private activeBookingService = inject(ActiveBookingService);
   private unlockRequestsApi = inject(UnlockRequestsApiEndpoint);
   private vehiclesApi = inject(VehiclesApiEndpoint);
+  private translate = inject(TranslateService);
 
   isActiveTrip = computed(() => this.tripStore.isActiveTrip());
   currentVehicle = computed(() => this.tripStore.currentVehicle());
@@ -105,7 +107,7 @@ export class VehicleUnlockStatusComponent implements OnInit, OnDestroy {
       const elapsedTime = this.calculateElapsedTime(vehicleInfo.bookingStartDate, now);
       const remainingTime = vehicleInfo.bookingEndDate
         ? this.calculateRemainingTime(now, vehicleInfo.bookingEndDate)
-        : 'N/A';
+        : this.translate.instant('booking.notAvailable');
 
       this.vehicleInfo.update(info => ({
         ...info,
@@ -159,14 +161,14 @@ export class VehicleUnlockStatusComponent implements OnInit, OnDestroy {
       const startDate = booking?.startDate || tripStart || now;
       const endDate = booking?.endDate || tripEnd || null;
       const elapsedTime = this.calculateElapsedTime(startDate, now);
-      const remainingTime = endDate ? this.calculateRemainingTime(now, endDate) : 'N/A';
+      const remainingTime = endDate ? this.calculateRemainingTime(now, endDate) : this.translate.instant('booking.notAvailable');
 
       const unlockRequests = booking
         ? await firstValueFrom(
             this.unlockRequestsApi.getByBookingId(booking.id).pipe(
               catchError(() => {
                 this.connectionError.set(true);
-                this.errorMessage.set('Error de conexión al obtener el estado de desbloqueo');
+                this.errorMessage.set(this.translate.instant('unlockStatus.connectionError'));
                 return of([]);
               })
             )
@@ -225,7 +227,7 @@ export class VehicleUnlockStatusComponent implements OnInit, OnDestroy {
           if (mostRecentRequest.actualUnlockTime) {
             activities.push({
               type: 'success',
-              message: 'Vehículo desbloqueado exitosamente',
+              message: this.translate.instant('unlockStatus.unlockedSuccessfully'),
               time: this.formatTime(mostRecentRequest.actualUnlockTime)
             });
           }
@@ -233,7 +235,7 @@ export class VehicleUnlockStatusComponent implements OnInit, OnDestroy {
           if (mostRecentRequest.status === 'pending') {
             activities.push({
               type: 'info',
-              message: 'Solicitud de desbloqueo iniciada',
+              message: this.translate.instant('unlockStatus.unlockRequestInitiated'),
               time: this.formatTime(mostRecentRequest.requestedAt)
             });
           }
@@ -241,16 +243,19 @@ export class VehicleUnlockStatusComponent implements OnInit, OnDestroy {
           if (mostRecentRequest.status === 'failed') {
             activities.push({
               type: 'error',
-              message: mostRecentRequest.errorMessage || 'Error en el desbloqueo - reintento intentado',
+              message: mostRecentRequest.errorMessage || this.translate.instant('unlockStatus.unlockFailedRetry'),
               time: this.formatTime(mostRecentRequest.requestedAt)
             });
           }
         }
 
         if (booking) {
+          const bookingStatus = booking.status === 'confirmed'
+            ? this.translate.instant('booking.status.confirmed')
+            : booking.status;
           activities.push({
             type: 'info',
-            message: `Reserva ${booking.status === 'confirmed' ? 'confirmada' : booking.status}`,
+            message: this.translate.instant('unlockStatus.bookingActivity', { status: bookingStatus }),
             time: this.formatDateTime(startDate)
           });
         }
@@ -260,7 +265,7 @@ export class VehicleUnlockStatusComponent implements OnInit, OnDestroy {
     } catch (error) {
       console.error('Error loading vehicle status:', error);
       this.connectionError.set(true);
-      this.errorMessage.set('Error al cargar el estado del vehículo');
+      this.errorMessage.set(this.translate.instant('unlockStatus.loadError'));
     } finally {
       this.isLoading.set(false);
     }
@@ -296,17 +301,17 @@ export class VehicleUnlockStatusComponent implements OnInit, OnDestroy {
     const diffMs = now.getTime() - date.getTime();
     const diffMins = Math.floor(diffMs / 60000);
 
-    if (diffMins < 1) return 'Justo ahora';
-    if (diffMins === 1) return 'Hace 1 minuto';
-    if (diffMins < 60) return `Hace ${diffMins} minutos`;
+    if (diffMins < 1) return this.translate.instant('unlockStatus.justNow');
+    if (diffMins === 1) return this.translate.instant('unlockStatus.oneMinuteAgo');
+    if (diffMins < 60) return this.translate.instant('unlockStatus.minutesAgo', { count: diffMins });
 
     const diffHours = Math.floor(diffMins / 60);
-    if (diffHours === 1) return 'Hace 1 hora';
-    if (diffHours < 24) return `Hace ${diffHours} horas`;
+    if (diffHours === 1) return this.translate.instant('unlockStatus.oneHourAgo');
+    if (diffHours < 24) return this.translate.instant('unlockStatus.hoursAgo', { count: diffHours });
 
     const diffDays = Math.floor(diffHours / 24);
-    if (diffDays === 1) return 'Hace 1 día';
-    return `Hace ${diffDays} días`;
+    if (diffDays === 1) return this.translate.instant('unlockStatus.oneDayAgo');
+    return this.translate.instant('unlockStatus.daysAgo', { count: diffDays });
   }
 
   formatTime(date: Date): string {
@@ -334,7 +339,7 @@ export class VehicleUnlockStatusComponent implements OnInit, OnDestroy {
   calculateRemainingTime(now: Date, endDate: Date): string {
     const diffMs = endDate.getTime() - now.getTime();
     if (diffMs < 0) {
-      return 'Tiempo agotado';
+      return this.translate.instant('unlockStatus.timeUp');
     }
     const diffMins = Math.floor(diffMs / 60000);
     const hours = Math.floor(diffMins / 60);
@@ -360,7 +365,7 @@ export class VehicleUnlockStatusComponent implements OnInit, OnDestroy {
 
       this.recentActivity.update(activities => [{
         type: 'info',
-        message: 'Vehículo bloqueado',
+        message: this.translate.instant('unlockStatus.locked'),
         time: this.formatTime(new Date())
       }, ...activities]);
     } catch (error) {
@@ -386,7 +391,7 @@ export class VehicleUnlockStatusComponent implements OnInit, OnDestroy {
 
       this.recentActivity.update(activities => [{
         type: 'success',
-        message: 'Vehículo desbloqueado',
+        message: this.translate.instant('unlockStatus.unlocked'),
         time: this.formatTime(new Date())
       }, ...activities]);
     } catch (error) {
@@ -409,28 +414,28 @@ export class VehicleUnlockStatusComponent implements OnInit, OnDestroy {
   getStatusLabel(status: string): string {
     switch (status) {
       case 'Unlocked':
-        return 'Desbloqueado';
+        return this.translate.instant('unlockStatus.statusUnlocked');
       case 'Locked':
-        return 'Bloqueado';
+        return this.translate.instant('unlockStatus.statusLocked');
       case 'Pending':
-        return 'En proceso';
+        return this.translate.instant('unlockStatus.statusPending');
       case 'Error':
-        return 'Error';
+        return this.translate.instant('unlockStatus.statusError');
       default:
-        return 'Desconocido';
+        return this.translate.instant('unlockStatus.statusUnknown');
     }
   }
 
   getBookingStatusLabel(status: string): string {
     switch (status) {
       case 'confirmed':
-        return 'Confirmada';
+        return this.translate.instant('booking.status.confirmed');
       case 'pending':
-        return 'Pendiente';
+        return this.translate.instant('booking.status.pending');
       case 'completed':
-        return 'Completada';
+        return this.translate.instant('booking.status.completed');
       case 'cancelled':
-        return 'Cancelada';
+        return this.translate.instant('booking.status.cancelled');
       default:
         return status;
     }

@@ -184,8 +184,8 @@ export class GarageLayout implements OnInit {
 
     if (activeBooking) {
       const snackBarRef = this.snackBar.open(
-        'Ya tienes una reserva activa',
-        'Ver Reserva',
+        this.translate.instant('booking.alreadyHasActive'),
+        this.translate.instant('home.actions.viewBookings'),
         {
           duration: 5000,
           horizontalPosition: 'end',
