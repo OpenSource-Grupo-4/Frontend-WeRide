@@ -179,6 +179,10 @@ export const FavoriteStore = signalStore(
                 }),
                 catchError((error) => {
                   console.error('✗ Error removing favorite:', error);
+                  patchState(store, {
+                    isLoading: false,
+                    error: error.message || 'Error al eliminar favorito'
+                  });
                   return of(null);
                 })
               );
@@ -197,6 +201,10 @@ export const FavoriteStore = signalStore(
                 }),
                 catchError((error) => {
                   console.error('✗ Error adding favorite:', error);
+                  patchState(store, {
+                    isLoading: false,
+                    error: error.message || 'Error al agregar favorito'
+                  });
                   return of(null);
                 })
               );
