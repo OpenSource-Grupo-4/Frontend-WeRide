@@ -4,9 +4,6 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatSelectModule } from '@angular/material/select';
-import { MatInputModule } from '@angular/material/input';
 
 import { BookingStorageService } from '../../../application/booking-storage.service';
 import { BookingStore } from '../../../application/booking.store';
@@ -23,10 +20,7 @@ import { DraftBookingService } from '../../../application/draft-booking.service'
     CommonModule,
     FormsModule,
     MatSnackBarModule,
-    TranslateModule,
-    MatFormFieldModule,
-    MatSelectModule,
-    MatInputModule
+    TranslateModule
   ],
   templateUrl: './booking.html',
   styleUrls: ['./booking.css']
@@ -94,6 +88,10 @@ export class BookingFormComponent implements OnInit {
     this.vehiclesApi.getAll().subscribe({
       next: (data) => {
         this.vehicles = data;
+        // Reset simétrico: una respuesta exitosa (aunque sea de una llamada más
+        // antigua que llegue tarde) debe limpiar un fallo previo; si no, un error
+        // de un reintento anterior dejaría la bandera pegada tras un éxito.
+        this.vehiclesLoadFailed = false;
       },
       error: (err) => {
         console.error('Error cargando vehículos', err);
@@ -111,6 +109,7 @@ export class BookingFormComponent implements OnInit {
         // carga falla (o no hay ubicaciones) los selects quedan vacíos y el usuario
         // ve un mensaje de error con reintento en lugar de una reserva equivocada.
         this.locations = locations.filter(location => location.isActive);
+        this.locationsLoadFailed = false;
       },
       error: () => {
         this.locationsLoadFailed = true;
@@ -144,7 +143,8 @@ export class BookingFormComponent implements OnInit {
     this.endLocationId = booking.endLocationId ? String(booking.endLocationId) : this.endLocationId;
     this.selectedDate = this.formatDateForInput(new Date(booking.startDate));
     this.unlockTime = this.formatTimeForInput(new Date(booking.startDate));
-    this.duration = booking.duration || 1;
+    const parsedDuration = Number(booking.duration);
+    this.duration = Number.isFinite(parsedDuration) && parsedDuration > 0 ? parsedDuration : 1;
   }
 
   // --- LÓGICA DE FORMULARIO Y API ---
@@ -241,7 +241,10 @@ export class BookingFormComponent implements OnInit {
   }
 
   saveDraft() {
-    if (!this.canSubmit) {
+    // Un borrador existe para persistir trabajo PARCIAL: basta con haber elegido
+    // vehículo (DraftBookingService tolera ubicaciones/fecha/hora vacías y usa
+    // valores por defecto). El envío real sí exige el formulario completo.
+    if (!this.canSaveDraft) {
       this.showErrorMessage('booking.form.missingFields');
       return;
     }
@@ -297,16 +300,24 @@ export class BookingFormComponent implements OnInit {
   // --- GETTERS DE ESTADO DEL FORMULARIO ---
 
   /** El formulario es válido sólo cuando hay vehículo, ambas ubicaciones, fecha,
-   *  hora y una duración positiva. Controla "Reservar Ahora", "Guardar como
-   *  Borrador" y la vista previa de precio previa al envío. */
+   *  hora y una duración positiva. Controla "Reservar Ahora" y la vista previa
+   *  de precio previa al envío. */
   get canSubmit(): boolean {
     return !!(this.selectedVehicle && this.startLocationId && this.endLocationId &&
       this.selectedDate && this.unlockTime && this.duration > 0);
   }
 
-  /** Vista previa de precio ANTES de confirmar (se muestra cuando canSubmit). */
+  /** Un borrador sólo necesita un vehículo elegido: el resto del formulario puede
+   *  estar incompleto (DraftBookingService rellena fecha/hora y tolera ubicaciones
+   *  vacías). Controla "Guardar como Borrador". */
+  get canSaveDraft(): boolean {
+    return !!this.selectedVehicle;
+  }
+
+  /** Vista previa de precio ANTES de confirmar. Excluye el estado posterior al
+   *  envío (showSummary) para que nunca se muestren dos resúmenes apilados. */
   get showPricePreview(): boolean {
-    return this.canSubmit;
+    return this.canSubmit && !this.showSummary;
   }
 
   /** Coste total estimado = tarifa por minuto × duración (en minutos). */
@@ -335,8 +346,16 @@ export class BookingFormComponent implements OnInit {
   }
 
   private formatDateForInput(date: Date): string {
+    // Componentes LOCALES (no UTC): toISOString() desplazaría la fecha al día
+    // siguiente para zonas horarias negativas (p. ej. UTC-5 en la noche) y el
+    // input de fecha mostraría un día distinto al de la hora local elegida.
+    // formatTimeForInput ya usa getHours()/getMinutes() locales, así que ambos
+    // quedan consistentes (y combineDateTime parsea "YYYY-MM-DDTHH:mm" como local).
     const d = new Date(date);
-    return d.toISOString().split('T')[0];
+    const y = d.getFullYear();
+    const m = (d.getMonth() + 1).toString().padStart(2, '0');
+    const day = d.getDate().toString().padStart(2, '0');
+    return `${y}-${m}-${day}`;
   }
 
   private formatTimeForInput(date: Date): string {

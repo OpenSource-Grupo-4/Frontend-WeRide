@@ -381,6 +381,7 @@
       "range": "Range",
       "dateTime": "Date and time",
       "duration": "Duration",
+      "minutes": "minutes",
       "rate": "Rate",
       "total": "Total",
       "notifications": {

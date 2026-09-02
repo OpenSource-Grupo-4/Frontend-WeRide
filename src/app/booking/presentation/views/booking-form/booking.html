@@ -1,7 +1,7 @@
 <div class="booking-form-container">
   <h2>{{ 'booking.title' | translate }}</h2>
 
-  <form (ngSubmit)="submitBooking()" #bookingForm="ngForm">
+  <form (ngSubmit)="submitBooking()">
     <div class="form-group">
       <label for="vehicle">{{ 'booking.electricVehicle' | translate }}</label>
 
@@ -77,7 +77,7 @@
             class="btn-primary"
             [disabled]="!canSubmit"> {{ 'booking.bookNow' | translate }}
     </button>
-    <button type="button" class="btn-secondary" [disabled]="!canSubmit"
+    <button type="button" class="btn-secondary" [disabled]="!canSaveDraft"
             (click)="saveDraft()">{{ 'booking.saveDraft' | translate }}</button>
 
     @if (!canSubmit) {
@@ -96,7 +96,7 @@
       <p><strong>{{ 'booking.summary.duration' | translate }}:</strong> {{ duration }} {{ 'booking.summary.minutes' | translate }}</p>
       <p><strong>{{ 'booking.summary.rate' | translate }}:</strong> ${{ rate }}/minute</p>
 
-      <p><strong>{{ 'booking.summary.total' | translate }}:</strong> ${{ (duration * rate)?.toFixed(2) || '0.00' }}</p>
+      <p><strong>{{ 'booking.summary.total' | translate }}:</strong> ${{ calculateCost().toFixed(2) }}</p>
 
       <div class="notifications">
         <label><input type="checkbox" [(ngModel)]="smsReminder" name="smsReminder" /> {{ 'booking.summary.notifications.smsReminder' | translate }}</label>
