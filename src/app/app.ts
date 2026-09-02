@@ -37,6 +37,10 @@ export class App implements OnInit, OnDestroy {
 
     // Initialize auth session from localStorage
     this.initializeAuth();
+
+    // Start monitoring bookings for start/expiry/expired notifications.
+    // No-ops for unauthenticated users; idempotent.
+    this.bookingNotificationService.startMonitoring();
   }
 
   private syncDocumentLang(lang: string): void {

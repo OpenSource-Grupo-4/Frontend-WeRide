@@ -4,7 +4,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
 import { ActiveBookingService } from './active-booking.service';
 import { NotificationsApiEndpoint } from '../infraestructure/notifications-api-endpoint';
+import { BookingsApiEndpoint } from '../infraestructure/bookings-api-endpoint';
+import { AuthStore } from '../../auth/application/auth.store';
 import { Booking } from '../domain/model/booking.entity';
+import { toDomainBooking } from '../infraestructure/booking-assembler';
 import { BookingEndingModal } from '../presentation/views/booking-ending-modal/booking-ending-modal';
 import { firstValueFrom } from 'rxjs';
 
@@ -23,6 +26,8 @@ export class BookingNotificationService implements OnDestroy {
   private translate = inject(TranslateService);
   private activeBookingService = inject(ActiveBookingService);
   private notificationsApi = inject(NotificationsApiEndpoint);
+  private bookingsApi = inject(BookingsApiEndpoint);
+  private authStore = inject(AuthStore);
 
   private checkInterval?: number;
   private isMonitoring = false;
@@ -41,13 +46,12 @@ export class BookingNotificationService implements OnDestroy {
    */
   startMonitoring(): void {
     if (this.isMonitoring) {
-      console.log('Booking notification monitoring already active');
       return;
     }
 
-    console.log('Starting booking notification monitoring');
     this.isMonitoring = true;
-
+    this.checkActiveBookings();
+    this.checkInterval = window.setInterval(() => this.checkActiveBookings(), this.CHECK_INTERVAL_MS);
   }
 
   /**
@@ -60,7 +64,31 @@ export class BookingNotificationService implements OnDestroy {
     }
     this.isMonitoring = false;
     this.resetState();
-    console.log('Stopped booking notification monitoring');
+  }
+
+  /**
+   * Fetch the current user's bookings and run the per-booking notification checks.
+   * No-ops for unauthenticated users or when there is no current user.
+   */
+  private checkActiveBookings(): void {
+    const session = this.authStore.session();
+    const userId = this.authStore.currentUser()?.id;
+    if (!session?.isAuthenticated || !userId) {
+      return;
+    }
+
+    this.bookingsApi.getByUserId(userId).subscribe({
+      next: (bookings) => {
+        const now = new Date();
+        for (const booking of bookings) {
+          const domainBooking = toDomainBooking(booking);
+          this.checkBookingStart(domainBooking, now);
+          this.checkBookingExpiring(domainBooking, now);
+          this.checkBookingExpired(domainBooking, now);
+        }
+      },
+      error: (error) => console.error('Booking notification check failed:', error)
+    });
   }
 
 
