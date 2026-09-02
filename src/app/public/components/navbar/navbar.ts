@@ -121,7 +121,10 @@ export class Navbar implements OnInit {
 
   logout() {
     this.closeMenus();
-    this.router.navigate(['/']);
+    this.authStore.logout();
+    localStorage.removeItem('session');
+    localStorage.removeItem('favoriteVehicleIds');
+    this.router.navigate(['/auth/login']);
   }
 
   getUserInitials(): string {

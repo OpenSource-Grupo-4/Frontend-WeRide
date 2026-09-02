@@ -51,11 +51,19 @@ describe('HeaderComponent notification authentication', () => {
 describe('HeaderComponent user identity', () => {
   let component: HeaderComponent;
   let fixture: ComponentFixture<HeaderComponent>;
+  let routerSpy: jasmine.SpyObj<Router>;
+  let authStore: { currentUser: ReturnType<typeof signal>; session: ReturnType<typeof signal>; logout: jasmine.Spy };
 
   beforeEach(async () => {
     const currentUser = signal({ id: 'u1', name: 'Juan Pérez' } as any);
     const notificationsApi = jasmine.createSpyObj<NotificationsApiEndpoint>('NotificationsApiEndpoint', ['getAll']);
     notificationsApi.getAll.and.returnValue(of([]));
+    routerSpy = jasmine.createSpyObj<Router>('Router', ['navigate']);
+    authStore = {
+      currentUser,
+      session: signal({ isAuthenticated: true }),
+      logout: jasmine.createSpy('logout')
+    };
 
     await TestBed.configureTestingModule({
       imports: [
@@ -64,15 +72,8 @@ describe('HeaderComponent user identity', () => {
       ],
       providers: [
         provideNoopAnimations(),
-        { provide: Router, useValue: jasmine.createSpyObj<Router>('Router', ['navigate']) },
-        {
-          provide: AuthStore,
-          useValue: {
-            currentUser,
-            session: signal({ isAuthenticated: true }),
-            logout: jasmine.createSpy('logout')
-          }
-        },
+        { provide: Router, useValue: routerSpy },
+        { provide: AuthStore, useValue: authStore },
         { provide: NotificationsApiEndpoint, useValue: notificationsApi }
       ]
     }).compileComponents();
@@ -89,5 +90,15 @@ describe('HeaderComponent user identity', () => {
   it('shows the real user name in the header', () => {
     const nameEl = fixture.nativeElement.querySelector('.user-name-nav');
     expect(nameEl.textContent.trim()).toBe('Juan Pérez');
+  });
+
+  it('calls authStore.logout and clears persisted keys on logout', () => {
+    localStorage.setItem('session', 'x');
+    localStorage.setItem('favoriteVehicleIds', '["v1"]');
+    component.logout();
+    expect(authStore.logout).toHaveBeenCalled();
+    expect(localStorage.getItem('session')).toBeNull();
+    expect(localStorage.getItem('favoriteVehicleIds')).toBeNull();
+    expect(routerSpy.navigate).toHaveBeenCalledWith(['/auth/login']);
   });
 });
