@@ -563,7 +563,10 @@
     },
     "cta": {
       "title": "¿Listo para viajar?",
-      "description": "Encuentra un vehículo cerca de ti y comienza tu viaje"
+      "description": "Encuentra un vehículo cerca de ti y comienza tu viaje",
+      "needAccount": "Necesitas una cuenta para reservar vehículos",
+      "login": "Iniciar sesión",
+      "later": "Ahora no"
     },
     "activeBooking": {
       "active": "Activo",

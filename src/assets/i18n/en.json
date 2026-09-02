@@ -561,7 +561,10 @@
     },
     "cta": {
       "title": "Ready to ride?",
-      "description": "Find a vehicle near you and start your journey"
+      "description": "Find a vehicle near you and start your journey",
+      "needAccount": "You need an account to book vehicles",
+      "login": "Log in",
+      "later": "Not now"
     },
     "activeBooking": {
       "active": "Active",

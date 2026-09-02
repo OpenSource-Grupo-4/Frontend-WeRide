@@ -5,7 +5,7 @@
       <h1 class="hero-title">{{ 'home.welcome' | translate }}</h1>
       <p class="hero-subtitle">{{ 'home.subtitle' | translate }}</p>
       <div class="hero-cta">
-        <button mat-raised-button color="primary" routerLink="/garage">
+        <button mat-raised-button color="primary" type="button" (click)="navigateToGarage()">
           <mat-icon>directions_bike</mat-icon>
           {{ 'home.hero.startRiding' | translate }}
         </button>
@@ -13,6 +13,23 @@
     </div>
     <div class="hero-banner"></div>
   </section>
+
+  @if (guestBookingMessage()) {
+  <section class="guest-message-section" role="alert">
+    <div class="guest-message">
+      <mat-icon class="guest-message-icon">account_circle</mat-icon>
+      <p class="guest-message-text">{{ 'home.cta.needAccount' | translate }}</p>
+      <div class="guest-message-actions">
+        <button class="btn-primary" type="button" (click)="goToLogin()">
+          {{ 'home.cta.login' | translate }}
+        </button>
+        <button class="btn-secondary" type="button" (click)="dismissGuestMessage()">
+          {{ 'home.cta.later' | translate }}
+        </button>
+      </div>
+    </div>
+  </section>
+  }
 
   @if (activeBooking()) {
   <section class="active-booking-section">
