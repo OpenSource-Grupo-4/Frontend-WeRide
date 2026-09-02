@@ -34,8 +34,13 @@ export class TripHistory implements OnInit {
   private vehicleService = inject(VehicleService);
   private translate = inject(TranslateService);
 
+  private readonly pageSize = 5;
+  private page = 0;
+  private allTrips: TripDisplay[] = [];
+
   trips: TripDisplay[] = [];
   loading = false;
+  hasMore = false;
 
   ngOnInit() {
     this.loadTrips();
@@ -47,7 +52,10 @@ export class TripHistory implements OnInit {
     this.tripService.loadTrips().subscribe({
       next: (trips: Trip[]) => {
         if (!trips || trips.length === 0) {
+          this.allTrips = [];
+          this.page = 0;
           this.trips = [];
+          this.hasMore = false;
           this.loading = false;
           return;
         }
@@ -55,7 +63,7 @@ export class TripHistory implements OnInit {
         // Get vehicles for all trips
         this.vehicleService.loadVehicles().subscribe({
           next: (vehicles: Vehicle[]) => {
-            this.trips = trips.map((trip: Trip) => {
+            this.allTrips = trips.map((trip: Trip) => {
               const vehicle = vehicles.find(v => v.id === trip.vehicleId);
               const startDate = new Date(trip.startDate);
               const formattedDate = this.formatDate(startDate);
@@ -75,6 +83,9 @@ export class TripHistory implements OnInit {
               };
             });
 
+            this.page = 0;
+            this.trips = this.allTrips.slice(0, this.pageSize);
+            this.hasMore = this.allTrips.length > this.trips.length;
             this.loading = false;
           },
           error: (error: any) => {
@@ -117,16 +128,21 @@ export class TripHistory implements OnInit {
     return formatted;
   }
 
-  printReceipt(trip: TripDisplay) {
-    alert('Imprimiendo recibo del viaje: ' + trip.id);
+  printReceipt(_trip: TripDisplay) {
+    window.print();
   }
 
   viewDetails(trip: TripDisplay) {
-    alert('Mostrando detalles del viaje: ' + trip.id);
+    this.router.navigate(['/trip/details'], { state: { tripId: trip.id } });
   }
 
   seeMore() {
-    alert('Cargando más viajes...');
+    if (!this.hasMore || this.loading) {
+      return;
+    }
+    this.page++;
+    this.trips = this.allTrips.slice(0, (this.page + 1) * this.pageSize);
+    this.hasMore = this.allTrips.length > this.trips.length;
   }
 
   goBack() {

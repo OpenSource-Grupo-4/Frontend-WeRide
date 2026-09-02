@@ -20,5 +20,5 @@
       <button (click)="viewDetails(trip)">{{ 'trip.viewDetails' | translate }}</button>
     </div>
   </div>
-  <button class="see-more-btn" (click)="seeMore()">{{ 'trip.seeMore' | translate }}</button>
+  <button class="see-more-btn" (click)="seeMore()" [disabled]="!hasMore || loading">{{ 'trip.seeMore' | translate }}</button>
 </div>
