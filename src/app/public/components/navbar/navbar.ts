@@ -26,6 +26,8 @@ export class Navbar implements OnInit {
   private router = inject(Router);
   private authStore = inject(AuthStore);
 
+  readonly currentUser = computed(() => this.authStore.currentUser());
+
   notifications = signal<Notification[]>([]);
   unreadCount = computed(() => this.notifications().filter(n => !n.isRead).length);
 
@@ -123,7 +125,9 @@ export class Navbar implements OnInit {
   }
 
   getUserInitials(): string {
-    return 'U';
+    const name = this.currentUser()?.name?.trim();
+    if (!name) return 'U';
+    return name.split(/\s+/).slice(0, 2).map(p => p[0]!.toUpperCase()).join('');
   }
 
   trackByNotificationId(index: number, notification: Notification): string {
