@@ -92,13 +92,9 @@ describe('HeaderComponent user identity', () => {
     expect(nameEl.textContent.trim()).toBe('Juan Pérez');
   });
 
-  it('calls authStore.logout and clears persisted keys on logout', () => {
-    localStorage.setItem('session', 'x');
-    localStorage.setItem('favoriteVehicleIds', '["v1"]');
+  it('delegates logout to authStore.logout and navigates to login', () => {
     component.logout();
     expect(authStore.logout).toHaveBeenCalled();
-    expect(localStorage.getItem('session')).toBeNull();
-    expect(localStorage.getItem('favoriteVehicleIds')).toBeNull();
     expect(routerSpy.navigate).toHaveBeenCalledWith(['/auth/login']);
   });
 });

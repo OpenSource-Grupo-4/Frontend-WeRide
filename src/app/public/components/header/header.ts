@@ -102,8 +102,6 @@ export class HeaderComponent implements OnInit {
 
   logout() {
     this.authStore.logout();
-    localStorage.removeItem('session');
-    localStorage.removeItem('favoriteVehicleIds');
     this.router.navigate(['/auth/login']);
   }
 

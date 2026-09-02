@@ -122,8 +122,6 @@ export class Navbar implements OnInit {
   logout() {
     this.closeMenus();
     this.authStore.logout();
-    localStorage.removeItem('session');
-    localStorage.removeItem('favoriteVehicleIds');
     this.router.navigate(['/auth/login']);
   }
 

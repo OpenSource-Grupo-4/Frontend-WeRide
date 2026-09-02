@@ -188,6 +188,11 @@ export class AuthRepositoryImpl extends AuthRepository {
 
   logout(): Observable<void> {
     localStorage.removeItem(AUTH_SESSION_KEY);
+    localStorage.removeItem('session');
+    localStorage.removeItem('favoriteVehicleIds');
+    localStorage.removeItem('active_booking');
+    // FavoriteService.STORAGE_KEY ('favorites') — private static, not exported
+    localStorage.removeItem('favorites');
     return of(void 0);
   }
 

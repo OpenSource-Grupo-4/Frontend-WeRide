@@ -258,3 +258,38 @@ describe('AuthRepositoryImpl - código de verificación unificado', () => {
     expect(wrongResult).toBeFalse();
   });
 });
+
+describe('AuthRepositoryImpl - logout', () => {
+  let repository: AuthRepositoryImpl;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      providers: [
+        AuthRepositoryImpl,
+        provideHttpClient(),
+        provideHttpClientTesting()
+      ]
+    });
+    repository = TestBed.inject(AuthRepositoryImpl);
+  });
+
+  afterEach(() => {
+    localStorage.clear();
+  });
+
+  it('clears all persisted session keys on logout', () => {
+    localStorage.setItem(AUTH_SESSION_KEY, 'x');
+    localStorage.setItem('session', 'x');
+    localStorage.setItem('favoriteVehicleIds', '["v1"]');
+    localStorage.setItem('active_booking', 'x');
+    localStorage.setItem('favorites', '["v1"]');
+
+    repository.logout().subscribe(() => {
+      expect(localStorage.getItem(AUTH_SESSION_KEY)).toBeNull();
+      expect(localStorage.getItem('session')).toBeNull();
+      expect(localStorage.getItem('favoriteVehicleIds')).toBeNull();
+      expect(localStorage.getItem('active_booking')).toBeNull();
+      expect(localStorage.getItem('favorites')).toBeNull();
+    });
+  });
+});
