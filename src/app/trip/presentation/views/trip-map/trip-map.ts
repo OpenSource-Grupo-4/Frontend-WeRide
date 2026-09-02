@@ -1,4 +1,5 @@
 import {Component, OnDestroy, OnInit, signal, inject, computed} from '@angular/core';
+import { Router } from '@angular/router';
 import { MapComponent, MarkerComponent} from 'ngx-mapbox-gl';
 import {LocationsApiEndpoint} from '../../../infrastructure/locations-api-endpoint';
 import {VehiclesApiEndpoint} from '../../../infrastructure/vehicles-api-endpoint';
@@ -33,6 +34,7 @@ export class TripMap implements OnInit, OnDestroy {
   private locationsApi = inject(LocationsApiEndpoint);
   private vehiclesApi = inject(VehiclesApiEndpoint);
   protected tripStore = inject(TripStore);
+  private router = inject(Router);
   private dialog = inject(MatDialog);
   private problemReportsApi = inject(ProblemReportsApiEndpoint);
   private ratingsApi = inject(RatingsApiEndpoint);
@@ -255,44 +257,13 @@ export class TripMap implements OnInit, OnDestroy {
 
     dialogRef.componentInstance.dialogRef.afterClosed().subscribe((result) => {
       if (result === 'reserve') {
-        this.reserveVehicle(vehicle);
+        // Route through the REAL booking flow: schedule-unlock creates a
+        // booking against the API (immediate) and handles the unlock flow.
+        this.router.navigate(['/schedule-unlock'], {
+          state: { vehicle, immediate: true }
+        });
       }
     });
-  }
-
-  reserveVehicle(vehicle: Vehicle) {
-    const locations = this.tripStore.locations();
-    const vehicleLocation = locations.find(loc => loc.id === vehicle.location);
-
-    if (vehicleLocation) {
-      this.tripStore.setCurrentVehicle(vehicle);
-      this.tripStore.setCurrentLocation(vehicleLocation);
-
-      const destinationLocation = this.getRandomDestination(vehicleLocation);
-      if (destinationLocation) {
-        this.tripStore.setDestinationLocation(destinationLocation);
-      }
-
-      const startTime = new Date();
-      const estimatedEndTime = new Date(startTime.getTime() + 30 * 60000);
-      this.tripStore.startTrip(startTime, estimatedEndTime, vehicle);
-
-      this.currentBattery.set(vehicle.battery);
-      const distance = this.calculateDistanceBetweenLocations(vehicleLocation, destinationLocation!);
-      this.estimatedDistance.set(distance);
-
-      this.clearSelection();
-    }
-  }
-
-  getRandomDestination(startLocation: Location): Location | null {
-    const locations = this.tripStore.locations();
-    const availableDestinations = locations.filter(loc => loc.id !== startLocation.id);
-    if (availableDestinations.length > 0) {
-      const randomIndex = Math.floor(Math.random() * availableDestinations.length);
-      return availableDestinations[randomIndex];
-    }
-    return null;
   }
 
   calculateDistanceBetweenLocations(loc1: Location, loc2: Location): number {
