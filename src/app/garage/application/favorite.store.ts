@@ -161,6 +161,28 @@ export const FavoriteStore = signalStore(
               );
 
               if (!favoriteToRemove) {
+                // After a reload, `favoriteVehicleIds` is hydrated from
+                // localStorage but `favorites` is empty (it is only populated
+                // by in-session add successes), so the Favorite id — required
+                // by removeFavorite(id) → DELETE /favorites/{id} — is unknown
+                // here. Best effort: drop the vehicle from favoriteVehicleIds +
+                // localStorage so the UI un-favorites instead of silently
+                // no-opping; deleting the server record (if any) needs a full
+                // favorites refresh first so the id can be resolved.
+                console.warn(
+                  'Favorite not found in store; removed locally. ' +
+                    'Server sync requires loadUserFavorites before removal.',
+                  { userId, vehicleId }
+                );
+                const updatedIds = store.favoriteVehicleIds().filter(
+                  id => id !== vehicleId
+                );
+                // Save to localStorage
+                saveFavoritesToLocalStorage(updatedIds);
+                patchState(store, {
+                  favoriteVehicleIds: updatedIds,
+                  error: null
+                });
                 return of(null);
               }
 
@@ -174,7 +196,8 @@ export const FavoriteStore = signalStore(
                   saveFavoritesToLocalStorage(updatedIds);
                   patchState(store, {
                     favorites: updatedFavorites,
-                    favoriteVehicleIds: updatedIds
+                    favoriteVehicleIds: updatedIds,
+                    error: null
                   });
                 }),
                 catchError((error) => {
@@ -196,7 +219,8 @@ export const FavoriteStore = signalStore(
                   saveFavoritesToLocalStorage(updatedIds);
                   patchState(store, {
                     favorites: updatedFavorites,
-                    favoriteVehicleIds: updatedIds
+                    favoriteVehicleIds: updatedIds,
+                    error: null
                   });
                 }),
                 catchError((error) => {

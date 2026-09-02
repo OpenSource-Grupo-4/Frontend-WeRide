@@ -86,4 +86,58 @@ describe('FavoriteStore', () => {
     expect(store.error()).toBeNull();
     expect(store.favoriteVehicleIds()).toContain('v1');
   }));
+
+  it('clears a stale error when a retried toggle succeeds', fakeAsync(() => {
+    const addFavorite = jasmine.createSpy('addFavorite');
+    let shouldFail = true;
+    addFavorite.and.callFake(() => {
+      if (shouldFail) {
+        shouldFail = false;
+        return throwError(() => new Error('API down'));
+      }
+      return of(createFavorite('v1'));
+    });
+    const store = setup({ addFavorite });
+
+    // First attempt fails and leaves the error set.
+    store.toggleFavorite({ userId: 'user-1', vehicleId: 'v1' });
+    tick();
+    expect(store.error()).toContain('API down');
+
+    // Retry succeeds: the stale error must be cleared so vehicle-card's
+    // delayed check does not roll back a successful toggle.
+    store.toggleFavorite({ userId: 'user-1', vehicleId: 'v1' });
+    tick();
+
+    expect(store.error()).toBeNull();
+    expect(store.favoriteVehicleIds()).toContain('v1');
+    expect(store.favorites().length).toBe(1);
+  }));
+
+  it('removing a favorite not in the in-memory favorites list still removes it from favoriteVehicleIds and localStorage', fakeAsync(() => {
+    const removeFavorite = jasmine.createSpy('removeFavorite').and.returnValue(of(undefined));
+    const store = setup({
+      addFavorite: jasmine.createSpy('addFavorite').and.returnValue(of(createFavorite('v1'))),
+      removeFavorite
+    });
+
+    // Favorite added in a previous session (user-1) and persisted to localStorage.
+    store.toggleFavorite({ userId: 'user-1', vehicleId: 'v1' });
+    tick();
+    expect(store.favoriteVehicleIds()).toContain('v1');
+    expect(store.favorites().length).toBe(1);
+
+    // After a reload `favoriteVehicleIds` is hydrated from localStorage while
+    // `favorites` holds no matching Favorite object (favorites is only
+    // populated by in-session adds). Toggling must still un-favorite the
+    // vehicle instead of silently no-opping: drop the id + localStorage, and
+    // do not attempt a server delete that cannot be addressed without an id.
+    store.toggleFavorite({ userId: 'user-2', vehicleId: 'v1' });
+    tick();
+
+    expect(store.favoriteVehicleIds()).not.toContain('v1');
+    expect(JSON.parse(localStorage.getItem('favoriteVehicleIds') || '[]')).not.toContain('v1');
+    expect(removeFavorite).not.toHaveBeenCalled();
+    expect(store.error()).toBeNull();
+  }));
 });
