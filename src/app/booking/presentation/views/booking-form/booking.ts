@@ -50,13 +50,17 @@ export class BookingFormComponent implements OnInit {
   vehicles: any[] = [];
   locations: LocationResponse[] = [];
 
+  // Fallos de carga de catálogos: se muestran en la UI con opción de reintentar
+  // en lugar de dejar selects vacíos sin explicación.
+  vehiclesLoadFailed = false;
+  locationsLoadFailed = false;
+
   selectedVehicle: string = '';
   startLocationId = '';
   endLocationId = '';
   selectedDate: string = '';
   unlockTime: string = '';
   duration: number = 1;
-  rate: number = 0;
   showSummary: boolean = false;
   smsReminder: boolean = false;
   emailConfirmation: boolean = false;
@@ -86,27 +90,39 @@ export class BookingFormComponent implements OnInit {
   // --- MÉTODOS DE CARGA ---
 
   private loadVehicles(): void {
+    this.vehiclesLoadFailed = false;
     this.vehiclesApi.getAll().subscribe({
       next: (data) => {
         this.vehicles = data;
-        this.updateRate();
       },
       error: (err) => {
         console.error('Error cargando vehículos', err);
-        this.showErrorMessage('Error cargando la lista de vehículos');
+        this.vehiclesLoadFailed = true;
+        this.showErrorMessage('booking.form.loadVehiclesError');
       }
     });
   }
 
   private loadLocations(): void {
+    this.locationsLoadFailed = false;
     this.locationsApi.getAll().subscribe({
       next: locations => {
+        // Solo ubicaciones activas; NUNCA auto-seleccionar una por defecto: si la
+        // carga falla (o no hay ubicaciones) los selects quedan vacíos y el usuario
+        // ve un mensaje de error con reintento en lugar de una reserva equivocada.
         this.locations = locations.filter(location => location.isActive);
-        this.startLocationId ||= this.locations[0]?.id || '';
-        this.endLocationId ||= this.locations[1]?.id || this.locations[0]?.id || '';
       },
-      error: () => this.showErrorMessage('Error cargando la lista de ubicaciones')
+      error: () => {
+        this.locationsLoadFailed = true;
+        this.showErrorMessage('booking.form.loadLocationsError');
+      }
     });
+  }
+
+  /** Vuelve a intentar la carga de catálogos tras un fallo (botón "Reintentar"). */
+  retryLoad(): void {
+    this.loadVehicles();
+    this.loadLocations();
   }
 
   private loadBookingForEdit(bookingId: string): void {
@@ -129,14 +145,11 @@ export class BookingFormComponent implements OnInit {
     this.selectedDate = this.formatDateForInput(new Date(booking.startDate));
     this.unlockTime = this.formatTimeForInput(new Date(booking.startDate));
     this.duration = booking.duration || 1;
-    this.updateRate();
   }
 
   // --- LÓGICA DE FORMULARIO Y API ---
 
   submitBooking() {
-    this.updateRate();
-
     if (this.isEditMode && this.editingBookingId) {
       this.updateBooking();
     } else {
@@ -148,14 +161,11 @@ export class BookingFormComponent implements OnInit {
     const startDateTime = this.combineDateTime(this.selectedDate, this.unlockTime);
     const calculatedCost = this.calculateCost();
 
-    // PENDIENTE backend/UX: startLocationId/endLocationId están
-    // hardcodeados ('loc-A'/'loc-B') porque este formulario no tiene un
-    // selector de ubicaciones reales. El backend real espera Long, así
-    // que crear una reserva contra el backend real fallará (400) hasta
-    // que se construya un selector — eso es un cambio de UX, fuera de
-    // alcance de esta fase. El userId hardcodeado ('1') es inofensivo
-    // contra el backend real (lo ignora y usa el JWT), pero sigue siendo
-    // fijo contra el mock actual.
+    // Las ubicaciones se eligen de la lista real (LocationsApiEndpoint) y ya no
+    // se auto-seleccionan: si no hay ubicaciones o falla su carga, el usuario no
+    // puede enviar (canSubmit false) hasta completar los campos.
+    // El userId hardcodeado ('1') es inofensivo contra el backend real (lo ignora
+    // y usa el JWT), pero sigue siendo fijo contra el mock actual.
     // PAYLOAD COMPLETO (NECESARIO PARA PASAR LA VALIDACIÓN TS DEL FRONTEND)
     const payload: any = {
       vehicleId: Number(this.selectedVehicle),
@@ -231,8 +241,8 @@ export class BookingFormComponent implements OnInit {
   }
 
   saveDraft() {
-    if (!this.selectedVehicle || !this.startLocationId || !this.endLocationId) {
-      this.showErrorMessage('Completa vehículo y ubicaciones antes de guardar');
+    if (!this.canSubmit) {
+      this.showErrorMessage('booking.form.missingFields');
       return;
     }
     this.draftService.saveDraft({
@@ -273,11 +283,35 @@ export class BookingFormComponent implements OnInit {
     return v ? (v.range + ' km' || 'N/A') : '';
   }
 
-  updateRate(): void {
-    if (this.selectedVehicle && this.vehicles.length > 0) {
+  /** Tarifa por minuto del vehículo seleccionado (derivada, siempre al día). */
+  get rate(): number {
+    if (this.selectedVehicle) {
       const vehicle = this.vehicles.find(v => v.id === this.selectedVehicle);
-      this.rate = vehicle ? (vehicle.pricePerMinute || vehicle.rate || 0) : 0;
+      if (vehicle) {
+        return vehicle.pricePerMinute || vehicle.rate || 0;
+      }
     }
+    return 0;
+  }
+
+  // --- GETTERS DE ESTADO DEL FORMULARIO ---
+
+  /** El formulario es válido sólo cuando hay vehículo, ambas ubicaciones, fecha,
+   *  hora y una duración positiva. Controla "Reservar Ahora", "Guardar como
+   *  Borrador" y la vista previa de precio previa al envío. */
+  get canSubmit(): boolean {
+    return !!(this.selectedVehicle && this.startLocationId && this.endLocationId &&
+      this.selectedDate && this.unlockTime && this.duration > 0);
+  }
+
+  /** Vista previa de precio ANTES de confirmar (se muestra cuando canSubmit). */
+  get showPricePreview(): boolean {
+    return this.canSubmit;
+  }
+
+  /** Coste total estimado = tarifa por minuto × duración (en minutos). */
+  calculateCost(): number {
+    return this.rate * this.duration;
   }
 
   // --- UTILIDADES ---
@@ -298,10 +332,6 @@ export class BookingFormComponent implements OnInit {
   private combineDateTime(dateStr: string, timeStr: string): Date {
     // Arregla la construcción de la fecha
     return new Date(`${dateStr}T${timeStr}`);
-  }
-
-  private calculateCost(): number {
-    return this.rate * this.duration;
   }
 
   private formatDateForInput(date: Date): string {

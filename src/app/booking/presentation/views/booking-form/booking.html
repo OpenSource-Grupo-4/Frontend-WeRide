@@ -12,12 +12,18 @@
           </option>
         }
       </select>
+      @if (vehiclesLoadFailed) {
+        <p class="load-error">
+          {{ 'booking.form.loadVehiclesError' | translate }}
+          <button type="button" class="btn-link" (click)="retryLoad()">{{ 'common.retry' | translate }}</button>
+        </p>
+      }
     </div>
 
     <div class="form-group">
-      <label for="start-location">Ubicación de inicio</label>
+      <label for="start-location">{{ 'booking.form.startLocation' | translate }}</label>
       <select id="start-location" [(ngModel)]="startLocationId" name="startLocation" required>
-        <option value="" disabled>Selecciona una ubicación</option>
+        <option value="" disabled>{{ 'booking.form.selectLocation' | translate }}</option>
         @for (location of locations; track location.id) {
           <option [value]="location.id">{{ location.name }} — {{ location.address }}</option>
         }
@@ -25,33 +31,58 @@
     </div>
 
     <div class="form-group">
-      <label for="end-location">Ubicación de destino</label>
+      <label for="end-location">{{ 'booking.form.endLocation' | translate }}</label>
       <select id="end-location" [(ngModel)]="endLocationId" name="endLocation" required>
-        <option value="" disabled>Selecciona una ubicación</option>
+        <option value="" disabled>{{ 'booking.form.selectLocation' | translate }}</option>
         @for (location of locations; track location.id) {
           <option [value]="location.id">{{ location.name }} — {{ location.address }}</option>
         }
       </select>
+      @if (locationsLoadFailed) {
+        <p class="load-error">
+          {{ 'booking.form.loadLocationsError' | translate }}
+          <button type="button" class="btn-link" (click)="retryLoad()">{{ 'common.retry' | translate }}</button>
+        </p>
+      }
     </div>
 
     <div class="form-group">
       <label for="date">{{ 'booking.date' | translate }}</label>
-      <input type="date" id="date" [(ngModel)]="selectedDate" name="date" required />
+      <input type="date" id="date" [(ngModel)]="selectedDate" name="date" required
+             [attr.aria-label]="'booking.date' | translate" />
     </div>
     <div class="form-group">
       <label for="time">{{ 'booking.unlockTime' | translate }}</label>
-      <input type="time" id="time" [(ngModel)]="unlockTime" name="time" required />
+      <input type="time" id="time" [(ngModel)]="unlockTime" name="time" required
+             [attr.aria-label]="'booking.unlockTime' | translate" />
     </div>
     <div class="form-group">
       <label for="duration">{{ 'booking.duration' | translate }}</label>
       <input type="number" id="duration" [(ngModel)]="duration" name="duration" min="1" required />
     </div>
 
+    @if (showPricePreview) {
+      <div class="booking-summary booking-summary--preview">
+        <h3>{{ 'booking.summary.title' | translate }}</h3>
+        <p><strong>{{ 'booking.summary.vehicle' | translate }}:</strong> {{ getVehicleName(selectedVehicle) }}</p>
+        <p><strong>{{ 'booking.summary.type' | translate }}:</strong> {{ getVehicleType(selectedVehicle) }}</p>
+        <p><strong>{{ 'booking.summary.dateTime' | translate }}:</strong> {{ selectedDate }} {{ unlockTime }}</p>
+        <p><strong>{{ 'booking.summary.duration' | translate }}:</strong> {{ duration }} {{ 'booking.summary.minutes' | translate }}</p>
+        <p><strong>{{ 'booking.summary.rate' | translate }}:</strong> ${{ rate }}/minute</p>
+        <p class="preview-total"><strong>{{ 'booking.summary.total' | translate }}:</strong> ${{ calculateCost().toFixed(2) }}</p>
+      </div>
+    }
+
     <button type="submit"
             class="btn-primary"
-            [disabled]="!bookingForm.valid"> {{ 'booking.bookNow' | translate }}
+            [disabled]="!canSubmit"> {{ 'booking.bookNow' | translate }}
     </button>
-    <button type="button" class="btn-secondary" (click)="saveDraft()">{{ 'booking.saveDraft' | translate }}</button>
+    <button type="button" class="btn-secondary" [disabled]="!canSubmit"
+            (click)="saveDraft()">{{ 'booking.saveDraft' | translate }}</button>
+
+    @if (!canSubmit) {
+      <p class="form-hint">{{ 'booking.form.missingFields' | translate }}</p>
+    }
   </form>
 
   @if (showSummary) {

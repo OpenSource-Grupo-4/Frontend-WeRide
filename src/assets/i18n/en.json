@@ -405,6 +405,14 @@
       "extendTime": "Extend time (s/.{cost})",
       "endReservation": "End reservation"
     },
+    "form": {
+      "startLocation": "Start location",
+      "endLocation": "End location",
+      "selectLocation": "Select a location",
+      "missingFields": "Complete vehicle, locations, date and duration to book",
+      "loadVehiclesError": "Error loading the vehicle list",
+      "loadLocationsError": "Error loading the location list"
+    },
     "notifications": {
       "started": {
         "title": "Reservation Started",

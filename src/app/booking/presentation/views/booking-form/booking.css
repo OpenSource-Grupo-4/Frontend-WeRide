@@ -56,6 +56,39 @@
 .btn-secondary:hover {
   background: #e5e7eb;
 }
+.btn-primary:disabled,
+.btn-secondary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.btn-link {
+  background: none;
+  border: none;
+  padding: 0;
+  margin-left: 6px;
+  color: #007bff;
+  font-size: 14px;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.load-error {
+  margin: 8px 0 0;
+  color: #c62828;
+  font-size: 13px;
+}
+.form-hint {
+  margin-top: 12px;
+  color: #6b7280;
+  font-size: 13px;
+}
+.preview-total {
+  font-size: 18px;
+  font-weight: 600;
+  color: #007bff;
+}
+.booking-summary--preview {
+  border: 1px solid #007bff;
+}
 .booking-summary {
   margin-top: 32px;
   background: #f8fafc;
