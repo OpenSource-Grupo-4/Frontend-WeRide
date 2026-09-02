@@ -20,6 +20,7 @@ interface AuthState {
   session: AuthSession | null;
   isLoading: boolean;
   error: string | null;
+  verificationCode: string | null;
   verificationCodeSent: boolean;
   registrationStep: 'phone' | 'verification' | 'details' | 'completed';
 }
@@ -29,6 +30,7 @@ const initialState: AuthState = {
   session: null,
   isLoading: false,
   error: null,
+  verificationCode: null,
   verificationCodeSent: false,
   registrationStep: 'phone'
 };
@@ -154,7 +156,8 @@ export const AuthStore = signalStore(
               tap((sent) => {
                 patchState(store, {
                   isLoading: false,
-                  verificationCodeSent: sent,
+                  verificationCode: sent.code,
+                  verificationCodeSent: true,
                   registrationStep: 'verification'
                 });
               }),

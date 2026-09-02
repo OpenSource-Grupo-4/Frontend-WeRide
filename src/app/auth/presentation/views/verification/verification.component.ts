@@ -30,7 +30,7 @@ export class VerificationComponent implements OnInit {
     const state = navigation?.extras.state as { phone?: string; code?: string } | null;
 
     const phone = state?.phone || '';
-    const code = state?.code || '';
+    const code = state?.code || this.authStore.verificationCode() || '';
 
     if (!phone || !code) {
       this.router.navigate(['/auth/phone-login']);

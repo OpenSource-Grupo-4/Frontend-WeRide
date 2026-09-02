@@ -3,6 +3,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { AuthRepositoryImpl } from './auth-repository.impl';
 import { AuthCredentials } from '../domain/model/auth-credentials.entity';
+import { PhoneCredentials } from '../domain/model/phone-credentials.entity';
 import { RegistrationData } from '../domain/model/registration-data.entity';
 import { AUTH_SESSION_KEY } from './token-storage';
 import { environment } from '../../../environments/environment';
@@ -176,5 +177,84 @@ describe('AuthRepositoryImpl - loginWithGoogle', () => {
 
     expect(receivedError?.message).toBe('Usuario no encontrado');
     httpMock.expectNone(`${environment.apiUrl}${environment.endpoints.authentication}/sign-in`);
+  });
+});
+
+describe('AuthRepositoryImpl - código de verificación unificado', () => {
+  let repository: AuthRepositoryImpl;
+
+  beforeEach(() => {
+    localStorage.removeItem(AUTH_SESSION_KEY);
+    TestBed.configureTestingModule({
+      providers: [
+        AuthRepositoryImpl,
+        provideHttpClient(),
+        provideHttpClientTesting()
+      ]
+    });
+    repository = TestBed.inject(AuthRepositoryImpl);
+  });
+
+  afterEach(() => {
+    localStorage.removeItem(AUTH_SESSION_KEY);
+  });
+
+  it('expone el mismo código que luego valida loginWithPhone', () => {
+    const phone = '+34600123456'; // Juan Pérez (hardcoded)
+    let sentCode: string | undefined;
+
+    repository.sendVerificationCode(phone).subscribe(sent => {
+      sentCode = sent.code;
+      expect(sent.phone).toBe(phone);
+      expect(sent.code).toMatch(/^\d{4}$/);
+    });
+
+    expect(sentCode).toBeDefined();
+
+    let sessionReceived = false;
+    repository.loginWithPhone(new PhoneCredentials(phone, sentCode!)).subscribe({
+      next: () => (sessionReceived = true),
+      error: () => fail('loginWithPhone debería aceptar el código enviado')
+    });
+
+    expect(sessionReceived).toBeTrue();
+  });
+
+  it('rechaza un código distinto al generado', () => {
+    const phone = '+34600123456';
+    let sentCode: string | undefined;
+
+    repository.sendVerificationCode(phone).subscribe(sent => {
+      sentCode = sent.code;
+    });
+
+    expect(sentCode).toBeDefined();
+    const wrongCode = sentCode === '0000' ? '0001' : '0000';
+
+    let receivedError: Error | undefined;
+    repository.loginWithPhone(new PhoneCredentials(phone, wrongCode)).subscribe({
+      error: (err) => (receivedError = err)
+    });
+
+    expect(receivedError?.message).toBe('Código de verificación inválido');
+  });
+
+  it('verifyCode confirma únicamente el código generado', () => {
+    const phone = '+34600123456';
+    let sentCode: string | undefined;
+
+    repository.sendVerificationCode(phone).subscribe(sent => {
+      sentCode = sent.code;
+    });
+
+    expect(sentCode).toBeDefined();
+
+    let validResult: boolean | undefined;
+    repository.verifyCode(phone, sentCode!).subscribe(result => (validResult = result));
+    expect(validResult).toBeTrue();
+
+    let wrongResult: boolean | undefined;
+    repository.verifyCode(phone, '9999').subscribe(result => (wrongResult = result));
+    expect(wrongResult).toBeFalse();
   });
 });

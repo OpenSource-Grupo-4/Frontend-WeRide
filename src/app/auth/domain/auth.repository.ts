@@ -11,7 +11,7 @@ export abstract class AuthRepository {
   abstract loginWithGoogle(account: { email: string }): Observable<AuthSession>;
   abstract loginAsGuest(): Observable<AuthSession>;
   abstract register(data: RegistrationData): Observable<User>;
-  abstract sendVerificationCode(phone: string): Observable<boolean>;
+  abstract sendVerificationCode(phone: string): Observable<{ phone: string; code: string }>;
   abstract verifyCode(phone: string, code: string): Observable<boolean>;
   abstract logout(): Observable<void>;
   abstract getCurrentUser(): Observable<User | null>;

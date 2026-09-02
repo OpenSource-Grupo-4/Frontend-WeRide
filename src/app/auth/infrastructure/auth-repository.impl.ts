@@ -172,11 +172,11 @@ export class AuthRepositoryImpl extends AuthRepository {
     return of(userEntity);
   }
 
-  sendVerificationCode(phone: string): Observable<boolean> {
+  sendVerificationCode(phone: string): Observable<{ phone: string; code: string }> {
     const code = Math.floor(1000 + Math.random() * 9000).toString();
     this.verificationCodes.set(phone, code);
     console.log(`Código de verificación para ${phone}: ${code}`);
-    return of(true);
+    return of({ phone, code });
   }
 
   verifyCode(phone: string, code: string): Observable<boolean> {

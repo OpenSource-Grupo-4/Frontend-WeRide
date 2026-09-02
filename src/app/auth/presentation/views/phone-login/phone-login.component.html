@@ -50,7 +50,7 @@
         <p>{{ 'auth.phoneLogin.codeSent' | translate }} {{ prefix() }}{{ phone() }}</p>
 
         <div class="code-display">
-          <span class="code">{{ verificationCode() }}</span>
+          <span class="code">{{ storeVerificationCode() }}</span>
           <button class="copy-btn" (click)="copyCode()">
             {{ copySuccess() ? ('auth.phoneLogin.copied' | translate) : ('auth.phoneLogin.copy' | translate) }}
           </button>

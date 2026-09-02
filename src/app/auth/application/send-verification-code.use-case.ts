@@ -8,7 +8,7 @@ import { AuthRepository } from '../domain/auth.repository';
 export class SendVerificationCodeUseCase {
   constructor(private authRepository: AuthRepository) {}
 
-  execute(phone: string): Observable<boolean> {
+  execute(phone: string): Observable<{ phone: string; code: string }> {
     return this.authRepository.sendVerificationCode(phone);
   }
 }

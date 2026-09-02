@@ -21,16 +21,13 @@ export class PhoneLoginComponent {
   prefix = signal('+51');
   phone = signal('');
   showModal = signal(false);
-  verificationCode = signal('');
   copySuccess = signal(false);
   phoneError = signal('');
 
+  readonly storeVerificationCode = this.authStore.verificationCode;
+
   goBack() {
     this.router.navigate(['/auth/login']);
-  }
-
-  generateVerificationCode(): string {
-    return Math.floor(1000 + Math.random() * 9000).toString();
   }
 
   isPhoneInvalid(): boolean {
@@ -46,8 +43,6 @@ export class PhoneLoginComponent {
     this.phoneError.set('');
     const fullPhone = this.prefix() + this.phone();
     if (fullPhone.length >= 10) {
-      this.verificationCode.set(this.generateVerificationCode());
-      console.log('Código de verificación:', this.verificationCode());
       this.authStore.sendVerificationCode(fullPhone);
       this.showModal.set(true);
       this.copySuccess.set(false);
@@ -56,7 +51,7 @@ export class PhoneLoginComponent {
 
   async copyCode() {
     try {
-      await navigator.clipboard.writeText(this.verificationCode());
+      await navigator.clipboard.writeText(this.storeVerificationCode() ?? '');
       this.copySuccess.set(true);
       setTimeout(() => this.copySuccess.set(false), 2000);
     } catch (err) {
@@ -73,7 +68,7 @@ export class PhoneLoginComponent {
     this.router.navigate(['/auth/verification'], {
       state: {
         phone: this.prefix() + this.phone(),
-        code: this.verificationCode()
+        code: this.storeVerificationCode()
       }
     });
   }
