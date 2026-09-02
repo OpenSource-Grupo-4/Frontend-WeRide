@@ -97,14 +97,14 @@ describe('Home', () => {
   });
 
   it('shows a login-required message instead of navigating to a feature when guest', () => {
-    component.onFeatureClick({ route: '/plan' });
+    component.onFeatureClick({ id: 'plan', icon: '', titleKey: '', descriptionKey: '', route: '/plan', order: 1 });
     expect(component.guestBookingMessage()).toBeTrue();
     expect(routerSpy.navigate).not.toHaveBeenCalled();
   });
 
   it('navigates to the feature route when authenticated', () => {
     authStore.session.set({ isAuthenticated: true });
-    component.onFeatureClick({ route: '/plan' });
+    component.onFeatureClick({ id: 'plan', icon: '', titleKey: '', descriptionKey: '', route: '/plan', order: 1 });
     expect(routerSpy.navigate).toHaveBeenCalledWith(['/plan']);
   });
 
@@ -113,6 +113,22 @@ describe('Home', () => {
     expect(component.guestBookingMessage()).toBeTrue();
 
     component.dismissGuestMessage();
+    expect(component.guestBookingMessage()).toBeFalse();
+  });
+
+  it('does nothing when a feature card has no route', () => {
+    component.onFeatureClick({ id: 'x', route: undefined } as any);
+    expect(component.guestBookingMessage()).toBeFalse();
+    expect(routerSpy.navigate).not.toHaveBeenCalled();
+  });
+
+  it('clears the guest message when the session becomes authenticated', () => {
+    component.navigateToGarage();
+    expect(component.guestBookingMessage()).toBeTrue();
+
+    authStore.session.set({ isAuthenticated: true });
+    fixture.detectChanges();
+
     expect(component.guestBookingMessage()).toBeFalse();
   });
 

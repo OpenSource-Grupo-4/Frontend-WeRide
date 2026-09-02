@@ -85,7 +85,7 @@
   <section class="quick-actions">
     <h2>{{ 'home.quickActions' | translate }}</h2>
     <div class="action-buttons">
-      <button class="btn-primary" (click)="navigateToVehicleStatus()">
+      <button class="btn-primary" type="button" (click)="navigateToVehicleStatus()">
         <mat-icon>lock_open</mat-icon>
         {{ 'home.actions.checkStatus' | translate }}
       </button>
@@ -93,7 +93,7 @@
         <mat-icon>schedule</mat-icon>
         {{ 'home.actions.schedule' | translate }}
       </button>
-      <button class="btn-tertiary" (click)="navigateToBookings()">
+      <button class="btn-tertiary" type="button" (click)="navigateToBookings()">
         <mat-icon>book_online</mat-icon>
         {{ 'home.actions.viewBookings' | translate }}
       </button>

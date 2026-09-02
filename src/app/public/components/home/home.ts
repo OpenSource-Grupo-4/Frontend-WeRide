@@ -1,4 +1,4 @@
-import { Component, inject, computed, signal } from '@angular/core';
+import { Component, inject, computed, signal, effect } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -6,7 +6,7 @@ import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { ActiveBookingService } from '../../../booking/application/active-booking.service';
 import { AuthStore } from '../../../auth/application/auth.store';
-import { HomeStore } from '../../application/home.store';
+import { HomeStore, FeatureCard } from '../../application/home.store';
 import { SkeletonLoaderComponent } from '../skeleton-loader/skeleton-loader';
 import { ErrorStateComponent } from '../error-state/error-state';
 import { ActiveBookingCardComponent } from '../active-booking-card/active-booking-card';
@@ -39,6 +39,14 @@ export class Home {
 
   readonly activeBooking = computed(() => this.activeBookingService.getActiveBooking());
   readonly guestBookingMessage = signal(false);
+
+  constructor() {
+    effect(() => {
+      if (this.authStore.session()?.isAuthenticated) {
+        this.guestBookingMessage.set(false);
+      }
+    });
+  }
 
   onRetry(): void {
     this.homeStore.retry();
@@ -80,7 +88,8 @@ export class Home {
     this.requireAuth('/schedule-unlock');
   }
 
-  onFeatureClick(feature: { route: string }): void {
+  onFeatureClick(feature: FeatureCard): void {
+    if (!feature.route) return; // no route → nothing to gate/navigate
     this.requireAuth(feature.route);
   }
 }
