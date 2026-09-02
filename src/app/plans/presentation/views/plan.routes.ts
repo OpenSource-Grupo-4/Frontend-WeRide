@@ -12,6 +12,10 @@ export const PLAN_ROUTES: Routes = [
       {
         path: 'payment/:id',
         loadComponent: () => import('./plan-payment/plan-payment').then(m => m.PlanPayment)
+      },
+      {
+        path: 'payment-success',
+        loadComponent: () => import('./payment-success/payment-success').then(m => m.PaymentSuccess)
       }
     ]
   }

@@ -7,9 +7,11 @@ import {MatInputModule} from '@angular/material/input';
 import {MatButtonModule} from '@angular/material/button';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import {MatIconModule} from '@angular/material/icon';
-import {TranslateModule} from '@ngx-translate/core';
+import {MatSnackBar} from '@angular/material/snack-bar';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
 import {Plan} from '../../../domain/model/plan.entity';
 import {PlanStore} from '../../../application/plan.store';
+import {PaymentsApiEndpoint} from '../../../infrastructure/payments-api-endpoint';
 import {Observable, Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
 
@@ -33,6 +35,9 @@ export class PlanPayment implements OnInit, OnDestroy {
   private readonly store = inject(PlanStore);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  private readonly paymentsApi = inject(PaymentsApiEndpoint);
+  private readonly snackBar = inject(MatSnackBar);
+  private readonly translate = inject(TranslateService);
   private readonly destroy$ = new Subject<void>();
   protected readonly length = length;
 
@@ -115,19 +120,31 @@ export class PlanPayment implements OnInit, OnDestroy {
   }
 
   endPayment(): void {
-    if (this.isFormValid()) {
-      console.log('Procesando pago...', {
-        planId: this.selectedPlan?.id,
-        cardNumber: this.cardNumber,
-        expiryDate: this.expiryDate,
-        cvv: this.cvv,
-        saveCard: this.saveCard,
-        billingAddress: this.billingAddress,
-        total: this.total
-      });
-
-      this.router.navigate(['/payment-success']);
+    if (!this.isFormValid() || !this.selectedPlan) {
+      return;
     }
+
+    const payload = {
+      planId: this.selectedPlan.id,
+      amount: this.total,
+      currency: this.selectedPlan.currency,
+      paymentMethod: 'card',
+      cardLast4: this.cardNumber.replace(/\s/g, '').slice(-4),
+      billingAddress: this.billingAddress,
+      saveCard: this.saveCard
+    };
+
+    this.paymentsApi.create(payload).subscribe({
+      next: () => this.router.navigate(['/plan/payment-success']),
+      error: (error) => {
+        console.error('Error al procesar el pago:', error);
+        this.snackBar.open(
+          this.translate.instant('plans.payment.error'),
+          this.translate.instant('common.close'),
+          { duration: 4000 }
+        );
+      }
+    });
   }
 
 }

@@ -521,7 +521,11 @@
       "finalizePayment": "Finalize Payment",
       "termsText": "By completing the purchase, you accept our",
       "termsOfUse": "terms of use",
-      "privacyPolicy": "Privacy Policy"
+      "privacyPolicy": "Privacy Policy",
+      "successTitle": "Payment successful",
+      "successMessage": "Your plan has been activated. Enjoy your benefits!",
+      "error": "Error processing payment. Please try again.",
+      "backToPlans": "Back to plans"
     }
   },
   "home": {
