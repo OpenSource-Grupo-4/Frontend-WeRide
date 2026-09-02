@@ -112,7 +112,7 @@ describe('HeaderComponent user identity', () => {
     expect(routerSpy.navigate).toHaveBeenCalledWith(['/auth/login']);
   });
 
-  it('does not call the notifications API when the user is a guest', () => {
+  it('does not call the notifications API when there is no current user', () => {
     authStore.currentUser.set(null);
     notificationsApi.getAll.calls.reset();
     fixture.detectChanges();
@@ -122,7 +122,7 @@ describe('HeaderComponent user identity', () => {
     expect(notificationsApi.getAll).not.toHaveBeenCalled();
   });
 
-  it('clears notifications and logs when the API call fails', () => {
+  it('keeps existing notifications and logs when the API call fails', () => {
     notificationsApi.getAll.and.returnValue(throwError(() => new Error('HTTP 500')));
     component.notifications.set([{ id: 'n1' } as any]);
     spyOn(console, 'error');
@@ -130,14 +130,16 @@ describe('HeaderComponent user identity', () => {
     component.loadNotifications();
 
     expect(console.error).toHaveBeenCalledWith('Error loading notifications:', jasmine.any(Error));
-    expect(component.notifications()).toEqual([]);
+    expect(component.notifications()).toEqual([{ id: 'n1' } as any]);
   });
 
-  it('shows the textual empty state when there are no notifications', () => {
+  it('shows the textual empty state when there are no notifications', async () => {
     component.notifications.set([]);
 
     const notificationButton = fixture.nativeElement.querySelector('.notification-btn');
     notificationButton.click();
+    fixture.detectChanges();
+    await fixture.whenStable();
     fixture.detectChanges();
 
     const emptyState = document.querySelector('.notification-empty');

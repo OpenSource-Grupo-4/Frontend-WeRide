@@ -80,7 +80,7 @@ describe('Navbar', () => {
     expect(routerSpy.navigate).toHaveBeenCalledWith(['/auth/login']);
   });
 
-  it('does not call the notifications API when the user is a guest', () => {
+  it('does not call the notifications API when there is no current user', () => {
     authStore.currentUser.set(null);
     notificationsApi.getAll.calls.reset();
 
@@ -89,7 +89,17 @@ describe('Navbar', () => {
     expect(notificationsApi.getAll).not.toHaveBeenCalled();
   });
 
-  it('clears notifications and logs when the API call fails', () => {
+  it('does not call the notifications API for a guest session (guest id, not authenticated)', () => {
+    authStore.currentUser.set({ id: 'guest', name: 'Invitado' } as any);
+    authStore.session.set({ isAuthenticated: false });
+    notificationsApi.getAll.calls.reset();
+
+    component.loadNotifications();
+
+    expect(notificationsApi.getAll).not.toHaveBeenCalled();
+  });
+
+  it('keeps existing notifications and logs when the API call fails', () => {
     notificationsApi.getAll.and.returnValue(throwError(() => new Error('HTTP 500')));
     component.notifications.set([{ id: 'n1' } as any]);
     spyOn(console, 'error');
@@ -97,7 +107,7 @@ describe('Navbar', () => {
     component.loadNotifications();
 
     expect(console.error).toHaveBeenCalledWith('Error loading notifications:', jasmine.any(Error));
-    expect(component.notifications()).toEqual([]);
+    expect(component.notifications()).toEqual([{ id: 'n1' } as any]);
   });
 
   it('shows the textual empty state when there are no notifications and the menu is open', () => {

@@ -66,7 +66,6 @@ export class HeaderComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error loading notifications:', error);
-        this.notifications.set([]);
       }
     });
   }
