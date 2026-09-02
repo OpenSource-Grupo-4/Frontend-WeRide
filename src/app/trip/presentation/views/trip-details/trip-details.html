@@ -2,13 +2,13 @@
   @if (isLoading()) {
   <div class="loading-state">
     <mat-spinner diameter="50"></mat-spinner>
-    <p>Cargando detalles del viaje...</p>
+    <p>{{ 'trip.loadingTrip' | translate }}</p>
   </div>
   } @if (!isLoading() && relatedBooking()) {
   <mat-card class="booking-card">
     <mat-card-header>
       <mat-icon mat-card-avatar>confirmation_number</mat-icon>
-      <mat-card-title>Estado de Reserva</mat-card-title>
+      <mat-card-title>{{ 'trip.bookingStatusTitle' | translate }}</mat-card-title>
     </mat-card-header>
 
     <mat-card-content>
@@ -61,7 +61,7 @@
       } @if (relatedBooking()?.activationStatus === 'active') {
       <div class="activation-notice">
         <mat-icon>check_circle</mat-icon>
-        <p>Tu reserva está activa y en uso</p>
+        <p>{{ 'trip.activeBookingInUse' | translate }}</p>
       </div>
       }
     </mat-card-content>
@@ -74,7 +74,7 @@
         <h3>{{ getVehicleType() }}</h3>
         <p>
           <strong>{{ 'trip.location' | translate }}:</strong>
-          {{ currentLocation()?.address || 'Ubicación actual' }}
+          {{ currentLocation()?.address || ('trip.currentLocation' | translate) }}
         </p>
         <p>
           <strong>{{ 'garage.vehicle.battery' | translate }}:</strong>
@@ -125,7 +125,7 @@
   <mat-card class="no-trip-card">
     <div class="no-trip-content">
       <mat-icon class="empty-icon">event_busy</mat-icon>
-      <h2>Aún no tienes un viaje en curso en este momento, quizás deseas...</h2>
+      <h2>{{ 'trip.noActiveTripEmpty' | translate }}</h2>
 
       <div class="no-trip-actions">
         <button
@@ -135,7 +135,7 @@
           (click)="goToGarage()"
         >
           <mat-icon>directions_bike</mat-icon>
-          Reservar un vehículo ahora
+          {{ 'trip.bookVehicleNow' | translate }}
         </button>
 
         <button

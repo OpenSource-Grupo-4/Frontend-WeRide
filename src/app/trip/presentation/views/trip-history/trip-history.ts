@@ -3,7 +3,7 @@ import { CommonModule} from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import {MatIconButton} from '@angular/material/button';
 import {Router} from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { forkJoin } from 'rxjs';
 import { TripService } from '../../../../core/services/trip.service';
 import { VehicleService } from '../../../../core/services/vehicle.service';
@@ -32,6 +32,7 @@ export class TripHistory implements OnInit {
   private router = inject(Router);
   private tripService = inject(TripService);
   private vehicleService = inject(VehicleService);
+  private translate = inject(TranslateService);
 
   trips: TripDisplay[] = [];
   loading = false;
@@ -66,7 +67,7 @@ export class TripHistory implements OnInit {
               return {
                 route: this.formatRoute(trip.route),
                 date: formattedDate,
-                vehicle: vehicle ? `${vehicle.brand} ${vehicle.model}` : 'Vehículo no encontrado',
+                vehicle: vehicle ? `${vehicle.brand} ${vehicle.model}` : this.translate.instant('trip.vehicleNotFound'),
                 duration: duration,
                 distance: `${trip.distance} km`,
                 id: trip.id,
@@ -98,14 +99,22 @@ export class TripHistory implements OnInit {
   }
 
   formatDate(date: Date): string {
-    const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sept', 'Oct', 'Nov', 'Dic'];
-    const day = date.getDate();
-    const month = months[date.getMonth()];
-    const hours = date.getHours().toString().padStart(2, '0');
-    const minutes = date.getMinutes().toString().padStart(2, '0');
-    const period = date.getHours() >= 12 ? 'PM' : 'AM';
+    const lang = this.translate.currentLang || 'es';
+    let formatted: string;
 
-    return `${day} ${month}, ${hours}:${minutes} ${period}`;
+    try {
+      const datePart = date.toLocaleDateString(lang, { day: 'numeric', month: 'short' });
+      const timePart = date.toLocaleTimeString(lang, { hour: '2-digit', minute: '2-digit' });
+      formatted = `${datePart}, ${timePart}`;
+    } catch {
+      // Fallback for unsupported locales: keep the same shape as the main path.
+      const fallbackLang = lang.startsWith('es') ? 'es-ES' : 'en-US';
+      const datePart = date.toLocaleDateString(fallbackLang, { day: 'numeric', month: 'short' });
+      const timePart = date.toLocaleTimeString(fallbackLang, { hour: '2-digit', minute: '2-digit' });
+      formatted = `${datePart}, ${timePart}`;
+    }
+
+    return formatted;
   }
 
   printReceipt(trip: TripDisplay) {

@@ -5,7 +5,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
 import { TripStore } from '../../../application/trip.store';
 import { BookingStore } from '../../../../booking/application/booking.store';
@@ -36,6 +36,7 @@ export class TripDetails implements OnInit, OnDestroy {
   private bookingStore = inject(BookingStore);
   private activeBookingService = inject(ActiveBookingService);
   private tripInitializer = inject(TripInitializerService);
+  private translate = inject(TranslateService);
   private destroy$ = new Subject<void>();
 
   isActiveTrip = computed(() => this.tripStore.isActiveTrip());
@@ -47,7 +48,7 @@ export class TripDetails implements OnInit, OnDestroy {
 
   elapsedTime = signal<string>('00:00');
   remainingTime = signal<string>('00:00');
-  extraTime = signal<string>('Aún no sobrepasas tu tiempo');
+  extraTime = signal<string>(this.translate.instant('trip.extraTimeDefault'));
   rating = signal<number>(0);
 
   relatedBooking = signal<Booking | null>(null);
@@ -120,25 +121,28 @@ export class TripDetails implements OnInit, OnDestroy {
       const remainingMinutes = Math.floor(remaining / 60000);
       const remainingSeconds = Math.floor((remaining % 60000) / 1000);
       this.remainingTime.set(`${remainingMinutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')} min`);
-      this.extraTime.set('Aún no sobrepasas tu tiempo');
+      this.extraTime.set(this.translate.instant('trip.extraTimeDefault'));
     } else {
       const overtimeMinutes = Math.floor(Math.abs(remaining) / 60000);
       const overtimeSeconds = Math.floor((Math.abs(remaining) % 60000) / 1000);
       this.remainingTime.set('00:00 min');
-      this.extraTime.set(`Tiempo extra: ${overtimeMinutes.toString().padStart(2, '0')}:${overtimeSeconds.toString().padStart(2, '0')} min`);
+      this.extraTime.set(this.translate.instant('trip.extraTimeValue', {
+        time: `${overtimeMinutes.toString().padStart(2, '0')}:${overtimeSeconds.toString().padStart(2, '0')} min`
+      }));
     }
   }
 
   getVehicleType(): string {
     const vehicle = this.currentVehicle();
-    if (!vehicle) return 'Electric Scooter';
+    if (!vehicle) return this.translate.instant('trip.electricScooter');
 
     const typeMap: { [key: string]: string } = {
-      'electric_scooter': 'Scooter Eléctrico',
-      'bike': 'Bicicleta',
-      'electric_bike': 'Bicicleta Eléctrica'
+      'electric_scooter': 'trip.electricScooter',
+      'bike': 'garage.vehicle.types.bike',
+      'electric_bike': 'garage.vehicle.types.electric_bike'
     };
-    return typeMap[vehicle.type] || 'Electric Scooter';
+    const key = typeMap[vehicle.type] || 'trip.electricScooter';
+    return this.translate.instant(key);
   }
   goToScheduleBooking() {
     this.router.navigate(['/garage']);
@@ -190,12 +194,12 @@ export class TripDetails implements OnInit, OnDestroy {
 
   getBookingStatusText(status?: BookingActivationStatus): string {
     const textMap: { [key: string]: string } = {
-      'scheduled': 'Programada',
-      'active': 'Activa',
-      'completed': 'Completada',
-      'cancelled': 'Cancelada'
+      'scheduled': 'booking.status.scheduled',
+      'active': 'booking.status.active',
+      'completed': 'booking.status.completed',
+      'cancelled': 'booking.status.cancelled'
     };
-    return textMap[status || 'scheduled'];
+    return this.translate.instant(textMap[status || 'scheduled']);
   }
 
   getBookingStatusClass(status?: BookingActivationStatus): string {
