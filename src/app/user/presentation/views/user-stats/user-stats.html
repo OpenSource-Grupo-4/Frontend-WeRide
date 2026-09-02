@@ -15,22 +15,22 @@
     </div>
     <div class="stats-container">
       <div class="stat-item">
-        <p class="stat-value">{{ user.statistics.totalTrips }}</p>
+        <p class="stat-value">{{ safeStats(user).totalTrips }}</p>
         <span class="stat-label">{{ 'user.stats.trips' | translate }}</span>
       </div>
 
       <div class="stat-item">
-        <p class="stat-value">{{ user.statistics.totalDistance | number: '1.0-0' }}</p>
+        <p class="stat-value">{{ safeStats(user).totalDistance | number: '1.0-0' }}</p>
         <span class="stat-label">{{ 'user.stats.meters' | translate }}</span>
       </div>
 
       <div class="stat-item">
-        <p class="stat-value">{{ user.statistics.totalSpent | currency: '$' }}</p>
+        <p class="stat-value">{{ safeStats(user).totalSpent | currency: '$' }}</p>
         <span class="stat-label">{{ 'user.stats.totalSpent' | translate }}</span>
       </div>
 
       <div class="stat-item">
-        <p class="stat-value">{{ user.statistics.averageRating | number: '1.0-0' }}</p>
+        <p class="stat-value">{{ safeStats(user).averageRating | number: '1.0-0' }}</p>
         <span class="stat-label">{{ 'user.stats.rating' | translate }}</span>
       </div>
     </div>
