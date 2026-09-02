@@ -1,7 +1,7 @@
-//deploy actual (Render) = https://db-weride-4.onrender.com/api/v1
+// dev: '/api/v1' is proxied by the dev server to https://db-weride-4.onrender.com (see proxy.conf.json)
 export const environment = {
   production: false,
-  apiUrl: 'http://localhost:8080/api/v1',
+  apiUrl: '/api/v1',
   endpoints: {
     authentication: '/authentication',
     profiles: '/profiles',

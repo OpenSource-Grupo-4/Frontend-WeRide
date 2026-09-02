@@ -3,9 +3,6 @@
     "target": "https://db-weride-4.onrender.com",
     "secure": true,
     "changeOrigin": true,
-    "logLevel": "debug",
-    "pathRewrite": {
-      "^/api": ""
-    }
+    "logLevel": "debug"
   }
 }

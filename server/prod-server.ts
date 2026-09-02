@@ -23,7 +23,9 @@ const router = jsonServer.router(dbFile);
 const middlewares = jsonServer.defaults({
   noCors: true
 });
-app.use('/api', middlewares, router);
+// Mount json-server under /api/v1 so requests like /api/v1/vehicles resolve against db.json,
+// mirroring the live backend layout (https://db-weride-4.onrender.com/api/v1).
+app.use('/api/v1', middlewares, router);
 
 app.use((req, res) => {
   res.sendFile(path.join(distFolder, 'index.html'));
