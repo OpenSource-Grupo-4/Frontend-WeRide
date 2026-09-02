@@ -101,7 +101,7 @@
 
     <button
       class="finalize-btn"
-      [disabled]="!isFormValid()"
+      [disabled]="!isFormValid() || submitting"
       (click)="endPayment()"
     >
       {{ 'plans.payment.finalizePayment' | translate }} $/ {{ total.toFixed(2) }}

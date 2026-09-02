@@ -53,6 +53,7 @@ export class PlanPayment implements OnInit, OnDestroy {
   subtotal = 0;
   discount = 0;
   total = 0;
+  submitting = false;
 
   ngOnInit(): void {
     const planId = this.route.snapshot.paramMap.get('id');
@@ -120,13 +121,15 @@ export class PlanPayment implements OnInit, OnDestroy {
   }
 
   endPayment(): void {
-    if (!this.isFormValid() || !this.selectedPlan) {
+    if (!this.isFormValid() || !this.selectedPlan || this.submitting) {
       return;
     }
 
+    this.submitting = true;
+
     const payload = {
       planId: this.selectedPlan.id,
-      amount: this.total,
+      amount: Math.round(this.total * 100) / 100,
       currency: this.selectedPlan.currency,
       paymentMethod: 'card',
       cardLast4: this.cardNumber.replace(/\s/g, '').slice(-4),
@@ -135,8 +138,12 @@ export class PlanPayment implements OnInit, OnDestroy {
     };
 
     this.paymentsApi.create(payload).subscribe({
-      next: () => this.router.navigate(['/plan/payment-success']),
+      next: () => {
+        this.submitting = false;
+        this.router.navigate(['/plan/payment-success']);
+      },
       error: (error) => {
+        this.submitting = false;
         console.error('Error al procesar el pago:', error);
         this.snackBar.open(
           this.translate.instant('plans.payment.error'),

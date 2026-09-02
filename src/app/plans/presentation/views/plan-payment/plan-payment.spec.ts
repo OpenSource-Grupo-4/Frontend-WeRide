@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
-import { Observable, of, throwError } from 'rxjs';
+import { Observable, of, Subject, throwError } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 
@@ -104,10 +104,48 @@ describe('PlanPayment', () => {
 
     expect(paymentsApi.create).toHaveBeenCalledWith(jasmine.objectContaining({
       planId: 'plan-1',
-      amount: jasmine.any(Number),
+      amount: 44.99,
       paymentMethod: 'card'
     }));
+
+    const payload = (paymentsApi.create as jasmine.Spy).calls.mostRecent().args[0];
+    expect(payload.cardNumber).toBeUndefined();
+    expect(payload.cvv).toBeUndefined();
+    expect(payload.expiryDate).toBeUndefined();
+    expect(payload.cardLast4).toBeDefined();
+    expect(payload.cardLast4).toBe('4242');
+
     expect(routerSpy.navigate).toHaveBeenCalledWith(['/plan/payment-success']);
+    expect(component.submitting).toBeFalse();
+  });
+
+  it('does not submit or navigate when no plan is selected even if the form is valid', () => {
+    paymentsApi.create.and.returnValue(of({ id: 'p1' }));
+    fillValidForm(component);
+    component.selectedPlan = null;
+
+    component.endPayment();
+
+    expect(paymentsApi.create).not.toHaveBeenCalled();
+    expect(routerSpy.navigate).not.toHaveBeenCalled();
+  });
+
+  it('ignores a second submit while a payment request is still in flight', () => {
+    const deferred = new Subject<{ id: string }>();
+    paymentsApi.create.and.returnValue(deferred.asObservable());
+    fillValidForm(component);
+
+    component.endPayment();
+    component.endPayment();
+
+    expect(paymentsApi.create).toHaveBeenCalledTimes(1);
+    expect(component.submitting).toBeTrue();
+
+    deferred.next({ id: 'p1' });
+    deferred.complete();
+
+    expect(routerSpy.navigate).toHaveBeenCalledWith(['/plan/payment-success']);
+    expect(component.submitting).toBeFalse();
   });
 
   it('does not submit or navigate when the form is invalid', () => {
