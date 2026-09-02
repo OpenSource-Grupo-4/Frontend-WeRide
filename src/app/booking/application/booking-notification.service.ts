@@ -9,7 +9,7 @@ import { AuthStore } from '../../auth/application/auth.store';
 import { Booking } from '../domain/model/booking.entity';
 import { toDomainBooking } from '../infraestructure/booking-assembler';
 import { BookingEndingModal } from '../presentation/views/booking-ending-modal/booking-ending-modal';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, Subscription } from 'rxjs';
 
 interface NotificationState {
   notifiedStartIds: Set<string>;
@@ -31,6 +31,9 @@ export class BookingNotificationService implements OnDestroy {
 
   private checkInterval?: number;
   private isMonitoring = false;
+  private stopped = false;
+  private fetchInFlight = false;
+  private fetchSub?: Subscription;
   private readonly CHECK_INTERVAL_MS = 60000; // 60 seconds
   private readonly EXPIRATION_WARNING_MINUTES = 5;
 
@@ -50,6 +53,7 @@ export class BookingNotificationService implements OnDestroy {
     }
 
     this.isMonitoring = true;
+    this.stopped = false;
     this.checkActiveBookings();
     this.checkInterval = window.setInterval(() => this.checkActiveBookings(), this.CHECK_INTERVAL_MS);
   }
@@ -58,11 +62,15 @@ export class BookingNotificationService implements OnDestroy {
    * Stop monitoring bookings
    */
   stopMonitoring(): void {
+    this.stopped = true;
     if (this.checkInterval) {
       clearInterval(this.checkInterval);
       this.checkInterval = undefined;
     }
     this.isMonitoring = false;
+    this.fetchSub?.unsubscribe();
+    this.fetchSub = undefined;
+    this.fetchInFlight = false;
     this.resetState();
   }
 
@@ -71,14 +79,25 @@ export class BookingNotificationService implements OnDestroy {
    * No-ops for unauthenticated users or when there is no current user.
    */
   private checkActiveBookings(): void {
+    if (this.fetchInFlight) {
+      return;
+    }
+
     const session = this.authStore.session();
     const userId = this.authStore.currentUser()?.id;
     if (!session?.isAuthenticated || !userId) {
       return;
     }
 
-    this.bookingsApi.getByUserId(userId).subscribe({
+    this.fetchInFlight = true;
+    this.fetchSub?.unsubscribe();
+    this.fetchSub = this.bookingsApi.getByUserId(userId).subscribe({
       next: (bookings) => {
+        this.fetchSub = undefined;
+        this.fetchInFlight = false;
+        if (this.stopped) {
+          return;
+        }
         const now = new Date();
         for (const booking of bookings) {
           const domainBooking = toDomainBooking(booking);
@@ -87,7 +106,11 @@ export class BookingNotificationService implements OnDestroy {
           this.checkBookingExpired(domainBooking, now);
         }
       },
-      error: (error) => console.error('Booking notification check failed:', error)
+      error: (error) => {
+        this.fetchSub = undefined;
+        this.fetchInFlight = false;
+        console.error('Booking notification check failed:', error);
+      }
     });
   }
 

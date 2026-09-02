@@ -1,7 +1,7 @@
 import { fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { signal, WritableSignal } from '@angular/core';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
-import { Observable, of } from 'rxjs';
+import { Observable, of, Subject } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { BookingNotificationService } from './booking-notification.service';
@@ -134,5 +134,90 @@ describe('BookingNotificationService', () => {
     expect((service as any).checkBookingStart).toHaveBeenCalledWith(jasmine.any(Booking), jasmine.any(Date));
     expect((service as any).checkBookingExpiring).toHaveBeenCalledWith(jasmine.any(Booking), jasmine.any(Date));
     expect((service as any).checkBookingExpired).toHaveBeenCalledWith(jasmine.any(Booking), jasmine.any(Date));
+  }));
+
+  it('does not run checks when a response arrives after stopMonitoring', fakeAsync(() => {
+    const booking: BookingResponse = {
+      id: 'b-late',
+      userId: 'user-1',
+      vehicleId: 'v-1',
+      startLocationId: 'sl-1',
+      endLocationId: 'el-1',
+      reservedAt: '2026-01-01T10:00:00.000Z',
+      startDate: new Date(Date.now() + 30_000).toISOString(),
+      endDate: new Date(Date.now() + 120_000).toISOString(),
+      actualStartDate: null,
+      actualEndDate: null,
+      status: 'confirmed',
+      totalCost: 10,
+      discount: 0,
+      finalCost: 10,
+      paymentMethod: 'card',
+      paymentStatus: 'paid',
+      distance: null,
+      duration: null,
+      averageSpeed: null,
+      rating: null,
+      issues: []
+    };
+    const pending$ = new Subject<BookingResponse[]>();
+    bookingsApi.getByUserId.and.returnValue(pending$);
+
+    const service = TestBed.inject(BookingNotificationService);
+    spyOn<any>(service, 'checkBookingStart');
+    spyOn<any>(service, 'checkBookingExpiring');
+    spyOn<any>(service, 'checkBookingExpired');
+
+    service.startMonitoring();
+    expect(bookingsApi.getByUserId).toHaveBeenCalledTimes(1);
+
+    service.stopMonitoring();
+
+    // The in-flight request resolves *after* monitoring stopped (e.g. logout or
+    // ngOnDestroy): its response must not trigger any notification side effects.
+    pending$.next([booking]);
+    pending$.complete();
+
+    expect((service as any).checkBookingStart).not.toHaveBeenCalled();
+    expect((service as any).checkBookingExpiring).not.toHaveBeenCalled();
+    expect((service as any).checkBookingExpired).not.toHaveBeenCalled();
+  }));
+
+  it('does not start an overlapping fetch while one is in flight', fakeAsync(() => {
+    const pending$ = new Subject<BookingResponse[]>();
+    bookingsApi.getByUserId.and.returnValue(pending$);
+
+    const service = TestBed.inject(BookingNotificationService);
+
+    (service as any).checkActiveBookings();
+    (service as any).checkActiveBookings();
+
+    expect(bookingsApi.getByUserId).toHaveBeenCalledTimes(1);
+
+    // Resolving the pending request releases the guard…
+    pending$.next([]);
+    expect((service as any).fetchInFlight).toBe(false);
+
+    // …so the next check can start another fetch.
+    (service as any).checkActiveBookings();
+    expect(bookingsApi.getByUserId).toHaveBeenCalledTimes(2);
+    pending$.complete();
+  }));
+
+  it('resets the in-flight guard when the fetch errors', fakeAsync(() => {
+    const failing$ = new Subject<BookingResponse[]>();
+    bookingsApi.getByUserId.and.returnValue(failing$);
+
+    const service = TestBed.inject(BookingNotificationService);
+    spyOn(console, 'error');
+
+    (service as any).checkActiveBookings();
+    expect((service as any).fetchInFlight).toBe(true);
+
+    failing$.error(new Error('network error'));
+    expect((service as any).fetchInFlight).toBe(false);
+
+    (service as any).checkActiveBookings();
+    expect(bookingsApi.getByUserId).toHaveBeenCalledTimes(2);
   }));
 });
