@@ -60,6 +60,54 @@ describe('Home', () => {
     expect(routerSpy.navigate).toHaveBeenCalledWith(['/garage']);
   });
 
+  it('shows a login-required message instead of navigating to bookings when guest', () => {
+    component.navigateToBookings();
+    expect(component.guestBookingMessage()).toBeTrue();
+    expect(routerSpy.navigate).not.toHaveBeenCalled();
+  });
+
+  it('navigates to bookings when authenticated', () => {
+    authStore.session.set({ isAuthenticated: true });
+    component.navigateToBookings();
+    expect(routerSpy.navigate).toHaveBeenCalledWith(['/booking']);
+  });
+
+  it('shows a login-required message instead of navigating to vehicle status when guest', () => {
+    component.navigateToVehicleStatus();
+    expect(component.guestBookingMessage()).toBeTrue();
+    expect(routerSpy.navigate).not.toHaveBeenCalled();
+  });
+
+  it('navigates to vehicle status when authenticated', () => {
+    authStore.session.set({ isAuthenticated: true });
+    component.navigateToVehicleStatus();
+    expect(routerSpy.navigate).toHaveBeenCalledWith(['/vehicle-status']);
+  });
+
+  it('shows a login-required message instead of navigating to schedule unlock when guest', () => {
+    component.onScheduleUnlock();
+    expect(component.guestBookingMessage()).toBeTrue();
+    expect(routerSpy.navigate).not.toHaveBeenCalled();
+  });
+
+  it('navigates to schedule unlock when authenticated', () => {
+    authStore.session.set({ isAuthenticated: true });
+    component.onScheduleUnlock();
+    expect(routerSpy.navigate).toHaveBeenCalledWith(['/schedule-unlock']);
+  });
+
+  it('shows a login-required message instead of navigating to a feature when guest', () => {
+    component.onFeatureClick({ route: '/plan' });
+    expect(component.guestBookingMessage()).toBeTrue();
+    expect(routerSpy.navigate).not.toHaveBeenCalled();
+  });
+
+  it('navigates to the feature route when authenticated', () => {
+    authStore.session.set({ isAuthenticated: true });
+    component.onFeatureClick({ route: '/plan' });
+    expect(routerSpy.navigate).toHaveBeenCalledWith(['/plan']);
+  });
+
   it('dismisses the login-required message', () => {
     component.navigateToGarage();
     expect(component.guestBookingMessage()).toBeTrue();

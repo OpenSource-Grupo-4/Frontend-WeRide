@@ -1,5 +1,5 @@
 import { Component, inject, computed, signal } from '@angular/core';
-import { Router, RouterModule } from '@angular/router';
+import { Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { CommonModule } from '@angular/common';
@@ -16,7 +16,6 @@ import { ActiveBookingCardComponent } from '../active-booking-card/active-bookin
   standalone: true,
   imports: [
     CommonModule,
-    RouterModule,
     MatIconModule,
     MatButtonModule,
     TranslateModule,
@@ -49,12 +48,24 @@ export class Home {
     this.router.navigate(['/trip/details']);
   }
 
-  navigateToGarage(): void {
+  private requireAuth(route: string): void {
     if (!this.authStore.session()?.isAuthenticated) {
       this.guestBookingMessage.set(true);
       return;
     }
-    this.router.navigate(['/garage']);
+    this.router.navigate([route]);
+  }
+
+  navigateToGarage(): void {
+    this.requireAuth('/garage');
+  }
+
+  navigateToBookings(): void {
+    this.requireAuth('/booking');
+  }
+
+  navigateToVehicleStatus(): void {
+    this.requireAuth('/vehicle-status');
   }
 
   dismissGuestMessage(): void {
@@ -66,6 +77,10 @@ export class Home {
   }
 
   onScheduleUnlock(): void {
-    this.router.navigate(['/schedule-unlock']);
+    this.requireAuth('/schedule-unlock');
+  }
+
+  onFeatureClick(feature: { route: string }): void {
+    this.requireAuth(feature.route);
   }
 }

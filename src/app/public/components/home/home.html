@@ -73,7 +73,7 @@
     <h2 class="section-title">{{ 'home.features.title' | translate }}</h2>
     <div class="features-grid">
       @for (feature of features(); track feature.id) {
-      <button class="feature-card" type="button" [routerLink]="feature.route">
+      <button class="feature-card" type="button" (click)="onFeatureClick(feature)">
         <mat-icon>{{ feature.icon }}</mat-icon>
         <h3>{{ feature.titleKey | translate }}</h3>
         <p>{{ feature.descriptionKey | translate }}</p>
@@ -85,7 +85,7 @@
   <section class="quick-actions">
     <h2>{{ 'home.quickActions' | translate }}</h2>
     <div class="action-buttons">
-      <button class="btn-primary" routerLink="/vehicle-status">
+      <button class="btn-primary" (click)="navigateToVehicleStatus()">
         <mat-icon>lock_open</mat-icon>
         {{ 'home.actions.checkStatus' | translate }}
       </button>
@@ -93,7 +93,7 @@
         <mat-icon>schedule</mat-icon>
         {{ 'home.actions.schedule' | translate }}
       </button>
-      <button class="btn-tertiary" routerLink="/booking">
+      <button class="btn-tertiary" (click)="navigateToBookings()">
         <mat-icon>book_online</mat-icon>
         {{ 'home.actions.viewBookings' | translate }}
       </button>
