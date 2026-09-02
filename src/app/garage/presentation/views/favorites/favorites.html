@@ -14,6 +14,7 @@
     @for (vehicle of favoriteVehicles(); track vehicle.id) {
     <app-vehicle-card
       [vehicle]="vehicle"
+      (reserve)="navigateToScheduleUnlock($event)"
     >
     </app-vehicle-card>
     } @if (!hasFavorites) {
