@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
@@ -11,6 +11,7 @@ import { Vehicle } from '../../../domain/model/vehicle.model';
 import { TripStore } from '../../../../trip/application/trip.store';
 import { LocationsApiEndpoint } from '../../../../trip/infrastructure/locations-api-endpoint';
 import { FavoriteStore } from '../../../application/favorite.store';
+import { AuthStore } from '../../../../auth/application/auth.store';
 
 class FakeLoader implements TranslateLoader {
   getTranslation(_lang: string): Observable<Record<string, string>> {
@@ -54,9 +55,12 @@ describe('VehicleCard', () => {
   let tripStore: jasmine.SpyObj<TripStore>;
   let locationsApi: jasmine.SpyObj<LocationsApiEndpoint>;
   let snackBar: jasmine.SpyObj<MatSnackBar>;
-  // FavoriteStore is an ngrx signalStore instance; only its error() getter is
-  // used by the component, so stub that surface.
-  let favoriteStore: { error: jasmine.Spy };
+  // FavoriteStore is an ngrx signalStore instance; only its error() getter and
+  // toggleFavorite() are used by the component, so stub that surface.
+  let favoriteStore: { error: jasmine.Spy; toggleFavorite: jasmine.Spy };
+  // AuthStore is a signalStore; the card calls session()/currentUser() as
+  // signal getters that return their value, so the stub returns plain values.
+  let authStore: { session: () => any; currentUser: () => any };
 
   beforeEach(async () => {
     dialog = jasmine.createSpyObj<MatDialog>('MatDialog', ['open']);
@@ -67,7 +71,16 @@ describe('VehicleCard', () => {
     ]);
     locationsApi = jasmine.createSpyObj<LocationsApiEndpoint>('LocationsApiEndpoint', ['getAll']);
     snackBar = jasmine.createSpyObj<MatSnackBar>('MatSnackBar', ['open']);
-    favoriteStore = { error: jasmine.createSpy('error') };
+    snackBar.open.and.returnValue({ onAction: () => of(null) } as any);
+    favoriteStore = {
+      error: jasmine.createSpy('error'),
+      toggleFavorite: jasmine.createSpy('toggleFavorite')
+    };
+    // Default: an authenticated user session.
+    authStore = {
+      session: () => ({ isAuthenticated: true, isGuest: false }),
+      currentUser: () => ({ id: 'user-1', name: 'Test User' })
+    };
 
     // Default: modal opens and closes without a choice.
     dialog.open.and.returnValue({ afterClosed: () => of(null) } as any);
@@ -86,7 +99,8 @@ describe('VehicleCard', () => {
         { provide: MatSnackBar, useValue: snackBar },
         { provide: TripStore, useValue: tripStore },
         { provide: LocationsApiEndpoint, useValue: locationsApi },
-        { provide: FavoriteStore, useValue: favoriteStore }
+        { provide: FavoriteStore, useValue: favoriteStore },
+        { provide: AuthStore, useValue: authStore }
       ]
     }).compileComponents();
 
@@ -125,4 +139,37 @@ describe('VehicleCard', () => {
     expect(component.reserve.emit).toHaveBeenCalledWith(component.vehicle);
     expect(tripStore.startTrip).not.toHaveBeenCalled();
   });
+
+  it('calls favoriteStore.toggleFavorite with the user and vehicle ids', fakeAsync(() => {
+    component.onToggleFavorite();
+
+    // The toggle is delegated to the store so it persists via repository + localStorage.
+    expect(favoriteStore.toggleFavorite).toHaveBeenCalledWith({
+      userId: 'user-1',
+      vehicleId: component.vehicle.id
+    });
+
+    tick(500);
+  }));
+
+  it('does not toggle for unauthenticated users — shows login-required message instead', fakeAsync(() => {
+    component.vehicle.favorite = true;
+    authStore.session = () => null;
+    authStore.currentUser = () => null;
+
+    component.onToggleFavorite();
+
+    // No persistence attempt for a session-less user.
+    expect(favoriteStore.toggleFavorite).not.toHaveBeenCalled();
+    // Optimistic flip rolled back.
+    expect(component.vehicle.favorite).toBe(true);
+    // Login-required message shown.
+    expect(snackBar.open).toHaveBeenCalledWith(
+      'garage.favorites.loginRequired',
+      'common.close',
+      jasmine.any(Object)
+    );
+
+    tick(500);
+  }));
 });

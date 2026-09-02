@@ -10,6 +10,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Vehicle } from '../../../domain/model/vehicle.model';
 import { BookingConfirmationModal } from '../../../../booking/presentation/views/booking-confirmation-modal/booking-confirmation-modal';
 import { FavoriteStore } from '../../../application/favorite.store';
+import { AuthStore } from '../../../../auth/application/auth.store';
 
 @Component({
   selector: 'app-vehicle-card',
@@ -41,6 +42,7 @@ export class VehicleCard {
   private dialog = inject(MatDialog);
   private snackBar = inject(MatSnackBar);
   private favoriteStore = inject(FavoriteStore);
+  private authStore = inject(AuthStore);
 
   isTogglingFavorite = false;
 
@@ -52,6 +54,34 @@ export class VehicleCard {
 
     // Optimistic UI update
     this.vehicle.favorite = !this.vehicle.favorite;
+
+    // Guests cannot persist favorites: explain instead of pretending.
+    if (!this.authStore.session()?.isAuthenticated) {
+      this.vehicle.favorite = previousState;
+      this.snackBar.open(
+        this.translate.instant('garage.favorites.loginRequired'),
+        this.translate.instant('common.close'),
+        {
+          duration: 4000,
+          horizontalPosition: 'end',
+          verticalPosition: 'top',
+          panelClass: ['error-snackbar']
+        }
+      );
+      this.isTogglingFavorite = false;
+      return;
+    }
+
+    const userId = this.authStore.currentUser()?.id;
+    if (!userId) {
+      // No usable user id: roll back and stay consistent with store state.
+      this.vehicle.favorite = previousState;
+      this.isTogglingFavorite = false;
+      return;
+    }
+
+    // Persist through the store (repository → API + localStorage).
+    this.favoriteStore.toggleFavorite({ userId, vehicleId: this.vehicle.id });
 
     // Check for errors after a delay
     setTimeout(() => {

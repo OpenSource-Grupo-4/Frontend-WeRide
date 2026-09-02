@@ -139,7 +139,8 @@
       "loading": "Cargando favoritos...",
       "addedToFavorites": "Agregado a favoritos",
       "removedFromFavorites": "Eliminado de favoritos",
-      "error": "Error al actualizar favoritos"
+      "error": "Error al actualizar favoritos",
+      "loginRequired": "Inicia sesión para guardar favoritos"
     },
     "details": {
       "basicInfo": "Información Básica",
