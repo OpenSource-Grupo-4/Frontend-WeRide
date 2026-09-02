@@ -157,7 +157,7 @@ export class TripDetails implements OnInit, OnDestroy {
   }
 
   goToSettings() {
-    this.router.navigate(['/user/profile']);
+    this.router.navigate(['/user']);
   }
 
   goToGarage() {

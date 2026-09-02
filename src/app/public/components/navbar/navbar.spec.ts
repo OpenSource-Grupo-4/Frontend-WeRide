@@ -80,6 +80,11 @@ describe('Navbar', () => {
     expect(routerSpy.navigate).toHaveBeenCalledWith(['/auth/login']);
   });
 
+  it('navigates to /user from the profile menu item', () => {
+    component.navigateToProfile();
+    expect(routerSpy.navigate).toHaveBeenCalledWith(['/user']);
+  });
+
   it('does not call the notifications API when there is no current user', () => {
     authStore.currentUser.set(null);
     notificationsApi.getAll.calls.reset();
