@@ -1,6 +1,14 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
+import { Observable, of } from 'rxjs';
 
 import { UserProfile } from './user-profile';
+
+class FakeLoader implements TranslateLoader {
+  getTranslation(_lang: string): Observable<Record<string, string>> {
+    return of({});
+  }
+}
 
 describe('UserProfile', () => {
   let component: UserProfile;
@@ -8,9 +16,11 @@ describe('UserProfile', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [UserProfile]
-    })
-    .compileComponents();
+      imports: [
+        UserProfile,
+        TranslateModule.forRoot({ loader: { provide: TranslateLoader, useClass: FakeLoader } })
+      ]
+    }).compileComponents();
 
     fixture = TestBed.createComponent(UserProfile);
     component = fixture.componentInstance;

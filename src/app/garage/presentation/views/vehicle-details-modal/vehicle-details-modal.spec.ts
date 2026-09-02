@@ -1,7 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
+import { Observable, of } from 'rxjs';
+
 import { VehicleDetailsModal } from './vehicle-details-modal';
 import { Vehicle } from '../../../domain/model/vehicle.model';
+
+class FakeLoader implements TranslateLoader {
+  getTranslation(_lang: string): Observable<Record<string, string>> {
+    return of({});
+  }
+}
 
 describe('VehicleDetailsModal', () => {
   let component: VehicleDetailsModal;
@@ -32,12 +42,20 @@ describe('VehicleDetailsModal', () => {
     rating: 4.6
   };
 
+  let dialogRefSpy: jasmine.SpyObj<MatDialogRef<VehicleDetailsModal>>;
+
   beforeEach(async () => {
+    dialogRefSpy = jasmine.createSpyObj<MatDialogRef<VehicleDetailsModal>>('MatDialogRef', ['close']);
+
     await TestBed.configureTestingModule({
-      imports: [VehicleDetailsModal],
+      imports: [
+        VehicleDetailsModal,
+        TranslateModule.forRoot({ loader: { provide: TranslateLoader, useClass: FakeLoader } })
+      ],
       providers: [
+        provideNoopAnimations(),
         { provide: MAT_DIALOG_DATA, useValue: mockVehicle },
-        { provide: MatDialogRef, useValue: { close: jasmine.createSpy('close') } }
+        { provide: MatDialogRef, useValue: dialogRefSpy }
       ]
     }).compileComponents();
 
@@ -56,6 +74,6 @@ describe('VehicleDetailsModal', () => {
 
   it('should close dialog when onClose is called', () => {
     component.onClose();
-    expect(component.dialogRef.close).toHaveBeenCalled();
+    expect(dialogRefSpy.close).toHaveBeenCalled();
   });
 });
