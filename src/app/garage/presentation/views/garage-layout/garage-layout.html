@@ -35,6 +35,9 @@
     </button>
   </div>
   } @if (!isLoading && !error) {
+  <div class="results-count" aria-live="polite">
+    {{ filteredVehicles.length }} {{ 'garage.resultsCount' | translate }}
+  </div>
   <div class="vehicle-grid">
     @for (vehicle of filteredVehicles; track vehicle.id) {
     <app-vehicle-card

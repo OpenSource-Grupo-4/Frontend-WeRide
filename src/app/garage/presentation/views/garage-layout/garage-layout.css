@@ -16,6 +16,12 @@
   padding: 0 3rem;
 }
 
+.results-count {
+  margin: 0.5rem 3rem 1.5rem;
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
 @media (min-width: 768px) and (max-width: 1200px) {
   .vehicle-grid {
     grid-template-columns: repeat(2, 1fr);
@@ -29,6 +35,10 @@
     grid-template-columns: 1fr;
     gap: 1rem;
     padding: 0 1rem;
+  }
+
+  .results-count {
+    margin: 0.5rem 1rem 1.25rem;
   }
 
   .garage-container h1 {

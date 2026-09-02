@@ -46,6 +46,9 @@ export class ScheduleUnlockComponent implements OnInit {
   vehicleAvailable: boolean = false;
   isSavingDraft: boolean = false;
   showIconFallback: boolean = false;
+  // Fallo de carga del catálogo de ubicaciones: se muestra junto a los selects
+  // con opción de reintentar en lugar de dejarlos vacíos sin explicación.
+  locationsLoadFailed = false;
 
   searchTerm: string = '';
   selectedVehicle: Vehicle | null = null;
@@ -74,14 +77,7 @@ export class ScheduleUnlockComponent implements OnInit {
       this.searchTerm = `${state.vehicle.brand} ${state.vehicle.model}`;
     }
 
-    this.locationsApi.getAll().subscribe({
-      next: locations => {
-        this.locations = locations.filter(location => location.isActive);
-        this.startLocationId = this.locations[0]?.id || '';
-        this.endLocationId = this.locations[1]?.id || this.locations[0]?.id || '';
-      },
-      error: () => this.availabilityError = this.translate.instant('scheduleUnlock.locationsLoadError')
-    });
+    this.loadLocations();
 
     // Check if immediate booking
     if (state?.immediate) {
@@ -90,6 +86,30 @@ export class ScheduleUnlockComponent implements OnInit {
     } else {
       this.setDefaultDateTime();
     }
+  }
+
+  /**
+   * Carga el catálogo de ubicaciones activas. Un fallo marca `locationsLoadFailed`
+   * (los selects quedan vacíos) y la UI ofrece un botón de reintento.
+   */
+  loadLocations(): void {
+    this.locationsLoadFailed = false;
+    this.locationsApi.getAll().subscribe({
+      next: locations => {
+        this.locations = locations.filter(location => location.isActive);
+        this.startLocationId = this.locations[0]?.id || '';
+        this.endLocationId = this.locations[1]?.id || this.locations[0]?.id || '';
+        this.locationsLoadFailed = false;
+        // Un reintento con éxito debe limpiar el aviso de fallo de carga previo.
+        if (this.availabilityError === this.translate.instant('scheduleUnlock.locationsLoadError')) {
+          this.availabilityError = '';
+        }
+      },
+      error: () => {
+        this.availabilityError = this.translate.instant('scheduleUnlock.locationsLoadError');
+        this.locationsLoadFailed = true;
+      }
+    });
   }
 
   setImmediateBooking() {
@@ -175,6 +195,12 @@ export class ScheduleUnlockComponent implements OnInit {
     if (!this.selectedVehicle) return '0.00';
     const totalMinutes = this.duration * 60;
     return (this.selectedVehicle.pricePerMinute * totalMinutes).toFixed(2);
+  }
+
+  getLocationName(locationId: string): string {
+    if (!locationId) return '';
+    const location = this.locations.find(location => location.id === locationId);
+    return location ? `${location.name} — ${location.address}` : locationId;
   }
 
   /**

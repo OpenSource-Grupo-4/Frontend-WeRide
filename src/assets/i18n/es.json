@@ -118,6 +118,7 @@
     "maxPrice": "Precio Max ($/min)",
     "loadingFavorites": "Cargando favoritos...",
     "filters": "Filtros",
+    "resultsCount": "vehículos encontrados",
     "vehicleType": "Tipo de Vehículo",
     "status": "Estado",
     "brand": "Marca",

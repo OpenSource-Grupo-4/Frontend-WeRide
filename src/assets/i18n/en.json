@@ -118,6 +118,7 @@
     "maxPrice": "Max Price ($/min)",
     "loadingFavorites": "Loading favorites...",
     "filters": "Filters",
+    "resultsCount": "vehicles found",
     "vehicleType": "Vehicle Type",
     "status": "Status",
     "brand": "Brand",
