@@ -1,10 +1,9 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { Component, inject, signal, effect, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AuthStore } from '../../../application/auth.store';
-import { LoginWithPhoneUseCase } from '../../../application/login-with-phone.use-case';
 import { PhoneCredentials } from '../../../domain/model/phone-credentials.entity';
 
 @Component({
@@ -17,13 +16,36 @@ import { PhoneCredentials } from '../../../domain/model/phone-credentials.entity
 export class VerificationComponent implements OnInit {
   private router = inject(Router);
   protected authStore = inject(AuthStore);
-  private loginUseCase = inject(LoginWithPhoneUseCase);
   private translate = inject(TranslateService);
 
   phone = signal('');
   expectedCode = signal('');
   code = signal(['', '', '', '']);
   errorMessage = signal('');
+  private loginAttempted = signal(false);
+
+  constructor() {
+    // Effect to react to the store result of loginWithPhone: navigate to /home
+    // on success and surface the store error (e.g. 'Otp Invalido') to the user.
+    effect(() => {
+      const session = this.authStore.session();
+      const error = this.authStore.error();
+      const isLoading = this.authStore.isLoading();
+
+      if (!this.loginAttempted() || isLoading) return;
+
+      if (session && session.isValid && !error) {
+        this.router.navigate(['/home']);
+        this.loginAttempted.set(false);
+        return;
+      }
+
+      if (error) {
+        this.errorMessage.set(this.translate.instant('errors.invalidCode'));
+        this.loginAttempted.set(false);
+      }
+    });
+  }
 
   ngOnInit() {
     const navigation = this.router.getCurrentNavigation();
@@ -103,16 +125,8 @@ export class VerificationComponent implements OnInit {
       verificationCode: enteredCode
     };
 
-    this.loginUseCase.execute(credentials).subscribe({
-      next: (session) => {
-        this.authStore.setSession(session);
-        this.router.navigate(['/home']);
-      },
-      error: (err) => {
-        this.errorMessage.set(this.translate.instant('errors.loginError') + ': ' + (err.message || this.translate.instant('errors.invalidCode')));
-        console.error('Error de autenticación:', err);
-      }
-    });
+    this.loginAttempted.set(true);
+    this.authStore.loginWithPhone(credentials);
   }
 
   goBack() {

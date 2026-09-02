@@ -4,7 +4,6 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AuthStore } from '../../../application/auth.store';
-import { VerificationComponent } from '../verification/verification.component';
 
 @Component({
   selector: 'app-phone-login',
@@ -23,8 +22,6 @@ export class PhoneLoginComponent {
   showModal = signal(false);
   copySuccess = signal(false);
   phoneError = signal('');
-
-  readonly storeVerificationCode = this.authStore.verificationCode;
 
   goBack() {
     this.router.navigate(['/auth/login']);
@@ -51,7 +48,7 @@ export class PhoneLoginComponent {
 
   async copyCode() {
     try {
-      await navigator.clipboard.writeText(this.storeVerificationCode() ?? '');
+      await navigator.clipboard.writeText(this.authStore.verificationCode() ?? '');
       this.copySuccess.set(true);
       setTimeout(() => this.copySuccess.set(false), 2000);
     } catch (err) {
@@ -68,7 +65,7 @@ export class PhoneLoginComponent {
     this.router.navigate(['/auth/verification'], {
       state: {
         phone: this.prefix() + this.phone(),
-        code: this.storeVerificationCode()
+        code: this.authStore.verificationCode()
       }
     });
   }

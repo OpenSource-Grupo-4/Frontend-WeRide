@@ -175,7 +175,9 @@ export class AuthRepositoryImpl extends AuthRepository {
   sendVerificationCode(phone: string): Observable<{ phone: string; code: string }> {
     const code = Math.floor(1000 + Math.random() * 9000).toString();
     this.verificationCodes.set(phone, code);
-    console.log(`Código de verificación para ${phone}: ${code}`);
+    if (!environment.production) {
+      console.log(`Código de verificación para ${phone}: ${code}`);
+    }
     return of({ phone, code });
   }
 

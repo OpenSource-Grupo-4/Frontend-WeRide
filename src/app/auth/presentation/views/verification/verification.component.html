@@ -11,6 +11,17 @@
           <div class="error-message">{{ authStore.error() }}</div>
         </div>
       </div>
+    } @else if (errorMessage()) {
+      <div class="error-toast">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="12" r="10" fill="#F04349"/>
+          <path d="M15 9L9 15M9 9L15 15" stroke="white" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <div>
+          <div class="error-title">{{ 'auth.verification.errorTitle' | translate }}</div>
+          <div class="error-message">{{ errorMessage() }}</div>
+        </div>
+      </div>
     }
 
     <button class="back-button" (click)="goBack()" [attr.aria-label]="'common.back' | translate">
