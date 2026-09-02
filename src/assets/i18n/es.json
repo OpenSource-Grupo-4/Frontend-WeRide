@@ -37,7 +37,9 @@
   "navbar": {
     "notifications": {
       "title": "Notificaciones",
-      "markAllRead": "Marcar todas como leídas"
+      "markAllRead": "Marcar todas como leídas",
+      "empty": "Aún no tienes notificaciones",
+      "emptySubtext": "Te avisaremos cuando haya novedades en tus reservas"
     },
     "userMenu": {
       "subtitle": "¡Bienvenido!",

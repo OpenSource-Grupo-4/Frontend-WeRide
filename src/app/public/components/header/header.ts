@@ -63,6 +63,10 @@ export class HeaderComponent implements OnInit {
           .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
           .slice(0, 10);
         this.notifications.set(sortedNotifications);
+      },
+      error: (error) => {
+        console.error('Error loading notifications:', error);
+        this.notifications.set([]);
       }
     });
   }

@@ -1,16 +1,25 @@
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
-import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
-import { Observable, of } from 'rxjs';
+import { TranslateModule, TranslateLoader, TranslateService } from '@ngx-translate/core';
+import { Observable, of, throwError } from 'rxjs';
 import { signal } from '@angular/core';
 import { AuthStore } from '../../../auth/application/auth.store';
 import { NotificationsApiEndpoint } from '../../../booking/infraestructure/notifications-api-endpoint';
 import { HeaderComponent } from './header';
 
+const notificationsTranslations = {
+  navbar: {
+    notifications: {
+      empty: 'You have no notifications yet',
+      emptySubtext: "We'll let you know when something happens with your bookings"
+    }
+  }
+};
+
 class FakeLoader implements TranslateLoader {
   getTranslation(lang: string): Observable<any> {
-    return of({});
+    return of(notificationsTranslations);
   }
 }
 
@@ -53,10 +62,11 @@ describe('HeaderComponent user identity', () => {
   let fixture: ComponentFixture<HeaderComponent>;
   let routerSpy: jasmine.SpyObj<Router>;
   let authStore: { currentUser: ReturnType<typeof signal>; session: ReturnType<typeof signal>; logout: jasmine.Spy };
+  let notificationsApi: jasmine.SpyObj<NotificationsApiEndpoint>;
 
   beforeEach(async () => {
     const currentUser = signal({ id: 'u1', name: 'Juan Pérez' } as any);
-    const notificationsApi = jasmine.createSpyObj<NotificationsApiEndpoint>('NotificationsApiEndpoint', ['getAll']);
+    notificationsApi = jasmine.createSpyObj<NotificationsApiEndpoint>('NotificationsApiEndpoint', ['getAll']);
     notificationsApi.getAll.and.returnValue(of([]));
     routerSpy = jasmine.createSpyObj<Router>('Router', ['navigate']);
     authStore = {
@@ -78,6 +88,10 @@ describe('HeaderComponent user identity', () => {
       ]
     }).compileComponents();
 
+    const translate = TestBed.inject(TranslateService);
+    translate.setDefaultLang('en');
+    translate.use('en').subscribe();
+
     fixture = TestBed.createComponent(HeaderComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
@@ -96,5 +110,40 @@ describe('HeaderComponent user identity', () => {
     component.logout();
     expect(authStore.logout).toHaveBeenCalled();
     expect(routerSpy.navigate).toHaveBeenCalledWith(['/auth/login']);
+  });
+
+  it('does not call the notifications API when the user is a guest', () => {
+    authStore.currentUser.set(null);
+    notificationsApi.getAll.calls.reset();
+    fixture.detectChanges();
+
+    component.loadNotifications();
+
+    expect(notificationsApi.getAll).not.toHaveBeenCalled();
+  });
+
+  it('clears notifications and logs when the API call fails', () => {
+    notificationsApi.getAll.and.returnValue(throwError(() => new Error('HTTP 500')));
+    component.notifications.set([{ id: 'n1' } as any]);
+    spyOn(console, 'error');
+
+    component.loadNotifications();
+
+    expect(console.error).toHaveBeenCalledWith('Error loading notifications:', jasmine.any(Error));
+    expect(component.notifications()).toEqual([]);
+  });
+
+  it('shows the textual empty state when there are no notifications', () => {
+    component.notifications.set([]);
+
+    const notificationButton = fixture.nativeElement.querySelector('.notification-btn');
+    notificationButton.click();
+    fixture.detectChanges();
+
+    const emptyState = document.querySelector('.notification-empty');
+    expect(emptyState).not.toBeNull();
+    const text = emptyState ? (emptyState.textContent || '') : '';
+    expect(text).toContain('You have no notifications yet');
+    expect(text).toContain("We'll let you know when something happens with your bookings");
   });
 });
