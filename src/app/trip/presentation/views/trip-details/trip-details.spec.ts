@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testin
 import { Router } from '@angular/router';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
-import { Observable, of } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 
 import { TripDetails } from './trip-details';
 import { TripStore } from '../../../application/trip.store';
@@ -19,6 +19,32 @@ class FakeLoader implements TranslateLoader {
     return of({});
   }
 }
+
+/** Viaje de ejemplo cargado desde el historial (router state `tripId`). */
+const historyTrip: Trip = {
+  id: 'trip-9',
+  bookingId: 'b-9',
+  userId: 'user-1',
+  vehicleId: 'vehicle-1',
+  startLocationId: 'loc-1',
+  endLocationId: 'loc-2',
+  route: 'A → B',
+  routeCoordinates: [],
+  startDate: '2026-01-15T10:30:00Z',
+  endDate: '2026-01-15T11:00:00Z',
+  duration: 30,
+  distance: 5,
+  averageSpeed: 10,
+  maxSpeed: 20,
+  totalCost: 3,
+  carbonSaved: 0.2,
+  caloriesBurned: 120,
+  weather: 'clear',
+  temperature: 20,
+  status: 'completed',
+  incidentReports: [],
+  photos: []
+};
 
 describe('TripDetails', () => {
   let component: TripDetails;
@@ -102,30 +128,7 @@ describe('TripDetails', () => {
   });
 
   it('loads the trip selected from history via router state tripId', fakeAsync(() => {
-    const trip: Trip = {
-      id: 'trip-9',
-      bookingId: 'b-9',
-      userId: 'user-1',
-      vehicleId: 'vehicle-1',
-      startLocationId: 'loc-1',
-      endLocationId: 'loc-2',
-      route: 'A → B',
-      routeCoordinates: [],
-      startDate: '2026-01-15T10:30:00Z',
-      endDate: '2026-01-15T11:00:00Z',
-      duration: 30,
-      distance: 5,
-      averageSpeed: 10,
-      maxSpeed: 20,
-      totalCost: 3,
-      carbonSaved: 0.2,
-      caloriesBurned: 120,
-      weather: 'clear',
-      temperature: 20,
-      status: 'completed',
-      incidentReports: [],
-      photos: []
-    };
+    const trip: Trip = historyTrip;
     (tripsApi.getById as jasmine.Spy).and.returnValue(of(trip));
     (vehiclesApi.getById as jasmine.Spy).and.returnValue(of({ id: 'vehicle-1', brand: 'Xiaomi', model: 'M365' }));
     (locationsApi.getById as jasmine.Spy).and.returnValue(of({ id: 'loc-1', name: 'Lima' }));
@@ -139,5 +142,55 @@ describe('TripDetails', () => {
 
     expect(component.selectedTrip()?.id).toBe('trip-9');
     expect(tripsApi.getById).toHaveBeenCalledWith('trip-9');
+  }));
+
+  it('falls back to the empty state when loading the selected trip fails', fakeAsync(() => {
+    spyOn(console, 'error');
+    (tripsApi.getById as jasmine.Spy).and.returnValue(
+      throwError(() => new Error('network down'))
+    );
+    (routerSpy.getCurrentNavigation as jasmine.Spy).and.returnValue({
+      extras: { state: { tripId: 'trip-9' } }
+    });
+
+    component.ngOnInit();
+    tick();
+
+    expect(component.selectedTrip()).toBeNull();
+    expect(component.isLoading()).toBeFalse();
+  }));
+
+  it('shows the trip card with fallbacks when detail lookups fail (backend 404s)', fakeAsync(() => {
+    const trip: Trip = historyTrip;
+    (tripsApi.getById as jasmine.Spy).and.returnValue(of(trip));
+    (vehiclesApi.getById as jasmine.Spy).and.returnValue(throwError(() => new Error('404')));
+    (locationsApi.getById as jasmine.Spy).and.returnValue(throwError(() => new Error('404')));
+    (routerSpy.getCurrentNavigation as jasmine.Spy).and.returnValue({
+      extras: { state: { tripId: 'trip-9' } }
+    });
+
+    component.ngOnInit();
+    tick();
+    fixture.detectChanges();
+
+    expect(component.selectedTrip()?.id).toBe('trip-9');
+    expect(component.detailVehicle()).toBeNull();
+    expect(component.detailStartLocation()).toBeNull();
+    expect(component.detailEndLocation()).toBeNull();
+
+    // La tarjeta del historial se renderiza (no empty state): mat-card con la
+    // clase trip-details-card y el título de la sección de historial.
+    const card: HTMLElement = fixture.nativeElement.querySelector(
+      '.trip-details-card'
+    );
+    expect(card).not.toBeNull();
+    expect(card.textContent).toContain('trip-9');
+    expect(card.querySelector('.history-trip-title')).not.toBeNull();
+
+    // Fallbacks: vehículo no encontrado y ruta del viaje en vez de nombres.
+    expect(card.textContent).toContain('trip.vehicleNotFound');
+    expect(card.textContent).toContain('A → B');
+    // Sin estado vacío.
+    expect(fixture.nativeElement.querySelector('.no-trip-card')).toBeNull();
   }));
 });
