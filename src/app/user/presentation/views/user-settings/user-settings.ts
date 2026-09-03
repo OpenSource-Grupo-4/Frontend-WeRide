@@ -1,12 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
 import { MatIcon } from "@angular/material/icon";
+import { TranslateModule } from '@ngx-translate/core';
 import { UserSettingsStateService, UserSettingsSection } from '../../../application/user-settings-state.service';
 
 @Component({
   selector: 'app-user-settings',
   standalone: true,
-  imports: [CommonModule, MatIcon],
+  imports: [CommonModule, MatIcon, TranslateModule],
   templateUrl: './user-settings.html',
   styleUrl: './user-settings.css'
 })
@@ -16,11 +17,11 @@ export class UserSettings implements OnInit {
   activeSection: UserSettingsSection = null;
 
   readonly settings = [
-    { key: 'wallet' as UserSettingsSection, icon: 'account_balance_wallet', label: 'Cartera' },
-    { key: 'history' as UserSettingsSection, icon: 'history', label: 'Historial' },
-    { key: 'security' as UserSettingsSection, icon: 'security', label: 'Centro de seguridad' },
-    { key: 'help' as UserSettingsSection, icon: 'help', label: 'Ayuda' },
-    { key: 'settings' as UserSettingsSection, icon: 'settings', label: 'Ajustes' }
+    { key: 'wallet' as UserSettingsSection, icon: 'account_balance_wallet', labelKey: 'user.wallet.title' },
+    { key: 'history' as UserSettingsSection, icon: 'history', labelKey: 'user.history.title' },
+    { key: 'security' as UserSettingsSection, icon: 'security', labelKey: 'user.security.title' },
+    { key: 'help' as UserSettingsSection, icon: 'help', labelKey: 'user.help.title' },
+    { key: 'settings' as UserSettingsSection, icon: 'settings', labelKey: 'user.settings.title' }
   ];
 
   ngOnInit(): void {

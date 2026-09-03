@@ -1,6 +1,15 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
+import { Observable, of } from 'rxjs';
 
 import { UserSettings } from './user-settings';
+import { UserSettingsStateService } from '../../../application/user-settings-state.service';
+
+class FakeLoader implements TranslateLoader {
+  getTranslation(_lang: string): Observable<Record<string, string>> {
+    return of({});
+  }
+}
 
 describe('UserSettings', () => {
   let component: UserSettings;
@@ -8,7 +17,13 @@ describe('UserSettings', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [UserSettings]
+      imports: [
+        UserSettings,
+        TranslateModule.forRoot({ loader: { provide: TranslateLoader, useClass: FakeLoader } })
+      ],
+      providers: [
+        UserSettingsStateService
+      ]
     })
     .compileComponents();
 
