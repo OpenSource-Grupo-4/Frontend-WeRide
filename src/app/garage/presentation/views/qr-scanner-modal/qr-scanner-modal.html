@@ -19,7 +19,7 @@
       <div class="vehicle-details">
         <p class="vehicle-name">{{ vehicle.brand }} {{ vehicle.model }}</p>
         <p *ngIf="unlockRequest" class="unlock-code">
-          Código: {{ unlockRequest.unlockCode }}
+          {{ 'garage.qrScanner.codeLabel' | translate }}: {{ unlockRequest.unlockCode }}
         </p>
       </div>
     </div>
@@ -29,7 +29,9 @@
       <p class="placeholder-text">
         {{ 'garage.qrScanner.scanHere' | translate }}
       </p>
-      <p *ngIf="isScanning" class="scanning-text">Escaneando...</p>
+      <p *ngIf="isScanning" class="scanning-text">
+        {{ 'garage.qrScanner.scanning' | translate }}
+      </p>
     </div>
   </div>
 
@@ -41,7 +43,7 @@
       class="ok-button"
     >
       <span *ngIf="!isScanning">{{ 'garage.qrScanner.ok' | translate }}</span>
-      <span *ngIf="isScanning">Escaneando...</span>
+      <span *ngIf="isScanning">{{ 'garage.qrScanner.scanning' | translate }}</span>
     </button>
   </div>
 </div>

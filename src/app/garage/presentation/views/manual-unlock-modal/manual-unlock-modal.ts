@@ -7,7 +7,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Router } from '@angular/router';
@@ -49,6 +49,7 @@ export class ManualUnlockModal {
   isUnlocking = false;
   errorMessage = '';
   private fb = inject(FormBuilder);
+  private translate = inject(TranslateService);
   private unlockRequestsApi = inject(UnlockRequestsApiEndpoint);
   private snackBar = inject(MatSnackBar);
   private router = inject(Router);
@@ -110,8 +111,8 @@ export class ManualUnlockModal {
         }
 
         this.snackBar.open(
-          'Vehículo desbloqueado con éxito',
-          'Cerrar',
+          this.translate.instant('garage.manualUnlock.unlockedSuccess'),
+          this.translate.instant('common.close'),
           { duration: 3000, panelClass: ['success-snackbar'] }
         );
 
@@ -121,16 +122,16 @@ export class ManualUnlockModal {
           queryParams: { activeTrip: true }
         });
       } else {
-        throw new Error(unlockResult.error || 'Código incorrecto');
+        throw new Error(unlockResult.error || this.translate.instant('errors.invalidCode'));
       }
     } catch (error) {
       this.errorMessage = error instanceof Error
         ? error.message
-        : 'Error al desbloquear el vehículo';
+        : this.translate.instant('garage.manualUnlock.unlockError');
 
       this.snackBar.open(
         this.errorMessage,
-        'Cerrar',
+        this.translate.instant('common.close'),
         { duration: 5000, panelClass: ['error-snackbar'] }
       );
       this.isUnlocking = false;

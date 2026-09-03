@@ -3,7 +3,7 @@ import { MAT_DIALOG_DATA, MatDialogRef, MatDialogModule } from '@angular/materia
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { Vehicle } from '../../../domain/model/vehicle.model';
@@ -39,6 +39,7 @@ export class QrScannerModal {
   errorMessage = '';
   private unlockRequestsApi = inject(UnlockRequestsApiEndpoint);
   private snackBar = inject(MatSnackBar);
+  private translate = inject(TranslateService);
   private router = inject(Router);
   private bookingStore = inject(BookingStore);
   private tripStore = inject(TripStore);
@@ -86,8 +87,8 @@ export class QrScannerModal {
         }
 
         this.snackBar.open(
-          'Vehículo desbloqueado con éxito',
-          'Cerrar',
+          this.translate.instant('garage.manualUnlock.unlockedSuccess'),
+          this.translate.instant('common.close'),
           { duration: 3000, panelClass: ['success-snackbar'] }
         );
 
@@ -97,16 +98,16 @@ export class QrScannerModal {
           queryParams: { activeTrip: true }
         });
       } else {
-        throw new Error(unlockResult.error || 'Error al desbloquear');
+        throw new Error(unlockResult.error || this.translate.instant('garage.qrScanner.unlockError'));
       }
     } catch (error) {
       this.errorMessage = error instanceof Error
         ? error.message
-        : 'Error al escanear el código QR';
+        : this.translate.instant('garage.qrScanner.scanError');
 
       this.snackBar.open(
         this.errorMessage,
-        'Reintentar',
+        this.translate.instant('common.retry'),
         { duration: 5000, panelClass: ['error-snackbar'] }
       );
       this.isScanning = false;
