@@ -6,12 +6,18 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, firstValueFrom, takeUntil } from 'rxjs';
 import { TripStore } from '../../../application/trip.store';
 import { BookingStore } from '../../../../booking/application/booking.store';
 import { ActiveBookingService } from '../../../../booking/application/active-booking.service';
 import { TripInitializerService } from '../../../application/trip-initializer.service';
 import { Booking, BookingActivationStatus } from '../../../../booking/domain/model/booking.entity';
+import { TripsApiEndpoint } from '../../../infrastructure/trips-api-endpoint';
+import { VehiclesApiEndpoint } from '../../../infrastructure/vehicles-api-endpoint';
+import { LocationsApiEndpoint } from '../../../infrastructure/locations-api-endpoint';
+import { Trip } from '../../../domain/model/trip.entity';
+import { Vehicle } from '../../../domain/model/vehicle.entity';
+import { Location } from '../../../domain/model/location.entity';
 
 @Component({
   selector: 'app-trip-details',
@@ -37,7 +43,18 @@ export class TripDetails implements OnInit, OnDestroy {
   private activeBookingService = inject(ActiveBookingService);
   private tripInitializer = inject(TripInitializerService);
   private translate = inject(TranslateService);
+  private tripsApi = inject(TripsApiEndpoint);
+  private vehiclesApi = inject(VehiclesApiEndpoint);
+  private locationsApi = inject(LocationsApiEndpoint);
   private destroy$ = new Subject<void>();
+
+  // Viaje seleccionado desde el historial (router state `tripId`) y sus
+  // detalles resueltos (vehículo y ubicaciones pueden fallar contra el
+  // backend real, por eso son opcionales).
+  selectedTrip = signal<Trip | null>(null);
+  detailVehicle = signal<Vehicle | null>(null);
+  detailStartLocation = signal<Location | null>(null);
+  detailEndLocation = signal<Location | null>(null);
 
   isActiveTrip = computed(() => this.tripStore.isActiveTrip());
   currentVehicle = computed(() => this.tripStore.currentVehicle());
@@ -69,6 +86,16 @@ export class TripDetails implements OnInit, OnDestroy {
         ));
       });
 
+    // Navegación desde el historial con un tripId en el router state: se
+    // muestra ese viaje en lugar del viaje activo / estado vacío. Se sale
+    // antes de tocar el flujo del viaje activo (temporizadores, booking).
+    const tripId = this.router.getCurrentNavigation()?.extras.state?.['tripId'];
+    if (tripId) {
+      this.isLoading.set(false);
+      await this.loadTripFromHistory(tripId);
+      return;
+    }
+
     if (this.isActiveTrip()) {
       this.startTimeUpdates();
       this.isLoading.set(false);
@@ -86,6 +113,41 @@ export class TripDetails implements OnInit, OnDestroy {
     }
 
     this.isLoading.set(false);
+  }
+
+  /**
+   * Carga el viaje seleccionado desde el historial y resuelve sus detalles
+   * (vehículo y ubicaciones). Cada detalle se resuelve con `.catch(() => null)`
+   * para que la vista funcione aunque el backend no tenga el recurso (p. ej.
+   * GET /location/{id} devuelve 404 hoy en el backend real).
+   */
+  private async loadTripFromHistory(tripId: string): Promise<void> {
+    try {
+      const trip = await firstValueFrom(this.tripsApi.getById(tripId));
+      this.selectedTrip.set(trip);
+
+      // Detalles opcionales: si uno falla se muestra el viaje igualmente.
+      const vehicle = firstValueFrom(this.vehiclesApi.getById(trip.vehicleId)).catch(() => null);
+      const startLocation = trip.startLocationId
+        ? firstValueFrom(this.locationsApi.getById(trip.startLocationId)).catch(() => null)
+        : Promise.resolve(null);
+      const endLocation = trip.endLocationId
+        ? firstValueFrom(this.locationsApi.getById(trip.endLocationId)).catch(() => null)
+        : Promise.resolve(null);
+
+      const [resolvedVehicle, resolvedStart, resolvedEnd] = await Promise.all([
+        vehicle,
+        startLocation,
+        endLocation
+      ]);
+
+      this.detailVehicle.set(resolvedVehicle);
+      this.detailStartLocation.set(resolvedStart);
+      this.detailEndLocation.set(resolvedEnd);
+    } catch (error) {
+      console.error('Error cargando el viaje desde el historial:', error);
+      this.selectedTrip.set(null);
+    }
   }
 
   ngOnDestroy() {

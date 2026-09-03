@@ -121,7 +121,51 @@
       </div>
     </div>
   </mat-card>
-  } @if (!isLoading() && !isActiveTrip() && !relatedBooking()) {
+  } @if (!isLoading() && selectedTrip()) {
+  <mat-card class="trip-details-card">
+    <div class="card-content">
+      <h2 class="history-trip-title">{{ 'trip.tripDetails' | translate }}</h2>
+      <div class="trip-info">
+        <h3>{{ detailVehicle() ? (detailVehicle()?.brand + ' ' + detailVehicle()?.model) : ('trip.vehicleNotFound' | translate) }}</h3>
+        <p>
+          <strong>{{ 'trip.dateAndTime' | translate }}:</strong>
+          {{ selectedTrip()?.startDate | date:'short' }}
+        </p>
+        <p>
+          <strong>{{ 'trip.tripDuration' | translate }}:</strong>
+          {{ selectedTrip()?.duration }} min
+        </p>
+        <p>
+          <strong>{{ 'trip.distanceTraveled' | translate }}:</strong>
+          {{ selectedTrip()?.distance }} km
+        </p>
+        <p>
+          <strong>{{ 'trip.tripId' | translate }}:</strong>
+          {{ selectedTrip()?.id }}
+        </p>
+        <p>
+          <strong>{{ 'trip.location' | translate }}:</strong>
+          @if (detailStartLocation() && detailEndLocation()) {
+          {{ detailStartLocation()?.name }} → {{ detailEndLocation()?.name }}
+          } @else if (selectedTrip()?.route) {
+          {{ selectedTrip()?.route }}
+          }
+        </p>
+      </div>
+
+      <div class="trip-actions">
+        <button mat-stroked-button class="action-btn" (click)="goToHistory()">
+          <mat-icon>history</mat-icon>
+          {{ 'trip.tripHistory' | translate }}
+        </button>
+        <button mat-stroked-button class="action-btn" (click)="goToGarage()">
+          <mat-icon>directions_bike</mat-icon>
+          {{ 'trip.bookVehicleNow' | translate }}
+        </button>
+      </div>
+    </div>
+  </mat-card>
+  } @if (!isLoading() && !isActiveTrip() && !relatedBooking() && !selectedTrip()) {
   <mat-card class="no-trip-card">
     <div class="no-trip-content">
       <mat-icon class="empty-icon">event_busy</mat-icon>

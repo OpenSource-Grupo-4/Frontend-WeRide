@@ -70,6 +70,16 @@
   margin-right: 4px;
 }
 
+/* Título de la tarjeta de viaje del historial (TripDetails navegado con
+   tripId en el router state). */
+.history-trip-title {
+  margin: 0 0 24px 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #000;
+  letter-spacing: -0.3px;
+}
+
 .trip-footer {
   display: flex;
   flex-direction: column;
