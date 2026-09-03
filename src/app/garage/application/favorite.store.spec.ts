@@ -214,17 +214,20 @@ describe('FavoriteStore', () => {
   }));
 
   it('turns isLoading off when removing a favorite that only exists in localStorage (no in-memory Favorite)', fakeAsync(() => {
-    // Simula un reload: el vehículo está en favoriteVehicleIds (hidratado de
-    // localStorage) pero NO existe ningún Favorite en memoria para ese par
-    // userId/vehicleId — la rama degradada `if (!favoriteToRemove)` debe
+    // Escenario real: favoriteVehicleIds contiene 'v1' porque un add en sesión
+    // de user-1 lo dejó ahí, pero favorites() no contiene ningún Favorite que
+    // empareje (userId: 'user-2', vehicleId: 'v1') — el estado análogo al de
+    // un post-reload, con ids presentes pero sin Favorite en memoria — así que
+    // el toggle cae en la rama degradada `if (!favoriteToRemove)`, que debe
     // apagar isLoading.
     //
-    // Nota: initialState.favoriteVehicleIds se lee de localStorage UNA sola
-    // vez, al importar el módulo (Karma carga el bundle antes de ejecutar los
-    // specs), así que en este harness el estado «tras un reload» se alcanza
-    // como en el spec existente de abajo: un add en sesión deja v1 en
-    // favoriteVehicleIds con un Favorite de user-1, y al hacer toggle con
-    // user-2 no hay Favorite en memoria que coincida.
+    // initialState.favoriteVehicleIds se lee de localStorage una sola vez, al
+    // importar el módulo (favorite.store.ts:36-41), así que en el harness el
+    // desajuste ids-sin-Favorite no puede venir de una recarga real: se
+    // reproduce con un add en sesión bajo otro userId. user-1 añade 'v1' (su
+    // Favorite queda en memoria con userId 'user-1') y el toggle de user-2
+    // sobre 'v1' no encuentra ningún Favorite que coincida con su par
+    // (userId, vehicleId).
     const store = setup();
     store.toggleFavorite({ userId: 'user-1', vehicleId: 'v1' });
     tick();
