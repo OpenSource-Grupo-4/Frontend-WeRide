@@ -28,6 +28,11 @@ const middlewares = jsonServer.defaults({
 // /sign-up against db.json before the json-server router sees them (the db
 // has a `users` collection but no `/authentication` route — see
 // server/auth-middleware.ts).
+// ⚠️ MOCK-AUTH (JWT de firma fija + contraseñas en texto plano en db.json).
+// Solo es seguro en desarrollo local. PENDIENTE de confirmación del equipo:
+// si backend-weride-2uvw.onrender.com NO es este server, envolver este bloque
+// con `if (process.env.NODE_ENV !== 'production')` para que el mock nunca se
+// monte en producción (Render inyecta NODE_ENV=production).
 const authMiddleware = createAuthMiddleware(dbFile);
 // Mount json-server under /api/v1 so requests like /api/v1/vehicles resolve against db.json,
 // mirroring the live backend layout (https://backend-weride-2uvw.onrender.com/api/v1).

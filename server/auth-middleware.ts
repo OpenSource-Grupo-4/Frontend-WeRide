@@ -26,6 +26,23 @@ import type { NextFunction, Request, RequestHandler, Response } from 'express';
  * persisted state).
  */
 
+/**
+ * ⚠️ SEGURIDAD — MOCK SOLO PARA DESARROLLO LOCAL.
+ *
+ * - Los JWTs se firman con una firma FIJA (MOCK_SIGNATURE) que cualquiera
+ *   puede replicar: NO son tokens válidos ante un backend real.
+ * - `db.json` guarda las contraseñas en TEXTO PLANO.
+ * - Este middleware solo debe montarse en entornos de desarrollo local
+ *   (npm run dev / start:local contra server/db.json).
+ *
+ * ANTES DE desplegar prod-server.ts como backend (Render inyecta
+ * NODE_ENV=production por defecto), confirmar que el mock NO queda montado:
+ * envolver la creación del middleware en server/prod-server.ts con
+ * `if (process.env.NODE_ENV !== 'production') { ... }`. Si el despliegue de
+ * producción depende de este mock para el sign-in, el equipo debe migrar a un
+ * backend con auth real ANTES de aplicar esa guarda.
+ */
+
 const SIGN_IN_SUFFIX = '/authentication/sign-in';
 const SIGN_UP_SUFFIX = '/authentication/sign-up';
 
