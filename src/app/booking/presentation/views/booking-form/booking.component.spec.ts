@@ -413,6 +413,54 @@ describe('BookingFormComponent', () => {
     expect((component as any).showErrorMessage).not.toHaveBeenCalled();
   });
 
+  it('opens a persistent snackbar with the session message and sign-in action on 401', fakeAsync(() => {
+    spyOn(component as any, 'showErrorMessage');
+    (snackBar.open as jasmine.Spy).and.returnValue({
+      onAction: () => of(null)
+    } as any);
+    component.vehicles = [{ id: '1', pricePerMinute: 0.5 } as any];
+    component.selectedVehicle = '1';
+    component.startLocationId = 'loc-A';
+    component.endLocationId = 'loc-B';
+    component.selectedDate = '2026-09-02';
+    component.unlockTime = '10:00';
+    component.duration = 30;
+    bookingsApi.create.and.returnValue(throwError(() => ({ status: 401 })));
+
+    component.submitBooking();
+    tick();
+
+    expect(snackBar.open).toHaveBeenCalledWith(
+      'booking.createSessionExpired',
+      'auth.login.title',
+      jasmine.objectContaining({ duration: 0 })
+    );
+    expect((component as any).showErrorMessage).not.toHaveBeenCalled();
+    tick(3000);
+  }));
+
+  it('handles a 401 response on update without showing the generic error', fakeAsync(() => {
+    spyOn(component as any, 'handleSessionExpired');
+    spyOn(component as any, 'showErrorMessage');
+    component.vehicles = [{ id: '1', pricePerMinute: 0.5 } as any];
+    component.selectedVehicle = '1';
+    component.startLocationId = 'loc-A';
+    component.endLocationId = 'loc-B';
+    component.selectedDate = '2026-09-02';
+    component.unlockTime = '10:00';
+    component.duration = 30;
+    component.isEditMode = true;
+    component.editingBookingId = 'b-1';
+    bookingsApi.update.and.returnValue(throwError(() => ({ status: 401 })));
+
+    component.submitBooking();
+    tick();
+
+    expect((component as any).handleSessionExpired).toHaveBeenCalled();
+    expect((component as any).showErrorMessage).not.toHaveBeenCalled();
+    tick(3000);
+  }));
+
   it('on a non-401 create error keeps the generic error and does not call the session helper', () => {
     spyOn(component as any, 'handleSessionExpired');
     spyOn(component as any, 'showErrorMessage');

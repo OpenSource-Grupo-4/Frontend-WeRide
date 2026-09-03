@@ -2,7 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import { BookingStorageService } from '../../../application/booking-storage.service';
@@ -12,6 +12,7 @@ import { VehiclesApiEndpoint } from '../../../infraestructure/vehicles-api-endpo
 import { LocationsApiEndpoint } from '../../../infraestructure/locations-api-endpoint';
 import { LocationResponse } from '../../../infraestructure/locations-response';
 import { DraftBookingService } from '../../../application/draft-booking.service';
+import { AUTH_SESSION_KEY } from '../../../../auth/infrastructure/token-storage';
 
 @Component({
   selector: 'app-booking-form',
@@ -19,7 +20,6 @@ import { DraftBookingService } from '../../../application/draft-booking.service'
   imports: [
     CommonModule,
     FormsModule,
-    MatSnackBarModule,
     TranslateModule
   ],
   templateUrl: './booking.html',
@@ -394,7 +394,7 @@ export class BookingFormComponent implements OnInit {
     snackBarRef.onAction().subscribe(() => {
       // Limpia la sesión local (mismas claves que AuthRepositoryImpl.logout) y
       // navega al login.
-      localStorage.removeItem('auth_session');
+      localStorage.removeItem(AUTH_SESSION_KEY);
       localStorage.removeItem('session');
       this.router.navigate(['/auth/login']);
     });
