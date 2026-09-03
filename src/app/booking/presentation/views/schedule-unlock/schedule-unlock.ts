@@ -292,8 +292,12 @@ export class ScheduleUnlockComponent implements OnInit {
       return { available: true };
     } catch (error) {
       console.error('Error checking vehicle availability:', error);
-      // En caso de error, permitir continuar pero mostrar advertencia
-      return { available: true };
+      // Fail-closed: si no podemos confirmar que el vehículo está libre, no
+      // permitimos crear la reserva (evita dobles reservas por un error de red).
+      return {
+        available: false,
+        message: this.translate.instant('scheduleUnlock.availabilityCheckFailed')
+      };
     }
   }
 

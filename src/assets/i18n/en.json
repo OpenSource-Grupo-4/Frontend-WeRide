@@ -478,6 +478,7 @@
   },
   "scheduleUnlock": {
     "locationsLoadError": "Could not load locations",
+    "availabilityCheckFailed": "We could not verify vehicle availability. Check your connection and try again.",
     "dateMustBeFuture": "The date must be in the future",
     "selectDateAndTime": "Select date and time",
     "noVehicleSelected": "No vehicle selected",

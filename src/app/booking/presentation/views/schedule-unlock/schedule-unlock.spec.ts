@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Observable, firstValueFrom, of, throwError } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -52,6 +52,8 @@ describe('ScheduleUnlockComponent', () => {
   let component: ScheduleUnlockComponent;
   let fixture: ComponentFixture<ScheduleUnlockComponent>;
   let locationsApi: jasmine.SpyObj<LocationsApiEndpoint>;
+  let bookingsApi: jasmine.SpyObj<BookingsApiEndpoint>;
+  let snackBar: jasmine.SpyObj<MatSnackBar>;
 
   const mockVehicle: Vehicle = {
     id: '1',
@@ -80,13 +82,13 @@ describe('ScheduleUnlockComponent', () => {
 
   beforeEach(async () => {
     locationsApi = jasmine.createSpyObj('LocationsApiEndpoint', ['getAll']);
-    const bookingsApi = jasmine.createSpyObj('BookingsApiEndpoint', ['create', 'getByVehicleId', 'getById', 'getByUserId']);
+    bookingsApi = jasmine.createSpyObj('BookingsApiEndpoint', ['create', 'getByVehicleId', 'getById', 'getByUserId']);
     const activeBookingService = jasmine.createSpyObj('ActiveBookingService', ['getActiveBooking', 'setActiveBooking', 'clearActiveBooking']);
     const bookingStore = jasmine.createSpyObj('BookingStore', ['addBooking', 'updateBooking']);
     const unlockRequestsApi = jasmine.createSpyObj('UnlockRequestsApiEndpoint', ['create']);
     const draftService = jasmine.createSpyObj('DraftBookingService', ['saveDraft', 'deleteDraft', 'getDrafts']);
     draftService.drafts$ = of([]);
-    const snackBar = jasmine.createSpyObj('MatSnackBar', ['open']);
+    snackBar = jasmine.createSpyObj('MatSnackBar', ['open']);
     const dialog = jasmine.createSpyObj('MatDialog', ['open']);
 
     locationsApi.getAll.and.returnValue(of([]));
@@ -191,4 +193,23 @@ describe('ScheduleUnlockComponent', () => {
 
     expect((component as any).validateDateTime()).toBeTrue();
   });
+
+  it('blocks the booking when the availability check fails (fail-closed)', fakeAsync(() => {
+    (bookingsApi.getByVehicleId as jasmine.Spy).and.returnValue(
+      throwError(() => new Error('network down'))
+    );
+    (snackBar.open as jasmine.Spy).and.returnValue({ onAction: () => of(null) } as any);
+    component.selectedVehicle = mockVehicle;
+    component.startLocationId = '1';
+    component.endLocationId = '2';
+    component.unlockTime = '23:59';
+    component.selectedDate = '2030-01-01';
+
+    component.scheduleUnlock();
+    tick();
+
+    expect(bookingsApi.create).not.toHaveBeenCalled();
+    expect(component.availabilityError).not.toBe('');
+    tick(5000);
+  }));
 });

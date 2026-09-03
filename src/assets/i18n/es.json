@@ -478,6 +478,7 @@
   },
   "scheduleUnlock": {
     "locationsLoadError": "No se pudieron cargar las ubicaciones",
+    "availabilityCheckFailed": "No pudimos verificar la disponibilidad del vehículo. Revisa tu conexión e inténtalo de nuevo.",
     "dateMustBeFuture": "La fecha debe ser futura",
     "selectDateAndTime": "Selecciona fecha y hora",
     "noVehicleSelected": "Vehículo no seleccionado",
