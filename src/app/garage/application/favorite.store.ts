@@ -166,30 +166,61 @@ export const FavoriteStore = signalStore(
               );
 
               if (!favoriteToRemove) {
-                // After a reload, `favoriteVehicleIds` is hydrated from
-                // localStorage but `favorites` is empty (it is only populated
-                // by in-session add successes), so the Favorite id — required
-                // by removeFavorite(id) → DELETE /favorites/{id} — is unknown
-                // here. Best effort: drop the vehicle from favoriteVehicleIds +
-                // localStorage so the UI un-favorites instead of silently
-                // no-opping; deleting the server record (if any) needs a full
-                // favorites refresh first so the id can be resolved.
-                console.warn(
-                  'Favorite not found in store; removed locally. ' +
-                    'Server sync requires loadUserFavorites before removal.',
-                  { userId, vehicleId }
+                // Tras un reload `favorites` está vacío (solo `favoriteVehicleIds`
+                // viene de localStorage), así que no conocemos el id de la fila que
+                // exige DELETE /favorites/{id}. Refrescamos los favoritos del
+                // servidor para resolverlo y borramos la fila remota; si el
+                // servidor ya no la tiene, solo limpiamos el estado local.
+                return favoriteRepository.getUserFavorites(userId).pipe(
+                  switchMap((serverFavorites) => {
+                    const serverFavorite = serverFavorites.find(
+                      (fav) => fav.vehicleId === vehicleId
+                    );
+                    if (!serverFavorite) {
+                      const updatedIds = store.favoriteVehicleIds().filter(
+                        (id) => id !== vehicleId
+                      );
+                      saveFavoritesToLocalStorage(updatedIds);
+                      patchState(store, {
+                        favoriteVehicleIds: updatedIds,
+                        isLoading: false,
+                        error: null
+                      });
+                      return of(null);
+                    }
+                    return favoriteRepository.removeFavorite(serverFavorite.id).pipe(
+                      tap(() => {
+                        const updatedFavorites = store.favorites().filter(
+                          (fav) => fav.id !== serverFavorite.id
+                        );
+                        const updatedIds = updatedFavorites.map((fav) => fav.vehicleId);
+                        saveFavoritesToLocalStorage(updatedIds);
+                        patchState(store, {
+                          favorites: updatedFavorites,
+                          favoriteVehicleIds: updatedIds,
+                          isLoading: false,
+                          error: null
+                        });
+                      }),
+                      catchError((error) => {
+                        console.error('✗ Error removing favorite after reload:', error);
+                        patchState(store, {
+                          isLoading: false,
+                          error: error.message || 'Error al eliminar favorito'
+                        });
+                        return of(null);
+                      })
+                    );
+                  }),
+                  catchError((error) => {
+                    console.error('✗ Error resolving favorite after reload:', error);
+                    patchState(store, {
+                      isLoading: false,
+                      error: error.message || 'Error al eliminar favorito'
+                    });
+                    return of(null);
+                  })
                 );
-                const updatedIds = store.favoriteVehicleIds().filter(
-                  id => id !== vehicleId
-                );
-                // Save to localStorage
-                saveFavoritesToLocalStorage(updatedIds);
-                patchState(store, {
-                  favoriteVehicleIds: updatedIds,
-                  isLoading: false,
-                  error: null
-                });
-                return of(null);
               }
 
               return favoriteRepository.removeFavorite(favoriteToRemove.id).pipe(

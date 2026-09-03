@@ -11,6 +11,7 @@ import { Vehicle } from '../../../domain/model/vehicle.model';
 import { GetVehiclesUseCase } from '../../../application/use-cases/get-vehicles.usecase';
 import { ToggleFavoriteUseCase } from '../../../application/use-cases/toggle-favorite.usecase';
 import { FavoriteStore } from '../../../application/favorite.store';
+import { AuthStore } from '../../../../auth/application/auth.store';
 import { ActiveBookingService } from '../../../../booking/application/active-booking.service';
 
 class FakeLoader implements TranslateLoader {
@@ -61,6 +62,7 @@ describe('Favorites', () => {
     isLoading: jasmine.Spy;
     error: jasmine.Spy;
     favoriteVehicleIds: jasmine.Spy;
+    loadUserFavorites: jasmine.Spy;
   };
   let toggleFavoriteUseCase: jasmine.SpyObj<ToggleFavoriteUseCase>;
 
@@ -74,9 +76,16 @@ describe('Favorites', () => {
     favoriteStore = {
       isLoading: jasmine.createSpy('isLoading'),
       error: jasmine.createSpy('error'),
-      favoriteVehicleIds: jasmine.createSpy('favoriteVehicleIds')
+      favoriteVehicleIds: jasmine.createSpy('favoriteVehicleIds'),
+      loadUserFavorites: jasmine.createSpy('loadUserFavorites')
     };
     toggleFavoriteUseCase = jasmine.createSpyObj<ToggleFavoriteUseCase>('ToggleFavoriteUseCase', ['execute']);
+    // AuthStore is a signalStore: session()/currentUser() are signal getters.
+    // Con sesión no autenticada, hydrateFavorites() no hace nada.
+    const authStore = {
+      session: () => ({ isAuthenticated: false }),
+      currentUser: () => null
+    };
 
     // Defaults: no active booking, empty favorite list, modal never resolves.
     activeBookingService.getActiveBooking.and.returnValue(null);
@@ -99,7 +108,8 @@ describe('Favorites', () => {
         { provide: ActiveBookingService, useValue: activeBookingService },
         { provide: GetVehiclesUseCase, useValue: getVehiclesUseCase },
         { provide: ToggleFavoriteUseCase, useValue: toggleFavoriteUseCase },
-        { provide: FavoriteStore, useValue: favoriteStore }
+        { provide: FavoriteStore, useValue: favoriteStore },
+        { provide: AuthStore, useValue: authStore }
       ]
     }).compileComponents();
 

@@ -9,6 +9,7 @@ import {Vehicle} from '../../../domain/model/vehicle.model';
 import {GetVehiclesUseCase} from '../../../application/use-cases/get-vehicles.usecase';
 import {ToggleFavoriteUseCase} from '../../../application/use-cases/toggle-favorite.usecase';
 import {FavoriteStore} from '../../../application/favorite.store';
+import {AuthStore} from '../../../../auth/application/auth.store';
 import {ActiveBookingService} from '../../../../booking/application/active-booking.service';
 import {BookingConfirmationModal} from '../../../../booking/presentation/views/booking-confirmation-modal/booking-confirmation-modal';
 
@@ -28,6 +29,7 @@ export class Favorites implements OnInit {
   private getVehiclesUseCase = inject(GetVehiclesUseCase);
   private toggleFavoriteUseCase = inject(ToggleFavoriteUseCase);
   private favoriteStore = inject(FavoriteStore);
+  private authStore = inject(AuthStore);
 
   // Use signal for reactivity
   allVehicles = signal<Vehicle[]>([]);
@@ -51,8 +53,18 @@ export class Favorites implements OnInit {
   });
 
   async ngOnInit() {
-    // Load all vehicles once
+    await this.hydrateFavorites();
     await this.loadVehicles();
+  }
+
+  /** Resuelve los Favorite ids desde el servidor para que el toggle de
+   *  un-favorite pueda borrar la fila remota tras un reload. */
+  private async hydrateFavorites(): Promise<void> {
+    if (!this.authStore.session()?.isAuthenticated) return;
+    const userId = this.authStore.currentUser()?.id;
+    if (!userId) return;
+    this.favoriteStore.loadUserFavorites(userId);
+    await Promise.resolve();
   }
 
   async loadVehicles() {

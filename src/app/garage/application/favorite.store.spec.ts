@@ -147,9 +147,11 @@ describe('FavoriteStore', () => {
   }));
 
   it('removing a favorite not in the in-memory favorites list still removes it from favoriteVehicleIds and localStorage', fakeAsync(() => {
+    const getUserFavorites = jasmine.createSpy('getUserFavorites').and.returnValue(of([]));
     const removeFavorite = jasmine.createSpy('removeFavorite').and.returnValue(of(undefined));
     const store = setup({
       addFavorite: jasmine.createSpy('addFavorite').and.returnValue(of(createFavorite('v1'))),
+      getUserFavorites,
       removeFavorite
     });
 
@@ -161,12 +163,14 @@ describe('FavoriteStore', () => {
 
     // After a reload `favoriteVehicleIds` is hydrated from localStorage while
     // `favorites` holds no matching Favorite object (favorites is only
-    // populated by in-session adds). Toggling must still un-favorite the
-    // vehicle instead of silently no-opping: drop the id + localStorage, and
-    // do not attempt a server delete that cannot be addressed without an id.
+    // populated by in-session adds). El toggle ya no degrada a borrado local
+    // silencioso: primero resuelve la fila del servidor (getUserFavorites) y,
+    // como el servidor ya no tiene el favorito ([]), no emite DELETE: solo
+    // limpia el id + localStorage.
     store.toggleFavorite({ userId: 'user-2', vehicleId: 'v1' });
     tick();
 
+    expect(getUserFavorites).toHaveBeenCalledWith('user-2');
     expect(store.favoriteVehicleIds()).not.toContain('v1');
     expect(JSON.parse(localStorage.getItem('favoriteVehicleIds') || '[]')).not.toContain('v1');
     expect(removeFavorite).not.toHaveBeenCalled();
@@ -239,5 +243,45 @@ describe('FavoriteStore', () => {
 
     expect(store.isLoading()).toBeFalse();
     expect(store.favoriteVehicleIds()).not.toContain('v1');
+  }));
+
+  it('resolves the server favorite id after a reload-like state and removes it remotely', fakeAsync(() => {
+    const getUserFavorites = jasmine.createSpy('getUserFavorites').and.returnValue(
+      of([createFavorite('v1')])
+    );
+    const removeFavorite = jasmine.createSpy('removeFavorite').and.returnValue(of(undefined));
+    const store = setup({ getUserFavorites, removeFavorite });
+
+    // Estado análogo al post-reload: 'v1' está en favoriteVehicleIds (add en
+    // sesión de user-1) pero el toggle es de user-2, sin Favorite en memoria
+    // que empareje → rama degradada.
+    store.toggleFavorite({ userId: 'user-1', vehicleId: 'v1' });
+    tick();
+    expect(store.favoriteVehicleIds()).toContain('v1');
+
+    store.toggleFavorite({ userId: 'user-2', vehicleId: 'v1' });
+    tick();
+
+    expect(getUserFavorites).toHaveBeenCalledWith('user-2');
+    expect(removeFavorite).toHaveBeenCalledWith('fav-v1');
+    expect(store.favoriteVehicleIds()).not.toContain('v1');
+    expect(store.isLoading()).toBeFalse();
+  }));
+
+  it('only clears local state when the server no longer has the favorite', fakeAsync(() => {
+    const getUserFavorites = jasmine.createSpy('getUserFavorites').and.returnValue(of([]));
+    const removeFavorite = jasmine.createSpy('removeFavorite').and.returnValue(of(undefined));
+    const store = setup({ getUserFavorites, removeFavorite });
+
+    store.toggleFavorite({ userId: 'user-1', vehicleId: 'v1' });
+    tick();
+    store.toggleFavorite({ userId: 'user-2', vehicleId: 'v1' });
+    tick();
+
+    expect(getUserFavorites).toHaveBeenCalledWith('user-2');
+    expect(removeFavorite).not.toHaveBeenCalled();
+    expect(store.favoriteVehicleIds()).not.toContain('v1');
+    expect(store.isLoading()).toBeFalse();
+    expect(store.error()).toBeNull();
   }));
 });
