@@ -1,5 +1,5 @@
 import { fakeAsync, TestBed, tick } from '@angular/core/testing';
-import { signal, WritableSignal } from '@angular/core';
+import { signal, untracked, WritableSignal } from '@angular/core';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { Observable, of, Subject } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -31,7 +31,12 @@ describe('BookingNotificationService', () => {
 
     authStore = {
       currentUser: signal({ id: 'user-1' }),
-      session: signal({ isAuthenticated: true })
+      // El servicio crea un effect sobre esta señal: el effect se ejecuta en el
+      // primer tick() tras inyectar el servicio. Sesión false por defecto para
+      // que los tests que arrancan el monitor manualmente (startMonitoring) no
+      // reciban un arranque adicional del effect. Cada test que requiera sesión
+      // activa la establece a true ANTES de inyectar el servicio.
+      session: signal({ isAuthenticated: false })
     };
 
     TestBed.configureTestingModule({
@@ -52,11 +57,22 @@ describe('BookingNotificationService', () => {
     // Make sure no interval survives between tests
     const service = TestBed.inject(BookingNotificationService);
     service.stopMonitoring();
+    // Deja la señal de sesión limpia para el siguiente test (sin notificar al
+    // effect, que ya no volverá a ejecutarse con el servicio destruido).
+    untracked(() => authStore.session.set({ isAuthenticated: false }));
   });
 
   it('starts an interval that checks bookings', fakeAsync(() => {
+    authStore.session.set({ isAuthenticated: true });
     const service = TestBed.inject(BookingNotificationService);
     spyOn<any>(service, 'checkActiveBookings');
+
+    // El effect creado al inyectar el servicio arranca el monitor en el primer
+    // tick (sesión autenticada). Detenlo y olvida esa llamada para probar el
+    // arranque manual desde cero.
+    tick();
+    service.stopMonitoring();
+    (service as any).checkActiveBookings.calls.reset();
 
     service.startMonitoring();
 
@@ -68,9 +84,14 @@ describe('BookingNotificationService', () => {
   }));
 
   it('is idempotent — calling startMonitoring twice keeps one interval', fakeAsync(() => {
+    authStore.session.set({ isAuthenticated: true });
     const service = TestBed.inject(BookingNotificationService);
     spyOn<any>(service, 'checkActiveBookings');
 
+    // El effect de creación ya ha arrancado el monitor (isMonitoring true):
+    // el primer startMonitoring manual es un no-op, lo que valida justo la
+    // idempotencia que este test persigue.
+    tick();
     service.startMonitoring();
     const firstInterval = (service as any).checkInterval;
 
@@ -87,14 +108,18 @@ describe('BookingNotificationService', () => {
     expect((service as any).checkInterval).toBeUndefined();
   }));
 
-  it('does not fetch bookings for unauthenticated users', () => {
-    authStore.session.set({ isAuthenticated: false });
+  it('does not fetch bookings for unauthenticated users', fakeAsync(() => {
+    // Sesión no autenticada por defecto: inyectar el servicio no arranca el
+    // monitor (el effect ve isAuthenticated false) y startMonitoring manual
+    // tampoco dispara fetches.
     const service = TestBed.inject(BookingNotificationService);
+    tick();
 
     service.startMonitoring();
 
     expect(bookingsApi.getByUserId).not.toHaveBeenCalled();
-  });
+    service.stopMonitoring();
+  }));
 
   it('fetches active bookings for authenticated users and runs the per-booking checks', fakeAsync(() => {
     const booking: BookingResponse = {
@@ -121,6 +146,7 @@ describe('BookingNotificationService', () => {
       issues: []
     };
     bookingsApi.getByUserId.and.returnValue(of([booking]));
+    authStore.session.set({ isAuthenticated: true });
 
     const service = TestBed.inject(BookingNotificationService);
     spyOn<any>(service, 'checkBookingStart');
@@ -162,6 +188,7 @@ describe('BookingNotificationService', () => {
     };
     const pending$ = new Subject<BookingResponse[]>();
     bookingsApi.getByUserId.and.returnValue(pending$);
+    authStore.session.set({ isAuthenticated: true });
 
     const service = TestBed.inject(BookingNotificationService);
     spyOn<any>(service, 'checkBookingStart');
@@ -186,8 +213,10 @@ describe('BookingNotificationService', () => {
   it('does not start an overlapping fetch while one is in flight', fakeAsync(() => {
     const pending$ = new Subject<BookingResponse[]>();
     bookingsApi.getByUserId.and.returnValue(pending$);
+    authStore.session.set({ isAuthenticated: true });
 
     const service = TestBed.inject(BookingNotificationService);
+    tick();
 
     (service as any).checkActiveBookings();
     (service as any).checkActiveBookings();
@@ -202,13 +231,16 @@ describe('BookingNotificationService', () => {
     (service as any).checkActiveBookings();
     expect(bookingsApi.getByUserId).toHaveBeenCalledTimes(2);
     pending$.complete();
+    service.stopMonitoring();
   }));
 
   it('resets the in-flight guard when the fetch errors', fakeAsync(() => {
     const failing$ = new Subject<BookingResponse[]>();
     bookingsApi.getByUserId.and.returnValue(failing$);
+    authStore.session.set({ isAuthenticated: true });
 
     const service = TestBed.inject(BookingNotificationService);
+    tick();
     spyOn(console, 'error');
 
     (service as any).checkActiveBookings();
@@ -219,5 +251,40 @@ describe('BookingNotificationService', () => {
 
     (service as any).checkActiveBookings();
     expect(bookingsApi.getByUserId).toHaveBeenCalledTimes(2);
+    service.stopMonitoring();
+  }));
+
+  it('stops monitoring when the session becomes unauthenticated (logout)', fakeAsync(() => {
+    authStore.session.set({ isAuthenticated: true });
+    const service = TestBed.inject(BookingNotificationService);
+    spyOn<any>(service, 'checkActiveBookings');
+
+    service.startMonitoring();
+    expect((service as any).isMonitoring).toBeTrue();
+
+    authStore.session.set({ isAuthenticated: false });
+    tick();
+
+    expect((service as any).isMonitoring).toBeFalse();
+    expect((service as any).checkInterval).toBeUndefined();
+  }));
+
+  it('resumes monitoring when a new session is authenticated (login)', fakeAsync(() => {
+    // Sesión no autenticada (default del beforeEach): el effect no arranca el
+    // monitor al crear el servicio y el startMonitoring manual queda anulado
+    // por el effect en el siguiente tick.
+    const service = TestBed.inject(BookingNotificationService);
+    spyOn<any>(service, 'checkActiveBookings');
+
+    service.startMonitoring();
+    tick();
+    expect((service as any).isMonitoring).toBeFalse();
+
+    // Login: el effect debe arrancarlo.
+    authStore.session.set({ isAuthenticated: true });
+    tick();
+
+    expect((service as any).isMonitoring).toBeTrue();
+    service.stopMonitoring();
   }));
 });

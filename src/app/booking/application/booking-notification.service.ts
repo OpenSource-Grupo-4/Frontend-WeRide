@@ -1,4 +1,4 @@
-import { Injectable, inject, OnDestroy } from '@angular/core';
+import { Injectable, inject, OnDestroy, effect } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
@@ -43,6 +43,23 @@ export class BookingNotificationService implements OnDestroy {
     notifiedExpiringIds: new Set(),
     notifiedExpiredIds: new Set()
   };
+
+  /**
+   * Reacciona a los cambios de sesión de auth:
+   * - Sesión no autenticada (logout) => detiene el monitor.
+   * - Sesión autenticada (login / sesión restaurada) => arranca el monitor si
+   *   aún no está corriendo. El effect se ejecuta la primera vez al crearse el
+   *   servicio con la sesión actual, de modo que con sesión restaurada el
+   *   monitor se pone en marcha solo.
+   */
+  private sessionEffect = effect(() => {
+    const session = this.authStore.session();
+    if (!session?.isAuthenticated) {
+      this.stopMonitoring();
+    } else if (!this.isMonitoring) {
+      this.startMonitoring();
+    }
+  });
 
   /**
    * Start monitoring bookings for notifications
@@ -343,6 +360,9 @@ export class BookingNotificationService implements OnDestroy {
   }
 
   ngOnDestroy(): void {
+    // Destruye el effect antes de detener el monitor: al destruirlo ya no se
+    // notificarán cambios de sesión sobre un servicio en destrucción.
+    this.sessionEffect.destroy();
     this.stopMonitoring();
   }
 }
