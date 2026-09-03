@@ -114,13 +114,13 @@ export class ScheduleUnlockComponent implements OnInit {
 
   setImmediateBooking() {
     const now = new Date();
-    this.selectedDate = now.toISOString().split('T')[0];
+    this.selectedDate = this.formatDateInput(now);
     this.unlockTime = now.toTimeString().substring(0, 5);
   }
 
   setDefaultDateTime() {
     const today = new Date();
-    this.selectedDate = today.toISOString().split('T')[0];
+    this.selectedDate = this.formatDateInput(today);
   }
 
   filterVehicles() {
@@ -204,11 +204,17 @@ export class ScheduleUnlockComponent implements OnInit {
   }
 
   /**
-   * Valida que la fecha y hora sean futuras
+   * Valida que la fecha y hora sean futuras. Las reservas inmediatas ("Book now")
+   * fijan la hora actual como unlockTime, así que se saltan esta regla: exigir
+   * una hora estrictamente futura bloquearía el flujo immediate (la hora :00
+   * casi nunca es > "ahora").
    */
   private validateDateTime(): boolean {
     if (!this.selectedDate || !this.unlockTime) {
       return false;
+    }
+    if (this.isImmediate) {
+      return true;
     }
 
     const [hours, minutes] = this.unlockTime.split(':');
@@ -217,6 +223,14 @@ export class ScheduleUnlockComponent implements OnInit {
     const now = new Date();
 
     return selectedDateTime > now;
+  }
+
+  /** Formatea una fecha como YYYY-MM-DD usando componentes LOCALES (no UTC). */
+  private formatDateInput(date: Date): string {
+    const y = date.getFullYear();
+    const m = (date.getMonth() + 1).toString().padStart(2, '0');
+    const d = date.getDate().toString().padStart(2, '0');
+    return `${y}-${m}-${d}`;
   }
 
   /**

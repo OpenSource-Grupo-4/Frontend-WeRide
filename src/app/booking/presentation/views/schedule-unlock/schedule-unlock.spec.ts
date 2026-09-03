@@ -176,4 +176,19 @@ describe('ScheduleUnlockComponent', () => {
     expect(component.calculateTotal()).toBe('60.00');
     expect(text).toContain('60.00');
   });
+
+  it('accepts the current time for an immediate booking (Book now is not blocked by the future-time rule)', () => {
+    const now = new Date();
+    const hh = now.getHours().toString().padStart(2, '0');
+    const mm = now.getMinutes().toString().padStart(2, '0');
+
+    component.isImmediate = true;
+    component.selectedDate = (component as any).formatDateInput(now);
+    component.unlockTime = `${hh}:${mm}`;
+    component.selectedVehicle = mockVehicle;
+    component.startLocationId = '1';
+    component.endLocationId = '2';
+
+    expect((component as any).validateDateTime()).toBeTrue();
+  });
 });
