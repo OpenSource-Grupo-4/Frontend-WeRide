@@ -30,7 +30,7 @@ const middlewares = jsonServer.defaults({
 // server/auth-middleware.ts).
 const authMiddleware = createAuthMiddleware(dbFile);
 // Mount json-server under /api/v1 so requests like /api/v1/vehicles resolve against db.json,
-// mirroring the live backend layout (https://db-weride-4.onrender.com/api/v1).
+// mirroring the live backend layout (https://backend-weride-2uvw.onrender.com/api/v1).
 // jsonServer.bodyParser must run before the auth middleware so req.body is
 // populated for the mock sign-in/sign-up handlers (json-server's own defaults
 // bodyParser only runs after this point; body-parser skips already-parsed bodies).

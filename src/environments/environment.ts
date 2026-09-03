@@ -1,4 +1,4 @@
-// dev: '/api/v1' is proxied by the dev server to https://db-weride-4.onrender.com (see proxy.conf.json)
+// dev: '/api/v1' is proxied by the dev server to https://backend-weride-2uvw.onrender.com (see proxy.conf.json)
 export const environment = {
   production: false,
   apiUrl: '/api/v1',
