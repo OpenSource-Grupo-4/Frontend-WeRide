@@ -394,6 +394,18 @@
       "completed": "Completed",
       "cancelled": "Cancelled"
     },
+    "list": {
+      "searchByVehicle": "Search by vehicle",
+      "vehicleNamePlaceholder": "Vehicle name",
+      "sortBy": "Sort by",
+      "date": "Date",
+      "vehicle": "Vehicle",
+      "status": "Status",
+      "order": "Order",
+      "newestFirst": "Newest first",
+      "oldestFirst": "Oldest first",
+      "clearFilters": "Clear filters"
+    },
     "summary": {
       "title": "Booking Summary",
       "vehicle": "Vehicle",

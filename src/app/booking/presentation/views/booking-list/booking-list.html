@@ -9,29 +9,29 @@
 
   <div class="filters" *ngIf="!isLoading">
     <mat-form-field appearance="outline" class="search-field">
-      <mat-label>Buscar por vehículo</mat-label>
-      <input matInput [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()" placeholder="Nombre del vehículo">
+      <mat-label>{{ 'booking.list.searchByVehicle' | translate }}</mat-label>
+      <input matInput [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()" [placeholder]="'booking.list.vehicleNamePlaceholder' | translate">
       <mat-icon matPrefix>search</mat-icon>
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="sort-field">
-      <mat-label>Ordenar por</mat-label>
+      <mat-label>{{ 'booking.list.sortBy' | translate }}</mat-label>
       <mat-select [(ngModel)]="sortBy" (ngModelChange)="onSortChange()">
-        <mat-option value="date">Fecha</mat-option>
-        <mat-option value="vehicle">Vehículo</mat-option>
-        <mat-option value="status">Estado</mat-option>
+        <mat-option value="date">{{ 'booking.list.date' | translate }}</mat-option>
+        <mat-option value="vehicle">{{ 'booking.list.vehicle' | translate }}</mat-option>
+        <mat-option value="status">{{ 'booking.list.status' | translate }}</mat-option>
       </mat-select>
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="order-field">
-      <mat-label>Orden</mat-label>
+      <mat-label>{{ 'booking.list.order' | translate }}</mat-label>
       <mat-select [(ngModel)]="sortOrder" (ngModelChange)="onSortChange()">
-        <mat-option value="desc">Más recientes</mat-option>
-        <mat-option value="asc">Más antiguos</mat-option>
+        <mat-option value="desc">{{ 'booking.list.newestFirst' | translate }}</mat-option>
+        <mat-option value="asc">{{ 'booking.list.oldestFirst' | translate }}</mat-option>
       </mat-select>
     </mat-form-field>
 
-    <button mat-icon-button (click)="clearFilters()" matTooltip="Limpiar filtros">
+    <button mat-icon-button (click)="clearFilters()" [matTooltip]="'booking.list.clearFilters' | translate">
       <mat-icon>clear</mat-icon>
     </button>
   </div>

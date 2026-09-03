@@ -394,6 +394,18 @@
       "completed": "Completada",
       "cancelled": "Cancelada"
     },
+    "list": {
+      "searchByVehicle": "Buscar por vehículo",
+      "vehicleNamePlaceholder": "Nombre del vehículo",
+      "sortBy": "Ordenar por",
+      "date": "Fecha",
+      "vehicle": "Vehículo",
+      "status": "Estado",
+      "order": "Orden",
+      "newestFirst": "Más recientes",
+      "oldestFirst": "Más antiguos",
+      "clearFilters": "Limpiar filtros"
+    },
     "summary": {
       "title": "Resumen de Reserva",
       "vehicle": "Vehículo",
