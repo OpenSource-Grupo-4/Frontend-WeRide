@@ -36,8 +36,11 @@ export class VehiclesApiEndpoint {
 
   // El backend real emite los ids de vehículos como números; se normalizan a
   // string para que las comparaciones del frontend (=== contra selectedVehicle,
-  // que Angular stringifica desde el <option>) sean consistentes.
+  // que Angular stringifica desde el <option>) sean consistentes. Si la
+  // respuesta no trae id (204, body inesperado), se normaliza a '' para que el
+  // fallo sea visible en la UI en vez de producir un "undefined" silencioso.
   private normalize(item: VehicleResponse): VehicleResponse {
-    return { ...item, id: String((item as any).id) };
+    const value = item as any;
+    return { ...item, id: value.id == null ? '' : String(value.id) };
   }
 }
