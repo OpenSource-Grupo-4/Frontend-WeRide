@@ -10,6 +10,7 @@ import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { BookingsApiEndpoint } from '../../../infraestructure/bookings-api-endpoint';
 import { VehiclesApiEndpoint } from '../../../infraestructure/vehicles-api-endpoint';
 import { LocationsApiEndpoint } from '../../../infraestructure/locations-api-endpoint';
@@ -36,7 +37,7 @@ interface BookingView {
 
 @Component({
   selector: 'app-booking-list',
-  imports: [CommonModule, MatIconModule, MatButtonModule, MatSnackBarModule, MatDialogModule, RouterModule, TranslateModule, FormsModule, MatFormFieldModule, MatInputModule, MatSelectModule],
+  imports: [CommonModule, MatIconModule, MatButtonModule, MatSnackBarModule, MatDialogModule, RouterModule, TranslateModule, FormsModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatTooltipModule],
   templateUrl: './booking-list.html',
   styleUrl: './booking-list.css'
 })
