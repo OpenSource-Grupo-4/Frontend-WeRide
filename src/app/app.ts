@@ -1,4 +1,4 @@
-import { Component, signal, OnInit, OnDestroy, inject, effect } from '@angular/core';
+import { Component, signal, OnInit, OnDestroy, inject } from '@angular/core';
 import { RouterOutlet, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
@@ -38,9 +38,8 @@ export class App implements OnInit, OnDestroy {
     // Initialize auth session from localStorage
     this.initializeAuth();
 
-    // Start monitoring bookings for start/expiry/expired notifications.
-    // No-ops for unauthenticated users; idempotent.
-    this.bookingNotificationService.startMonitoring();
+    // El arranque/parada del monitor de notificaciones lo orquesta BookingNotificationService
+    // vía un effect sobre authStore.session().
   }
 
   private syncDocumentLang(lang: string): void {
