@@ -75,6 +75,43 @@ describe('FavoriteStore', () => {
     expect(store.favoriteVehicleIds()).toContain('v1'); // no partial state
   }));
 
+  it('keeps the favorite and reports an error when resolving the server favorite fails', fakeAsync(() => {
+    const store = setup({
+      getUserFavorites: jasmine.createSpy('getUserFavorites').and.returnValue(
+        throwError(() => new Error('API down'))
+      )
+    });
+    // add en sesión de user-1 deja v1 en favoriteVehicleIds; toggle de user-2
+    // cae en la rama degradada (sin Favorite en memoria que empareje).
+    store.toggleFavorite({ userId: 'user-1', vehicleId: 'v1' });
+    tick();
+    store.toggleFavorite({ userId: 'user-2', vehicleId: 'v1' });
+    tick();
+
+    expect(store.error()).toContain('API down');
+    expect(store.favoriteVehicleIds()).toContain('v1'); // no se des-favoritó
+    expect(store.isLoading()).toBeFalse();
+  }));
+
+  it('reports an error and keeps state when the resolved remote delete fails', fakeAsync(() => {
+    const store = setup({
+      getUserFavorites: jasmine.createSpy('getUserFavorites').and.returnValue(
+        of([createFavorite('v1')])
+      ),
+      removeFavorite: jasmine.createSpy('removeFavorite').and.returnValue(
+        throwError(() => new Error('API down'))
+      )
+    });
+    store.toggleFavorite({ userId: 'user-1', vehicleId: 'v1' });
+    tick();
+    store.toggleFavorite({ userId: 'user-2', vehicleId: 'v1' });
+    tick();
+
+    expect(store.error()).toContain('API down');
+    expect(store.favoriteVehicleIds()).toContain('v1');
+    expect(store.isLoading()).toBeFalse();
+  }));
+
   it('toggles successfully when the API call succeeds', fakeAsync(() => {
     const store = setup({
       addFavorite: jasmine.createSpy('addFavorite').and.returnValue(of(createFavorite('v1')))

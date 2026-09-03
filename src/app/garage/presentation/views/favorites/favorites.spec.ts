@@ -65,6 +65,14 @@ describe('Favorites', () => {
     loadUserFavorites: jasmine.Spy;
   };
   let toggleFavoriteUseCase: jasmine.SpyObj<ToggleFavoriteUseCase>;
+  // AuthStore is a signalStore: session()/currentUser() are signal getters.
+  // Stub mutable: por defecto sesión NO autenticada (hydrateFavorites() no hace
+  // nada); el test de hidratación re-configura session/currentUser ANTES de
+  // crear el componente.
+  let authStore: {
+    session: () => { isAuthenticated: boolean };
+    currentUser: () => { id: string } | null;
+  };
 
   beforeEach(async () => {
     dialog = jasmine.createSpyObj<MatDialog>('MatDialog', ['open']);
@@ -80,9 +88,7 @@ describe('Favorites', () => {
       loadUserFavorites: jasmine.createSpy('loadUserFavorites')
     };
     toggleFavoriteUseCase = jasmine.createSpyObj<ToggleFavoriteUseCase>('ToggleFavoriteUseCase', ['execute']);
-    // AuthStore is a signalStore: session()/currentUser() are signal getters.
-    // Con sesión no autenticada, hydrateFavorites() no hace nada.
-    const authStore = {
+    authStore = {
       session: () => ({ isAuthenticated: false }),
       currentUser: () => null
     };
@@ -159,5 +165,19 @@ describe('Favorites', () => {
     expect(snackBar.open).toHaveBeenCalled();
     expect(dialog.open).not.toHaveBeenCalled();
     expect(router.navigate).not.toHaveBeenCalled();
+  });
+
+  it('hydrates server favorites on init when authenticated', async () => {
+    // Configura una sesión autenticada ANTES de crear el componente, ya que el
+    // beforeEach construyó el fixture con la sesión por defecto (no autenticada).
+    authStore.session = () => ({ isAuthenticated: true });
+    authStore.currentUser = () => ({ id: 'user-1' });
+
+    fixture = TestBed.createComponent(Favorites);
+    component = fixture.componentInstance;
+    await component.ngOnInit();
+    fixture.detectChanges();
+
+    expect(favoriteStore.loadUserFavorites).toHaveBeenCalledWith('user-1');
   });
 });
