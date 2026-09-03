@@ -567,7 +567,24 @@
     "vehicleInfo": {
       "battery": "Battery",
       "brand": "Brand"
-    }
+    },
+    "activeTripPanel": {
+      "inProgress": "Trip in Progress",
+      "statusInProgress": "Trip in progress",
+      "elapsedTime": "Elapsed time",
+      "estimatedDistance": "Estimated distance",
+      "origin": "Origin",
+      "destination": "Destination",
+      "connectionError": "Connection error - The information may not be up to date"
+    },
+    "connectionErrorTitle": "Connection Error",
+    "connectionErrorMessage": "Could not load vehicle information. Please check your internet connection.",
+    "nearbyVehicles": "Nearby Vehicles",
+    "noVehiclesNearby": "There are no vehicles available near this location",
+    "alternativeLocations": "Alternative locations with vehicles:",
+    "activateBookingNow": "Activate Booking Now",
+    "scheduleBooking": "Schedule a booking",
+    "activatedAt": "Activated: {{date}}"
   },
   "plans": {
     "title": "Plans",

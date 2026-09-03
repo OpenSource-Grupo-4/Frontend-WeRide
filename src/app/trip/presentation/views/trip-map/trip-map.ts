@@ -16,7 +16,7 @@ import {ProblemReportsApiEndpoint} from '../../../infrastructure/problem-reports
 import {RatingsApiEndpoint} from '../../../infrastructure/ratings-api-endpoint';
 import {OfflineSyncService} from '../../../application/offline-sync.service';
 import {MatSnackBar} from '@angular/material/snack-bar';
-import {TranslateService} from '@ngx-translate/core';
+import {TranslateModule, TranslateService} from '@ngx-translate/core';
 import { ActiveBookingService } from '../../../../booking/application/active-booking.service';
 import { TripInitializerService } from '../../../application/trip-initializer.service';
 import { TravelHistoryApiEndpoint } from '../../../infrastructure/travel-history-api-endpoint';
@@ -26,7 +26,7 @@ import { TripsApiEndpoint } from '../../../infrastructure/trips-api-endpoint';
 
 @Component({
   selector: 'app-trip-map',
-  imports: [MapComponent, MarkerComponent, CommonModule, ActiveTripPanel],
+  imports: [MapComponent, MarkerComponent, CommonModule, TranslateModule, ActiveTripPanel],
   templateUrl: './trip-map.html',
   styleUrl: './trip-map.css'
 })

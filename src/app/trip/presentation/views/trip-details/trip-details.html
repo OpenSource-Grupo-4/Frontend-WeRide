@@ -42,7 +42,7 @@
         <div class="info-item">
           <mat-icon>schedule</mat-icon>
           <span
-            >Activada: {{ relatedBooking()?.activatedAt | date:'short' }}</span
+            >{{ 'trip.activatedAt' | translate:{ date: (relatedBooking()?.activatedAt | date:'short') } }}</span
           >
         </div>
         }
@@ -56,7 +56,7 @@
         class="activate-booking-button"
       >
         <mat-icon>play_arrow</mat-icon>
-        Activar Reserva Ahora
+        {{ 'trip.activateBookingNow' | translate }}
       </button>
       } @if (relatedBooking()?.activationStatus === 'active') {
       <div class="activation-notice">
@@ -188,7 +188,7 @@
           (click)="goToScheduleBooking()"
         >
           <mat-icon>schedule</mat-icon>
-          Programar una reserva
+          {{ 'trip.scheduleBooking' | translate }}
         </button>
 
         <button
@@ -197,7 +197,7 @@
           (click)="goToHistory()"
         >
           <mat-icon>history</mat-icon>
-          Historial de Viajes
+          {{ 'trip.tripHistory' | translate }}
         </button>
       </div>
     </div>
