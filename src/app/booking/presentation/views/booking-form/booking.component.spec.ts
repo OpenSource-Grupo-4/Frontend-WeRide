@@ -392,4 +392,43 @@ describe('BookingFormComponent', () => {
     expect(component.getVehicleName('7')).toBe('Xiaomi Pro');
     expect(component.rate).toBe(0.5);
   });
+
+  it('on a 401 create response triggers the session-expired helper and skips the generic error', () => {
+    spyOn(component as any, 'handleSessionExpired');
+    spyOn(component as any, 'showErrorMessage');
+    spyOn(console, 'error');
+    component.vehicles = [{ id: '1', pricePerMinute: 0.5 } as any];
+    component.selectedVehicle = '1';
+    component.startLocationId = 'loc-A';
+    component.endLocationId = 'loc-B';
+    component.selectedDate = '2026-09-02';
+    component.unlockTime = '10:00';
+    component.duration = 30;
+    bookingsApi.create.and.returnValue(throwError(() => ({ status: 401 })));
+
+    component.submitBooking();
+
+    expect(bookingsApi.create).toHaveBeenCalled();
+    expect((component as any).handleSessionExpired).toHaveBeenCalled();
+    expect((component as any).showErrorMessage).not.toHaveBeenCalled();
+  });
+
+  it('on a non-401 create error keeps the generic error and does not call the session helper', () => {
+    spyOn(component as any, 'handleSessionExpired');
+    spyOn(component as any, 'showErrorMessage');
+    spyOn(console, 'error');
+    component.vehicles = [{ id: '1', pricePerMinute: 0.5 } as any];
+    component.selectedVehicle = '1';
+    component.startLocationId = 'loc-A';
+    component.endLocationId = 'loc-B';
+    component.selectedDate = '2026-09-02';
+    component.unlockTime = '10:00';
+    component.duration = 30;
+    bookingsApi.create.and.returnValue(throwError(() => ({ status: 500 })));
+
+    component.submitBooking();
+
+    expect((component as any).handleSessionExpired).not.toHaveBeenCalled();
+    expect((component as any).showErrorMessage).toHaveBeenCalledWith('booking.createError');
+  });
 });

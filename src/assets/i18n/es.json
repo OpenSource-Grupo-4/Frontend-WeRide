@@ -386,6 +386,7 @@
     "alreadyHasActive": "Ya tienes una reserva activa en curso",
     "vehicleNotAvailable": "El vehículo no está disponible",
     "createError": "Error al crear la reserva",
+    "createSessionExpired": "Tu sesión expiró. Inicia sesión nuevamente para continuar.",
     "status": {
       "pending": "Pendiente",
       "confirmed": "Confirmada",

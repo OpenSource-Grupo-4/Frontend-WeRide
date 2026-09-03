@@ -203,6 +203,10 @@ export class BookingFormComponent implements OnInit {
         }, 2000);
       },
       error: (err) => {
+        if (err.status === 401) {
+          this.handleSessionExpired();
+          return;
+        }
         console.error('Error creando reserva:', err);
         this.showErrorMessage('booking.createError');
       }
@@ -234,6 +238,10 @@ export class BookingFormComponent implements OnInit {
         setTimeout(() => this.router.navigate(['/booking/list']), 2000);
       },
       error: (err) => {
+        if (err.status === 401) {
+          this.handleSessionExpired();
+          return;
+        }
         console.error('Error actualizando:', err);
         this.showErrorMessage('booking.updateError');
       }
@@ -373,6 +381,24 @@ export class BookingFormComponent implements OnInit {
   }
 
   // --- Mensajes ---
+
+  /** Sesión expirada/JWT inválido (401): mensaje específico con acción para
+   *  volver a iniciar sesión. Reemplaza al mensaje genérico (nunca se llama a
+   *  showErrorMessage para no apilar dos snackbars). */
+  private handleSessionExpired(): void {
+    const snackBarRef = this.snackBar.open(
+      this.translate.instant('booking.createSessionExpired'),
+      this.translate.instant('auth.login.title'),
+      { duration: 0, horizontalPosition: 'center', verticalPosition: 'top', panelClass: ['error-snackbar'] }
+    );
+    snackBarRef.onAction().subscribe(() => {
+      // Limpia la sesión local (mismas claves que AuthRepositoryImpl.logout) y
+      // navega al login.
+      localStorage.removeItem('auth_session');
+      localStorage.removeItem('session');
+      this.router.navigate(['/auth/login']);
+    });
+  }
 
   private showSuccessMessage(key: string): void {
     const message = this.translate.instant(key);

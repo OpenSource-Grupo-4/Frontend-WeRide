@@ -386,6 +386,7 @@
     "alreadyHasActive": "You already have an active booking in progress",
     "vehicleNotAvailable": "Vehicle is not available",
     "createError": "Error creating booking",
+    "createSessionExpired": "Your session has expired. Please sign in again to continue.",
     "status": {
       "pending": "Pending",
       "confirmed": "Confirmed",
