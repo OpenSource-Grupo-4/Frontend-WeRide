@@ -20,7 +20,7 @@ describe('FavoriteStore', () => {
     addFavorite?: jasmine.Spy;
     removeFavorite?: jasmine.Spy;
     isFavorite?: jasmine.Spy;
-  }) {
+  } = {}) {
     TestBed.configureTestingModule({
       providers: [
         FavoriteStore,
@@ -171,5 +171,70 @@ describe('FavoriteStore', () => {
     expect(JSON.parse(localStorage.getItem('favoriteVehicleIds') || '[]')).not.toContain('v1');
     expect(removeFavorite).not.toHaveBeenCalled();
     expect(store.error()).toBeNull();
+  }));
+
+  it('turns isLoading off after a successful add inside toggleFavorite', fakeAsync(() => {
+    // Deferred observable so the in-flight loading state is observable before
+    // the synchronous `of(...)` completion would flip it straight back.
+    const addFavorite$ = new Subject<Favorite>();
+    const store = setup({
+      addFavorite: jasmine.createSpy('addFavorite').and.returnValue(addFavorite$)
+    });
+
+    store.toggleFavorite({ userId: 'user-1', vehicleId: 'v1' });
+    expect(store.isLoading()).toBeTrue();
+
+    addFavorite$.next(createFavorite('v1'));
+    addFavorite$.complete();
+    tick();
+
+    expect(store.isLoading()).toBeFalse();
+    expect(store.favoriteVehicleIds()).toContain('v1');
+  }));
+
+  it('turns isLoading off after a successful remove inside toggleFavorite', fakeAsync(() => {
+    const removeFavorite$ = new Subject<void>();
+    const store = setup({
+      getUserFavorites: jasmine.createSpy('getUserFavorites').and.returnValue(of([createFavorite('v1')])),
+      removeFavorite: jasmine.createSpy('removeFavorite').and.returnValue(removeFavorite$)
+    });
+    store.loadUserFavorites('user-1');
+    tick();
+    expect(store.favoriteVehicleIds()).toContain('v1');
+
+    store.toggleFavorite({ userId: 'user-1', vehicleId: 'v1' });
+    expect(store.isLoading()).toBeTrue();
+
+    removeFavorite$.next();
+    removeFavorite$.complete();
+    tick();
+
+    expect(store.isLoading()).toBeFalse();
+    expect(store.favoriteVehicleIds()).not.toContain('v1');
+  }));
+
+  it('turns isLoading off when removing a favorite that only exists in localStorage (no in-memory Favorite)', fakeAsync(() => {
+    // Simula un reload: el vehículo está en favoriteVehicleIds (hidratado de
+    // localStorage) pero NO existe ningún Favorite en memoria para ese par
+    // userId/vehicleId — la rama degradada `if (!favoriteToRemove)` debe
+    // apagar isLoading.
+    //
+    // Nota: initialState.favoriteVehicleIds se lee de localStorage UNA sola
+    // vez, al importar el módulo (Karma carga el bundle antes de ejecutar los
+    // specs), así que en este harness el estado «tras un reload» se alcanza
+    // como en el spec existente de abajo: un add en sesión deja v1 en
+    // favoriteVehicleIds con un Favorite de user-1, y al hacer toggle con
+    // user-2 no hay Favorite en memoria que coincida.
+    const store = setup();
+    store.toggleFavorite({ userId: 'user-1', vehicleId: 'v1' });
+    tick();
+    expect(store.favoriteVehicleIds()).toContain('v1');
+    expect(store.favorites().length).toBe(1);
+
+    store.toggleFavorite({ userId: 'user-2', vehicleId: 'v1' });
+    tick();
+
+    expect(store.isLoading()).toBeFalse();
+    expect(store.favoriteVehicleIds()).not.toContain('v1');
   }));
 });

@@ -186,6 +186,7 @@ export const FavoriteStore = signalStore(
                 saveFavoritesToLocalStorage(updatedIds);
                 patchState(store, {
                   favoriteVehicleIds: updatedIds,
+                  isLoading: false,
                   error: null
                 });
                 return of(null);
@@ -202,6 +203,7 @@ export const FavoriteStore = signalStore(
                   patchState(store, {
                     favorites: updatedFavorites,
                     favoriteVehicleIds: updatedIds,
+                    isLoading: false,
                     error: null
                   });
                 }),
@@ -225,6 +227,7 @@ export const FavoriteStore = signalStore(
                   patchState(store, {
                     favorites: updatedFavorites,
                     favoriteVehicleIds: updatedIds,
+                    isLoading: false,
                     error: null
                   });
                 }),
