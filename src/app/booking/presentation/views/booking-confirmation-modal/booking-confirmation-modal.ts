@@ -25,7 +25,7 @@ export interface BookingConfirmationData {
       <div class="modal-header">
         <h2 mat-dialog-title>
           <mat-icon>event_available</mat-icon>
-          ¿Cómo deseas reservar?
+          {{ 'booking.confirmBooking.howToBook' | translate }}
         </h2>
         <button mat-icon-button (click)="close()">
           <mat-icon>close</mat-icon>
@@ -51,8 +51,8 @@ export interface BookingConfirmationData {
           >
             <mat-icon>play_circle</mat-icon>
             <div class="button-text">
-              <strong>Reservar Ahora</strong>
-              <span>Usa el vehículo inmediatamente</span>
+              <strong>{{ 'booking.confirmBooking.bookNow' | translate }}</strong>
+              <span>{{ 'booking.confirmBooking.bookNowHint' | translate }}</span>
             </div>
           </button>
 
@@ -63,8 +63,8 @@ export interface BookingConfirmationData {
           >
             <mat-icon>schedule</mat-icon>
             <div class="button-text">
-              <strong>Programar Reserva</strong>
-              <span>Elige fecha y hora específica</span>
+              <strong>{{ 'booking.confirmBooking.schedule' | translate }}</strong>
+              <span>{{ 'booking.confirmBooking.scheduleHint' | translate }}</span>
             </div>
           </button>
         </div>

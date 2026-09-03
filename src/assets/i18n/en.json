@@ -189,14 +189,29 @@
     "qrScanner": {
       "title": "Scan the vehicle's QR code",
       "ok": "All OK.",
-      "scanHere": "Scan here"
+      "scanHere": "Scan here",
+      "scanning": "Scanning...",
+      "codeLabel": "Code",
+      "unlockError": "Error unlocking",
+      "scanError": "Error scanning the QR code"
     },
     "manualUnlock": {
       "title": "Vehicle Reservation",
       "phoneNumber": "Enter your cell phone number:",
       "password": "Enter your password:",
       "responsibility": "I am responsible for the use of the following vehicle and I take responsibility for possible damages",
-      "unlock": "Unlock"
+      "unlock": "Unlock",
+      "dialogTitle": "Manual Unlock",
+      "instructions": "Enter the vehicle's phone number and the unlock code",
+      "vehiclePhoneLabel": "Vehicle Phone",
+      "unlockCodeLabel": "Unlock Code",
+      "phoneRequired": "Phone is required",
+      "phonePattern": "Invalid phone format",
+      "codeRequired": "Code is required",
+      "codeLength": "The code must be between 4 and 8 characters",
+      "unlocking": "Unlocking...",
+      "unlockedSuccess": "Vehicle unlocked successfully",
+      "unlockError": "Error unlocking the vehicle"
     },
     "reportProblem": {
       "title": "Report a problem",
@@ -399,7 +414,32 @@
     "confirmBooking": {
       "title": "Confirm reservation of this vehicle?",
       "reserveWithQR": "Reserve with QR",
-      "reserveWithCode": "Reserve with code"
+      "reserveWithCode": "Reserve with code",
+      "howToBook": "How would you like to book?",
+      "bookNow": "Book Now",
+      "bookNowHint": "Use the vehicle immediately",
+      "schedule": "Schedule Reservation",
+      "scheduleHint": "Choose a specific date and time"
+    },
+    "unlockMethod": {
+      "title": "Select unlock method",
+      "scheduledFor": "Reservation scheduled for: {{date}}",
+      "manual": "Manual Unlock",
+      "manualHint": "Enter your number and password",
+      "qr": "Unlock with QR",
+      "qrHint": "Scan the vehicle's QR code"
+    },
+    "successModal": {
+      "title": "Vehicle reserved successfully",
+      "id": "ID",
+      "battery": "Battery",
+      "price": "Price",
+      "detailsTitle": "Reservation details",
+      "date": "Date",
+      "startTime": "Start time",
+      "estimatedDuration": "Estimated duration",
+      "endDate": "End date",
+      "continueToTrip": "Continue to trip"
     },
     "activeBooking": {
       "title": "Active reservation",

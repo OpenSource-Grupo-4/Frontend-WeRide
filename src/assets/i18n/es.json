@@ -189,14 +189,29 @@
     "qrScanner": {
       "title": "Escanea el código QR del vehículo",
       "ok": "Todo OK.",
-      "scanHere": "Escanea aquí"
+      "scanHere": "Escanea aquí",
+      "scanning": "Escaneando...",
+      "codeLabel": "Código",
+      "unlockError": "Error al desbloquear",
+      "scanError": "Error al escanear el código QR"
     },
     "manualUnlock": {
       "title": "Reserva de vehiculo",
       "phoneNumber": "Ingresa tu numero de celular:",
       "password": "Ingresa tu contrasena:",
       "responsibility": "Soy responsable del uso del siguiente vehiculo y me hago cargo de posibles danos",
-      "unlock": "Desbloquear"
+      "unlock": "Desbloquear",
+      "dialogTitle": "Desbloqueo Manual",
+      "instructions": "Ingresa el número de teléfono del vehículo y el código de desbloqueo",
+      "vehiclePhoneLabel": "Teléfono del Vehículo",
+      "unlockCodeLabel": "Código de Desbloqueo",
+      "phoneRequired": "El teléfono es requerido",
+      "phonePattern": "Formato de teléfono inválido",
+      "codeRequired": "El código es requerido",
+      "codeLength": "El código debe tener entre 4 y 8 caracteres",
+      "unlocking": "Desbloqueando...",
+      "unlockedSuccess": "Vehículo desbloqueado con éxito",
+      "unlockError": "Error al desbloquear el vehículo"
     },
     "reportProblem": {
       "title": "Reportar un problema",
@@ -399,7 +414,32 @@
     "confirmBooking": {
       "title": "¿Confirmar reserva de este vehículo?",
       "reserveWithQR": "Reservar con QR",
-      "reserveWithCode": "Reservar con codigo"
+      "reserveWithCode": "Reservar con codigo",
+      "howToBook": "¿Cómo deseas reservar?",
+      "bookNow": "Reservar Ahora",
+      "bookNowHint": "Usa el vehículo inmediatamente",
+      "schedule": "Programar Reserva",
+      "scheduleHint": "Elige fecha y hora específica"
+    },
+    "unlockMethod": {
+      "title": "Selecciona método de desbloqueo",
+      "scheduledFor": "Reserva programada para: {{date}}",
+      "manual": "Desbloqueo Manual",
+      "manualHint": "Ingresa tu número y contraseña",
+      "qr": "Desbloqueo con QR",
+      "qrHint": "Escanea el código QR del vehículo"
+    },
+    "successModal": {
+      "title": "Vehículo reservado satisfactoriamente",
+      "id": "ID",
+      "battery": "Batería",
+      "price": "Precio",
+      "detailsTitle": "Detalles de la reserva",
+      "date": "Fecha",
+      "startTime": "Hora de inicio",
+      "estimatedDuration": "Duración estimada",
+      "endDate": "Fecha de fin",
+      "continueToTrip": "Continuar al viaje"
     },
     "activeBooking": {
       "title": "Reserva activa",

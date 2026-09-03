@@ -27,7 +27,7 @@ export interface UnlockMethodSelectionData {
       <div class="modal-header">
         <h2 mat-dialog-title>
           <mat-icon>lock_open</mat-icon>
-          Selecciona método de desbloqueo
+          {{ 'booking.unlockMethod.title' | translate }}
         </h2>
         <button mat-icon-button (click)="close()">
           <mat-icon>close</mat-icon>
@@ -39,7 +39,9 @@ export interface UnlockMethodSelectionData {
           <img [src]="data.vehicle.image" [alt]="data.vehicle.brand + ' ' + data.vehicle.model">
           <div class="vehicle-info">
             <h3>{{ data.vehicle.brand }} {{ data.vehicle.model }}</h3>
-            <p class="booking-info">Reserva programada para: {{ formatScheduledTime() }}</p>
+            <p class="booking-info">
+              {{ 'booking.unlockMethod.scheduledFor' | translate:{ date: formatScheduledTime() } }}
+            </p>
           </div>
         </div>
 
@@ -51,8 +53,8 @@ export interface UnlockMethodSelectionData {
           >
             <mat-icon>lock</mat-icon>
             <div class="button-text">
-              <strong>Desbloqueo Manual</strong>
-              <span>Ingresa tu número y contraseña</span>
+              <strong>{{ 'booking.unlockMethod.manual' | translate }}</strong>
+              <span>{{ 'booking.unlockMethod.manualHint' | translate }}</span>
             </div>
           </button>
 
@@ -63,8 +65,8 @@ export interface UnlockMethodSelectionData {
           >
             <mat-icon>qr_code_scanner</mat-icon>
             <div class="button-text">
-              <strong>Desbloqueo con QR</strong>
-              <span>Escanea el código QR del vehículo</span>
+              <strong>{{ 'booking.unlockMethod.qr' | translate }}</strong>
+              <span>{{ 'booking.unlockMethod.qrHint' | translate }}</span>
             </div>
           </button>
         </div>
