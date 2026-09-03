@@ -46,7 +46,9 @@ export class UnlockRequestList implements OnInit {
     }).subscribe({
       next: ({ unlockRequests, vehicles }) => {
         this.unlockRequests = unlockRequests.map(request => {
-          const vehicle = vehicles.find(v => v.id === request.vehicleId);
+          // String() en ambos lados: los ids de vehículo pueden venir numéricos
+          // del backend real o string según el contrato del endpoint.
+          const vehicle = vehicles.find(v => String(v.id) === String(request.vehicleId));
           return {
             id: request.id,
             vehicleName: vehicle ? `${vehicle.brand} ${vehicle.model}` : 'Unknown',

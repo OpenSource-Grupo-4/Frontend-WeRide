@@ -383,4 +383,13 @@ describe('BookingFormComponent', () => {
     expect(fixture.nativeElement.querySelector('.booking-summary').textContent).toContain('15.00');
     tick(2000);
   }));
+
+  it('resolves vehicle name/rate when the API returns numeric ids', () => {
+    // El backend real responde ids numéricos.
+    component.vehicles = [{ id: 7, brand: 'Xiaomi', model: 'Pro', pricePerMinute: 0.5 } as any];
+    component.selectedVehicle = '7';
+
+    expect(component.getVehicleName('7')).toBe('Xiaomi Pro');
+    expect(component.rate).toBe(0.5);
+  });
 });

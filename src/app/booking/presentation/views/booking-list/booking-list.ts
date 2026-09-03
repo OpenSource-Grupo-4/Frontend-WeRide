@@ -90,9 +90,11 @@ export class BookingListComponent implements OnInit {
         );
 
         this.bookings = uniqueBookings.map(booking => {
-          const vehicle = vehicles.find(v => v.id === booking.vehicleId);
-          const startLocation = locations.find(l => l.id === booking.startLocationId);
-          const endLocation = locations.find(l => l.id === booking.endLocationId);
+          // String() en ambos lados: los ids pueden venir numéricos del backend
+          // real o string del localStorage/opciones del formulario.
+          const vehicle = vehicles.find(v => String(v.id) === String(booking.vehicleId));
+          const startLocation = locations.find(l => String(l.id) === String(booking.startLocationId));
+          const endLocation = locations.find(l => String(l.id) === String(booking.endLocationId));
 
           return {
             id: booking.id,
@@ -264,7 +266,7 @@ export class BookingListComponent implements OnInit {
       // Get vehicle information
       this.vehiclesApi.getAll().subscribe({
         next: (vehicles) => {
-          const vehicle = vehicles.find(v => v.id === bookingView.vehicleId);
+          const vehicle = vehicles.find(v => String(v.id) === String(bookingView.vehicleId));
 
           if (!vehicle) {
             this.showErrorMessage('booking.vehicleNotAvailable');

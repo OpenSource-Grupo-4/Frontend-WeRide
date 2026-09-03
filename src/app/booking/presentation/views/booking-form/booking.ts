@@ -266,30 +266,37 @@ export class BookingFormComponent implements OnInit {
 
   // --- MÉTODOS AUXILIARES Y GETTERS ---
 
+  // Comparación tolerante a tipos: selectedVehicle llega como string (Angular
+  // stringifica el value del <option>) pero el id puede ser numérico si aún no
+  // pasó por la normalización del endpoint; String() en ambos lados cubre ambos casos.
+  private findVehicleById(id: string): any {
+    return this.vehicles.find(vehicle => String(vehicle.id) === String(id));
+  }
+
   getVehicleName(id: string): string {
-    const v = this.vehicles.find(vehicle => vehicle.id === id);
+    const v = this.findVehicleById(id);
     return v ? `${v.brand} ${v.model}` : '';
   }
 
   getVehicleType(id: string): string {
-    const v = this.vehicles.find(vehicle => vehicle.id === id);
+    const v = this.findVehicleById(id);
     return v ? (v.type || 'Unknown') : '';
   }
 
   getVehicleBattery(id: string): string {
-    const v = this.vehicles.find(vehicle => vehicle.id === id);
+    const v = this.findVehicleById(id);
     return v ? (v.battery + '%' || 'N/A') : '';
   }
 
   getVehicleRange(id: string): string {
-    const v = this.vehicles.find(vehicle => vehicle.id === id);
+    const v = this.findVehicleById(id);
     return v ? (v.range + ' km' || 'N/A') : '';
   }
 
   /** Tarifa por minuto del vehículo seleccionado (derivada, siempre al día). */
   get rate(): number {
     if (this.selectedVehicle) {
-      const vehicle = this.vehicles.find(v => v.id === this.selectedVehicle);
+      const vehicle = this.findVehicleById(this.selectedVehicle);
       if (vehicle) {
         return vehicle.pricePerMinute || vehicle.rate || 0;
       }
