@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { PaymentsApiEndpoint, Payment } from './payments-api-endpoint';
+import { PaymentsApiEndpoint, Payment } from '../../booking/infraestructure/payments-api-endpoint';
 
 @Injectable({
   providedIn: 'root'

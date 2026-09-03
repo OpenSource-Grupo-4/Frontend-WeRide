@@ -5,7 +5,7 @@ import { MatIcon } from '@angular/material/icon';
 import { TranslateModule } from '@ngx-translate/core';
 import { CurrentUserViewService } from '../../../../profile/application/current-user-view.service';
 import { UserPaymentsService } from '../../../infrastructure/user-payments.service';
-import { Payment } from '../../../infrastructure/payments-api-endpoint';
+import { Payment } from '../../../../booking/infraestructure/payments-api-endpoint';
 import { UserSettingsStateService } from '../../../application/user-settings-state.service';
 
 @Component({

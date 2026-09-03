@@ -7,7 +7,7 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 import { PlanPayment } from './plan-payment';
 import { PlanStore } from '../../../application/plan.store';
-import { PaymentsApiEndpoint } from '../../../infrastructure/payments-api-endpoint';
+import { PaymentsApiEndpoint } from '../../../../booking/infraestructure/payments-api-endpoint';
 import { Plan } from '../../../domain/model/plan.entity';
 
 class FakeLoader implements TranslateLoader {

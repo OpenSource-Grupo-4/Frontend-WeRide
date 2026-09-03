@@ -11,7 +11,7 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 import {TranslateModule, TranslateService} from '@ngx-translate/core';
 import {Plan} from '../../../domain/model/plan.entity';
 import {PlanStore} from '../../../application/plan.store';
-import {PaymentsApiEndpoint} from '../../../infrastructure/payments-api-endpoint';
+import {PaymentsApiEndpoint} from '../../../../booking/infraestructure/payments-api-endpoint';
 import {Observable, Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
 
